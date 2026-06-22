@@ -13,11 +13,41 @@ export const orders: Order[] = [
         id: "order-1-item-1",
         name: "Pool shell",
         quantity: 1,
+        technicalDescription: "Rectangular demonstration pool shell.",
+        materials: [
+          {
+            id: "order-1-item-1-material-1",
+            partName: "Walls",
+            materialType: "PP",
+            thicknessMm: 10,
+          },
+          {
+            id: "order-1-item-1-material-2",
+            partName: "Bottom",
+            materialType: "PP",
+            thicknessMm: 12,
+          },
+        ],
       },
       {
         id: "order-1-item-2",
         name: "Overflow tank",
         quantity: 1,
+        technicalDescription: "Tank with a removable lid.",
+        materials: [
+          {
+            id: "order-1-item-2-material-1",
+            partName: "Body",
+            materialType: "PP",
+            thicknessMm: 8,
+          },
+          {
+            id: "order-1-item-2-material-2",
+            partName: "Lid",
+            materialType: "PE",
+            thicknessMm: 6,
+          },
+        ],
       },
     ],
   },
@@ -33,11 +63,27 @@ export const orders: Order[] = [
         id: "order-2-item-1",
         name: "Bends D400",
         quantity: 5,
+        technicalDescription: "Ventilation bends with a 400 mm diameter.",
+        materials: [
+          {
+            id: "order-2-item-1-material-1",
+            materialType: "PP",
+            thicknessMm: 5,
+          },
+        ],
       },
       {
         id: "order-2-item-2",
         name: "Flanges D315",
         quantity: 2,
+        technicalDescription: "Connection flanges with a 315 mm diameter.",
+        materials: [
+          {
+            id: "order-2-item-2-material-1",
+            materialType: "PVC",
+            thicknessMm: 10,
+          },
+        ],
       },
     ],
   },

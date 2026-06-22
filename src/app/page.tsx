@@ -1,5 +1,6 @@
 import { orders } from "@/data/orders";
 import type { OrderStatus } from "@/types/order";
+import Link from "next/link";
 
 const dateFormatter = new Intl.DateTimeFormat("lt-LT", {
   dateStyle: "short",
@@ -54,7 +55,14 @@ export default function Home() {
                 key={order.id}
                 className="transition-colors hover:bg-slate-900/60"
               >
-                <td className="px-4 py-4">{order.orderNumber}</td>
+                <td className="px-4 py-4">
+                  <Link
+                    href={`/orders/${order.id}`}
+                    className="font-medium text-sky-400 hover:text-sky-300"
+                  >
+                    {order.orderNumber}
+                  </Link>
+                </td>
                 <td className="px-4 py-4">{order.projectName}</td>
                 <td className="px-4 py-4">
                   {dateFormatter.format(new Date(order.deadline))}
