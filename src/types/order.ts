@@ -6,12 +6,15 @@ export type OrderStatus =
   | "DISPATCHED"
   | "CANCELLED";
 
+export type MaterialType = "PP" | "PE" | "PVC";
+
 export type OrderItem = {
   id: string;
   name: string;
   quantity: number;
+  materialType: MaterialType;
+  thicknessMm: number;
   technicalDescription: string;
-  materials: OrderItemMaterial[];
 };
 
 export type Order = {
@@ -22,13 +25,4 @@ export type Order = {
   status: OrderStatus;
   updatedAt: string;
   items: OrderItem[];
-};
-
-export type MaterialType = "PP" | "PE" | "PVC";
-
-export type OrderItemMaterial = {
-  id: string;
-  partName?: string;
-  materialType: MaterialType;
-  thicknessMm: number;
 };

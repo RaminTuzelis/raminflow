@@ -75,17 +75,18 @@ export default async function OrderDetailsPage({
                 {item.technicalDescription}
               </p>
 
-              <ul className="mt-4 space-y-2">
-                {item.materials.map((material) => (
-                  <li
-                    key={material.id}
-                    className="rounded-md bg-slate-950 px-3 py-2 text-sm"
-                  >
-                    {material.partName ? `${material.partName}: ` : ""}
-                    {material.materialType}, {material.thicknessMm} mm
-                  </li>
-                ))}
-              </ul>
+              <dl className="mt-4 flex gap-6 rounded-md bg-slate-950 px-3 py-2 text-sm">
+                <div>
+                  <dt className="text-xs uppercase text-slate-500">Material</dt>
+                  <dd className="mt-1 text-slate-200">{item.materialType}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase text-slate-500">Thickness</dt>
+                  <dd className="mt-1 text-slate-200">
+                    {item.thicknessMm} mm
+                  </dd>
+                </div>
+              </dl>
             </article>
           ))}
         </div>
