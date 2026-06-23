@@ -1,5 +1,8 @@
 import { orders } from "@/data/orders";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { dateFormatter, dateTimeFormatter } from "@/lib/order-display";
+import { OrderStatusBadge } from "@/components/order-status-badge";
 
 type OrderDetailsPageProps = {
   params: Promise<{ id: string }>;
@@ -16,9 +19,43 @@ export default async function OrderDetailsPage({
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-8">
+    <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <Link
+        href="/"
+        className="text-sm font-medium text-sky-400 hover:text-sky-300"
+      >
+        Back to orders
+      </Link>
       <h1 className="text-2xl font-semibold text-white">{order.orderNumber}</h1>
       <p className="mt-4 text-slate-400">{order.projectName}</p>
+      <dl className="mt-6 grid gap-4 border-y border-slate-800 py-4 sm:grid-cols-3">
+        <div>
+          <dt className="text-xs font-medium uppercase text-slate-500">
+            Status
+          </dt>
+          <dd className="mt-1 text-sm text-slate-200">
+            <OrderStatusBadge status={order.status} />
+          </dd>
+        </div>
+
+        <div>
+          <dt className="text-xs font-medium uppercase text-slate-500">
+            Deadline
+          </dt>
+          <dd className="mt-1 text-sm text-slate-200">
+            {dateFormatter.format(new Date(order.deadline))}
+          </dd>
+        </div>
+
+        <div>
+          <dt className="text-xs font-medium uppercase text-slate-500">
+            Last updated
+          </dt>
+          <dd className="mt-1 text-sm text-slate-200">
+            {dateTimeFormatter.format(new Date(order.updatedAt))}
+          </dd>
+        </div>
+      </dl>
       <section className="mt-8">
         <h2 className="text-lg font-semibold text-white">Order items</h2>
 
