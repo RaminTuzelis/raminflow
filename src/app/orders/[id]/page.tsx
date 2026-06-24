@@ -56,6 +56,18 @@ export default async function OrderDetailsPage({
           </dd>
         </div>
       </dl>
+
+      {order.productionNotes && (
+        <section className="mt-8 rounded-lg border border-slate-800 bg-slate-900/50 p-4">
+          <h2 className="text-sm font-semibold uppercase text-slate-500">
+            Production notes
+          </h2>
+          <p className="mt-2 whitespace-pre-wrap text-sm text-slate-200">
+            {order.productionNotes}
+          </p>
+        </section>
+      )}
+
       <section className="mt-8">
         <h2 className="text-lg font-semibold text-white">Order items</h2>
 
@@ -71,10 +83,6 @@ export default async function OrderDetailsPage({
                   Quantity: {item.quantity}
                 </span>
               </div>
-              <p className="mt-2 text-sm text-slate-400">
-                {item.technicalDescription}
-              </p>
-
               <dl className="mt-4 flex gap-6 rounded-md bg-slate-950 px-3 py-2 text-sm">
                 <div>
                   <dt className="text-xs uppercase text-slate-500">Material</dt>

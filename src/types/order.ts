@@ -14,15 +14,24 @@ export type OrderItem = {
   quantity: number;
   materialType: MaterialType;
   thicknessMm: number;
-  technicalDescription: string;
 };
 
 export type Order = {
   id: string;
   orderNumber: string;
   projectName: string;
+  productionNotes: string;
   deadline: string;
   status: OrderStatus;
   updatedAt: string;
   items: OrderItem[];
+};
+
+export type OrderItemDraft = Omit<OrderItem, "id">;
+
+export type OrderDraft = {
+  projectName: string;
+  productionNotes: string;
+  deadline: string;
+  items: OrderItemDraft[];
 };
