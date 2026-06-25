@@ -6,7 +6,15 @@ import { OrderStatusBadge } from "@/components/order-status-badge";
 export default function Home() {
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="mb-6 text-2xl font-semibold text-white">Orders</h1>
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-semibold text-white">Orders</h1>
+        <Link
+          href="/orders/new"
+          className="inline-flex rounded-md bg-sky-500 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-sky-400"
+        >
+          Create order
+        </Link>
+      </div>
       <div className="overflow-x-auto rounded-lg border border-slate-800">
         <table className="w-full min-w-190 border-collapse text-left text-sm">
           <thead className="bg-slate-900 text-slate-400">

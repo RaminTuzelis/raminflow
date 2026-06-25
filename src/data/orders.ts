@@ -2,6 +2,25 @@ import type { Order } from "@/types/order";
 
 export const orders: Order[] = [
   {
+    id: "order-0",
+    orderNumber: "RF-2026-000",
+    projectName: "Demo Workshop Repair",
+    productionNotes:
+      "Waiting for final dimension confirmation before production approval.",
+    deadline: "2026-07-02",
+    status: "DRAFT",
+    updatedAt: "2026-06-24T12:15:00Z",
+    items: [
+      {
+        id: "order-0-item-1",
+        name: "Replacement cover",
+        quantity: 1,
+        materialType: "PVC",
+        thicknessMm: 6,
+      },
+    ],
+  },
+  {
     id: "order-1",
     orderNumber: "RF-2026-001",
     projectName: "Demo Pool Project",
@@ -50,6 +69,70 @@ export const orders: Order[] = [
         quantity: 2,
         materialType: "PVC",
         thicknessMm: 10,
+      },
+    ],
+  },
+  {
+    id: "order-3",
+    orderNumber: "RF-2026-003",
+    projectName: "Demo Chemical Tank Repair",
+    productionNotes:
+      "Parts are finished and waiting for final packaging and dispatch confirmation.",
+    deadline: "2026-07-22",
+    status: "READY_FOR_DISPATCH",
+    updatedAt: "2026-06-23T14:45:00Z",
+    items: [
+      {
+        id: "order-3-item-1",
+        name: "Tank lid",
+        quantity: 2,
+        materialType: "PE",
+        thicknessMm: 12,
+      },
+      {
+        id: "order-3-item-2",
+        name: "Inspection hatch",
+        quantity: 1,
+        materialType: "PE",
+        thicknessMm: 10,
+      },
+    ],
+  },
+  {
+    id: "order-4",
+    orderNumber: "RF-2026-004",
+    projectName: "Demo Water Treatment Covers",
+    productionNotes:
+      "Order dispatched after quality check and packing confirmation.",
+    deadline: "2026-06-28",
+    status: "DISPATCHED",
+    updatedAt: "2026-06-21T09:10:00Z",
+    items: [
+      {
+        id: "order-4-item-1",
+        name: "Protective cover",
+        quantity: 4,
+        materialType: "PP",
+        thicknessMm: 5,
+      },
+    ],
+  },
+  {
+    id: "order-5",
+    orderNumber: "RF-2026-005",
+    projectName: "Demo Cancelled Custom Fitting",
+    productionNotes:
+      "Cancelled during draft review because the project requirements changed.",
+    deadline: "2026-08-05",
+    status: "CANCELLED",
+    updatedAt: "2026-06-19T16:20:00Z",
+    items: [
+      {
+        id: "order-5-item-1",
+        name: "Custom transition fitting",
+        quantity: 3,
+        materialType: "PVC",
+        thicknessMm: 8,
       },
     ],
   },

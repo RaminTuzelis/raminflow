@@ -26,7 +26,9 @@ export default async function OrderDetailsPage({
       >
         Back to orders
       </Link>
-      <h1 className="text-2xl font-semibold text-white">{order.orderNumber}</h1>
+      <h1 className="mt-4 text-2xl font-semibold text-white">
+        {order.orderNumber}
+      </h1>
       <p className="mt-4 text-slate-400">{order.projectName}</p>
       <dl className="mt-6 grid gap-4 border-y border-slate-800 py-4 sm:grid-cols-3">
         <div>
@@ -89,10 +91,10 @@ export default async function OrderDetailsPage({
                   <dd className="mt-1 text-slate-200">{item.materialType}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs uppercase text-slate-500">Thickness</dt>
-                  <dd className="mt-1 text-slate-200">
-                    {item.thicknessMm} mm
-                  </dd>
+                  <dt className="text-xs uppercase text-slate-500">
+                    Thickness
+                  </dt>
+                  <dd className="mt-1 text-slate-200">{item.thicknessMm} mm</dd>
                 </div>
               </dl>
             </article>

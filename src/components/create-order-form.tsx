@@ -1,20 +1,79 @@
 "use client";
 import type { MouseEvent, SubmitEvent } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { MaterialType, OrderDraft, OrderItemDraft } from "@/types/order";
+import Link from "next/link";
+import { createOrderDraft } from "@/app/orders/new/actions";
 
 const labelClassName = "text-sm font-medium text-slate-200";
 
 const fieldClassName =
   "w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20";
 
+const materialOptions: MaterialType[] = ["PP", "PE", "PVC"];
+const thicknessOptions = [3, 4, 5, 6, 8, 10, 12, 15, 20, 25];
+
 type DraftListItem = OrderItemDraft & {
   clientId: string;
 };
 
+type AddedOrderItemProps = {
+  item: DraftListItem;
+  index: number;
+  onRemove: (clientId: string) => void;
+};
+
+function AddedOrderItem({ item, index, onRemove }: AddedOrderItemProps) {
+  return (
+    <article className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border border-slate-700 bg-slate-950/60 px-4 py-3">
+      <span className="text-xs font-medium text-sky-300">#{index + 1}</span>
+
+      <h3 className="min-w-40 flex-1 truncate font-medium text-white">
+        {item.name}
+      </h3>
+
+      <span className="text-sm text-slate-300">{item.quantity} pcs</span>
+
+      <span className="text-sm text-slate-300">{item.materialType}</span>
+
+      <span className="text-sm text-slate-300">{item.thicknessMm} mm</span>
+
+      <button
+        type="button"
+        onClick={() => onRemove(item.clientId)}
+        className="text-sm text-red-400 transition hover:text-red-300"
+      >
+        Remove
+      </button>
+    </article>
+  );
+}
+
+type DeveloperPreviewProps = {
+  draftOrder: OrderDraft;
+};
+
+function DeveloperPreview({ draftOrder }: DeveloperPreviewProps) {
+  return (
+    <section className="rounded-lg border border-slate-800 bg-slate-950 p-4">
+      <h2 className="text-sm font-semibold uppercase text-slate-500">
+        Developer preview
+      </h2>
+      <pre className="mt-3 overflow-x-auto text-xs text-slate-300">
+        {JSON.stringify(draftOrder, null, 2)}
+      </pre>
+    </section>
+  );
+}
+
 export function CreateOrderForm() {
   const [quantity, setQuantity] = useState(1);
   const [items, setItems] = useState<DraftListItem[]>([]);
+  const [formError, setFormError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [lastDraftOrder, setLastDraftOrder] = useState<OrderDraft | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const itemNameInputRef = useRef<HTMLInputElement>(null);
 
   function handleAddItem(event: MouseEvent<HTMLButtonElement>) {
     const form = event.currentTarget.form;
@@ -33,16 +92,28 @@ export function CreateOrderForm() {
     };
 
     setItems((currentItems) => [...currentItems, newItem]);
+    setFormError("");
+    setSuccessMessage("");
+    itemNameInputRef.current?.focus();
+    itemNameInputRef.current?.select();
+    setQuantity(1);
   }
 
   function handleRemoveItem(clientId: string) {
     setItems((currentItems) =>
       currentItems.filter((item) => item.clientId !== clientId),
     );
+    setSuccessMessage("");
   }
 
-  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (items.length === 0) {
+      setFormError("Add at least one order item before saving.");
+      setSuccessMessage("");
+      return;
+    }
 
     const formData = new FormData(event.currentTarget);
     const projectName = String(formData.get("projectName") ?? "");
@@ -56,12 +127,36 @@ export function CreateOrderForm() {
       items,
     };
 
-    console.log(draftOrder);
+    setIsSubmitting(true);
+    try {
+      const createdOrder = await createOrderDraft(draftOrder);
+      setLastDraftOrder(draftOrder);
+      setFormError("");
+      setSuccessMessage(
+        `Draft ${createdOrder.orderNumber} created on server. Database connection will be added later.`,
+      );
+    } catch (error) {
+      setSuccessMessage("");
+      setLastDraftOrder(null);
+
+      if (error instanceof Error) {
+        setFormError(error.message);
+        return;
+      }
+
+      setFormError("Could not create draft order. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <form
       onSubmit={handleSubmit}
+      onChange={() => {
+        setSuccessMessage("");
+        setLastDraftOrder(null);
+      }}
       className="mt-6 space-y-6 rounded-lg border border-slate-800 bg-slate-900/50 p-6"
     >
       <div className="grid gap-2">
@@ -111,6 +206,7 @@ export function CreateOrderForm() {
             Item name
           </label>
           <input
+            ref={itemNameInputRef}
             className={fieldClassName}
             id="itemName"
             name="itemName"
@@ -181,9 +277,11 @@ export function CreateOrderForm() {
             <option value="" disabled>
               Select material
             </option>
-            <option value="PP">PP</option>
-            <option value="PE">PE</option>
-            <option value="PVC">PVC</option>
+            {materialOptions.map((material) => (
+              <option key={material} value={material}>
+                {material}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -201,16 +299,11 @@ export function CreateOrderForm() {
             <option value="" disabled>
               Select thickness
             </option>
-            <option value="3">3 mm</option>
-            <option value="4">4 mm</option>
-            <option value="5">5 mm</option>
-            <option value="6">6 mm</option>
-            <option value="8">8 mm</option>
-            <option value="10">10 mm</option>
-            <option value="12">12 mm</option>
-            <option value="15">15 mm</option>
-            <option value="20">20 mm</option>
-            <option value="25">25 mm</option>
+            {thicknessOptions.map((thickness) => (
+              <option key={thickness} value={thickness}>
+                {thickness} mm
+              </option>
+            ))}
           </select>
         </div>
 
@@ -229,49 +322,61 @@ export function CreateOrderForm() {
 
           <div className="space-y-3">
             {items.map((item, index) => (
-              <article
+              <AddedOrderItem
                 key={item.clientId}
-                className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border border-slate-700 bg-slate-950/60 px-4 py-3"
-              >
-                <span className="text-xs font-medium text-sky-300">
-                  #{index + 1}
-                </span>
-
-                <h3 className="min-w-40 flex-1 truncate font-medium text-white">
-                  {item.name}
-                </h3>
-
-                <span className="text-sm text-slate-300">
-                  {item.quantity} pcs
-                </span>
-
-                <span className="text-sm text-slate-300">
-                  {item.materialType}
-                </span>
-
-                <span className="text-sm text-slate-300">
-                  {item.thicknessMm} mm
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() => handleRemoveItem(item.clientId)}
-                  className="text-sm text-red-400 transition hover:text-red-300"
-                >
-                  Remove
-                </button>
-              </article>
+                item={item}
+                index={index}
+                onRemove={handleRemoveItem}
+              />
             ))}
           </div>
         </section>
       )}
+      {formError && (
+        <p className="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+          {formError}
+        </p>
+      )}
 
-      <button
-        className="rounded-md bg-sky-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-slate-950"
-        type="submit"
-      >
-        Save draft
-      </button>
+      {successMessage && (
+        <div className="flex flex-col gap-3 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300 sm:flex-row sm:items-center sm:justify-between">
+          <p>{successMessage}</p>
+
+          <Link
+            href="/"
+            className="font-medium text-emerald-100 underline underline-offset-4 transition hover:text-white"
+          >
+            View order
+          </Link>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-3 border-t border-slate-800 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm font-medium text-slate-200">
+            {items.length} order item{items.length === 1 ? "" : "s"} added
+          </p>
+          <p className="mt-1 text-sm text-slate-500">
+            Save the draft after all required positions are added.
+          </p>
+        </div>
+        <button
+          className={`rounded-md px-4 py-2 font-medium text-slate-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 ${
+            successMessage
+              ? "cursor-not-allowed bg-emerald-500 focus:ring-emerald-400"
+              : "bg-sky-500 hover:bg-sky-400 focus:ring-sky-400"
+          }`}
+          disabled={Boolean(successMessage) || isSubmitting}
+          type="submit"
+        >
+          {isSubmitting
+            ? "Saving..."
+            : successMessage
+              ? "Draft saved"
+              : "Save draft"}
+        </button>
+      </div>
+      {lastDraftOrder && <DeveloperPreview draftOrder={lastDraftOrder} />}
     </form>
   );
 }
