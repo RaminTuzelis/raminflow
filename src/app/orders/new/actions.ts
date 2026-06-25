@@ -1,6 +1,7 @@
 "use server";
 
 import type { OrderDraft } from "@/types/order";
+import { isMaterialType, isThicknessOption } from "@/lib/order-options";
 
 type CreateOrderDraftResult =
   | {
@@ -54,14 +55,14 @@ export async function createOrderDraft(
       };
     }
 
-    if (!item.materialType) {
+    if (!isMaterialType(item.materialType)) {
       return {
         success: false,
-        error: "Each order item must have a material.",
+        error: "Each order item must have a valid material.",
       };
     }
 
-    if (item.thicknessMm <= 0) {
+    if (!isThicknessOption(item.thicknessMm)) {
       return {
         success: false,
         error: "Each order item must have a valid thickness.",

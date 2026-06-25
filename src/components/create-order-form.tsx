@@ -4,14 +4,12 @@ import { useRef, useState } from "react";
 import type { MaterialType, OrderDraft, OrderItemDraft } from "@/types/order";
 import Link from "next/link";
 import { createOrderDraft } from "@/app/orders/new/actions";
+import { materialOptions, thicknessOptions } from "@/lib/order-options";
 
 const labelClassName = "text-sm font-medium text-slate-200";
 
 const fieldClassName =
   "w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20";
-
-const materialOptions: MaterialType[] = ["PP", "PE", "PVC"];
-const thicknessOptions = [3, 4, 5, 6, 8, 10, 12, 15, 20, 25];
 
 type DraftListItem = OrderItemDraft & {
   clientId: string;
@@ -119,12 +117,18 @@ export function CreateOrderForm() {
     const projectName = String(formData.get("projectName") ?? "");
     const productionNotes = String(formData.get("productionNotes") ?? "");
     const deadline = String(formData.get("deadline") ?? "");
+    const orderItems: OrderItemDraft[] = items.map((item) => ({
+      name: item.name,
+      quantity: item.quantity,
+      materialType: item.materialType,
+      thicknessMm: item.thicknessMm,
+    }));
 
     const draftOrder: OrderDraft = {
       projectName,
       productionNotes,
       deadline,
-      items,
+      items: orderItems,
     };
 
     setIsSubmitting(true);

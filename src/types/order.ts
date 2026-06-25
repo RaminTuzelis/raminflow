@@ -6,7 +6,7 @@ export type OrderStatus =
   | "DISPATCHED"
   | "CANCELLED";
 
-export type MaterialType = "PP" | "PE" | "PVC";
+export type MaterialType = "PP" | "PE" | "PVC" | "PVDF";
 
 export type OrderItem = {
   id: string;
