@@ -130,10 +130,18 @@ export function CreateOrderForm() {
     setIsSubmitting(true);
     try {
       const createdOrder = await createOrderDraft(draftOrder);
+
+      if (!createdOrder.success) {
+        setSuccessMessage("");
+        setLastDraftOrder(null);
+        setFormError(createdOrder.error);
+        return;
+      }
+
       setLastDraftOrder(draftOrder);
       setFormError("");
       setSuccessMessage(
-        `Draft ${createdOrder.orderNumber} created on server. Database connection will be added later.`,
+        `Draft ${createdOrder.order.orderNumber} created on server. Database connection will be added later.`,
       );
     } catch (error) {
       setSuccessMessage("");

@@ -2,30 +2,80 @@
 
 import type { OrderDraft } from "@/types/order";
 
-type CreateOrderDraftResult = {
-  id: string;
-  orderNumber: string;
-};
+type CreateOrderDraftResult =
+  | {
+      success: true;
+      order: {
+        id: string;
+        orderNumber: string;
+      };
+    }
+  | {
+      success: false;
+      error: string;
+    };
 
 export async function createOrderDraft(
   draftOrder: OrderDraft,
 ): Promise<CreateOrderDraftResult> {
   if (!draftOrder.projectName.trim()) {
-    throw new Error("Project name is required.");
+    return {
+      success: false,
+      error: "Project name is required.",
+    };
   }
 
   if (!draftOrder.deadline) {
-    throw new Error("Deadline is required.");
+    return {
+      success: false,
+      error: "Deadline is required.",
+    };
   }
 
   if (draftOrder.items.length === 0) {
-    throw new Error("At least one order item is required.");
+    return {
+      success: false,
+      error: "At least one order item is required.",
+    };
+  }
+
+  for (const item of draftOrder.items) {
+    if (!item.name.trim()) {
+      return {
+        success: false,
+        error: "Each order item must have a name.",
+      };
+    }
+
+    if (item.quantity < 1) {
+      return {
+        success: false,
+        error: "Each order item quantity must be at least 1.",
+      };
+    }
+
+    if (!item.materialType) {
+      return {
+        success: false,
+        error: "Each order item must have a material.",
+      };
+    }
+
+    if (item.thicknessMm <= 0) {
+      return {
+        success: false,
+        error: "Each order item must have a valid thickness.",
+      };
+    }
   }
 
   console.log("Server received draft order:", draftOrder);
 
   return {
-    id: "temporary-order-id",
-    orderNumber: "RF-2026-TEMP",
+    success: true,
+    order: {
+      id: "temporary-order-id",
+      orderNumber: "RF-2026-TEMP",
+    },
   };
 }
