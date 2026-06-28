@@ -1,4 +1,4 @@
-import type { OrderStatus } from "@/types/order";
+import type { OrderStatus, UnitType } from "@/types/order";
 
 export const dateFormatter = new Intl.DateTimeFormat("lt-LT", {
   dateStyle: "short",
@@ -16,4 +16,18 @@ export const statusLabels: Record<OrderStatus, string> = {
   READY_FOR_DISPATCH: "Ready for dispatch",
   DISPATCHED: "Dispatched",
   CANCELLED: "Cancelled",
+};
+
+export const unitLabels: Record<UnitType, string> = {
+  PCS: "pcs",
+  M: "m",
+  M2: "m²",
+  KG: "kg",
+};
+
+export const unitOptionLabels: Record<UnitType, string> = {
+  PCS: "Pieces (pcs)",
+  M: "Meters (m)",
+  M2: "Square meters (m²)",
+  KG: "Kilograms (kg)",
 };

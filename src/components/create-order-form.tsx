@@ -1,10 +1,20 @@
 "use client";
 import type { MouseEvent, SubmitEvent } from "react";
 import { useRef, useState } from "react";
-import type { MaterialType, OrderDraft, OrderItemDraft } from "@/types/order";
 import Link from "next/link";
 import { createOrderDraft } from "@/app/orders/new/actions";
-import { materialOptions, thicknessOptions } from "@/lib/order-options";
+import type {
+  MaterialType,
+  OrderDraft,
+  OrderItemDraft,
+  UnitType,
+} from "@/types/order";
+import {
+  materialOptions,
+  thicknessOptions,
+  unitOptions,
+} from "@/lib/order-options";
+import { unitLabels, unitOptionLabels } from "@/lib/order-display";
 
 const labelClassName = "text-sm font-medium text-slate-200";
 
@@ -30,7 +40,9 @@ function AddedOrderItem({ item, index, onRemove }: AddedOrderItemProps) {
         {item.name}
       </h3>
 
-      <span className="text-sm text-slate-300">{item.quantity} pcs</span>
+      <span className="text-sm text-slate-300">
+        {item.quantity} {unitLabels[item.unit]}
+      </span>
 
       <span className="text-sm text-slate-300">{item.materialType}</span>
 
@@ -71,6 +83,7 @@ export function CreateOrderForm() {
   const [successMessage, setSuccessMessage] = useState("");
   const [lastDraftOrder, setLastDraftOrder] = useState<OrderDraft | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createdOrderId, setCreatedOrderId] = useState("");
   const itemNameInputRef = useRef<HTMLInputElement>(null);
 
   function handleAddItem(event: MouseEvent<HTMLButtonElement>) {
@@ -85,6 +98,7 @@ export function CreateOrderForm() {
       clientId: crypto.randomUUID(),
       name: String(formData.get("itemName") ?? ""),
       quantity,
+      unit: String(formData.get("unit") ?? "") as UnitType,
       materialType: String(formData.get("materialType") ?? "") as MaterialType,
       thicknessMm: Number(formData.get("thicknessMm")),
     };
@@ -92,6 +106,7 @@ export function CreateOrderForm() {
     setItems((currentItems) => [...currentItems, newItem]);
     setFormError("");
     setSuccessMessage("");
+    setCreatedOrderId("");
     itemNameInputRef.current?.focus();
     itemNameInputRef.current?.select();
     setQuantity(1);
@@ -102,6 +117,8 @@ export function CreateOrderForm() {
       currentItems.filter((item) => item.clientId !== clientId),
     );
     setSuccessMessage("");
+    setCreatedOrderId("");
+    setLastDraftOrder(null);
   }
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
@@ -120,6 +137,7 @@ export function CreateOrderForm() {
     const orderItems: OrderItemDraft[] = items.map((item) => ({
       name: item.name,
       quantity: item.quantity,
+      unit: item.unit,
       materialType: item.materialType,
       thicknessMm: item.thicknessMm,
     }));
@@ -144,9 +162,8 @@ export function CreateOrderForm() {
 
       setLastDraftOrder(draftOrder);
       setFormError("");
-      setSuccessMessage(
-        `Draft ${createdOrder.order.orderNumber} created on server. Database connection will be added later.`,
-      );
+      setCreatedOrderId(createdOrder.order.id);
+      setSuccessMessage(`Draft ${createdOrder.order.orderNumber} created.`);
     } catch (error) {
       setSuccessMessage("");
       setLastDraftOrder(null);
@@ -276,6 +293,25 @@ export function CreateOrderForm() {
         </div>
 
         <div className="grid gap-2">
+          <label className={labelClassName} htmlFor="unit">
+            Unit
+          </label>
+          <select
+            className={fieldClassName}
+            name="unit"
+            id="unit"
+            defaultValue="PCS"
+            required
+          >
+            {unitOptions.map((unit) => (
+              <option key={unit} value={unit}>
+                {unitOptionLabels[unit]}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid gap-2">
           <label className={labelClassName} htmlFor="materialType">
             Material
           </label>
@@ -355,7 +391,7 @@ export function CreateOrderForm() {
           <p>{successMessage}</p>
 
           <Link
-            href="/"
+            href={`/orders/${createdOrderId}`}
             className="font-medium text-emerald-100 underline underline-offset-4 transition hover:text-white"
           >
             View order

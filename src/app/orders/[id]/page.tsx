@@ -1,7 +1,11 @@
-import { orders } from "@/data/orders";
+import { getOrderById } from "@/db/queries";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { dateFormatter, dateTimeFormatter } from "@/lib/order-display";
+import {
+  dateFormatter,
+  dateTimeFormatter,
+  unitLabels,
+} from "@/lib/order-display";
 import { OrderStatusBadge } from "@/components/order-status-badge";
 
 type OrderDetailsPageProps = {
@@ -12,7 +16,7 @@ export default async function OrderDetailsPage({
   params,
 }: OrderDetailsPageProps) {
   const { id } = await params;
-  const order = orders.find((order) => order.id === id);
+  const order = await getOrderById(id);
 
   if (!order) {
     notFound();
@@ -82,7 +86,7 @@ export default async function OrderDetailsPage({
               <div className="flex items-start justify-between gap-4">
                 <h3 className="font-medium text-white">{item.name}</h3>
                 <span className="text-sm text-slate-400">
-                  Quantity: {item.quantity}
+                  Quantity: {item.quantity} {unitLabels[item.unit]}
                 </span>
               </div>
               <dl className="mt-4 flex gap-6 rounded-md bg-slate-950 px-3 py-2 text-sm">

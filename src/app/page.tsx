@@ -1,9 +1,10 @@
-import { orders } from "@/data/orders";
+import { getOrders } from "@/db/queries";
 import Link from "next/link";
 import { dateFormatter, dateTimeFormatter } from "@/lib/order-display";
 import { OrderStatusBadge } from "@/components/order-status-badge";
 
-export default function Home() {
+export default async function Home() {
+  const orders = await getOrders();
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

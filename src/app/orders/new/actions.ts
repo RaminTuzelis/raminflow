@@ -1,7 +1,13 @@
 "use server";
 
 import type { OrderDraft } from "@/types/order";
-import { isMaterialType, isThicknessOption } from "@/lib/order-options";
+import {
+  isMaterialType,
+  isThicknessOption,
+  isUnitType,
+} from "@/lib/order-options";
+import { db } from "@/db/client";
+import { orderItems, orders } from "@/db/schema";
 
 type CreateOrderDraftResult =
   | {
@@ -15,6 +21,10 @@ type CreateOrderDraftResult =
       success: false;
       error: string;
     };
+
+function createTemporaryOrderNumber() {
+  return `RF-${new Date().getFullYear()}-${Date.now()}`;
+}
 
 export async function createOrderDraft(
   draftOrder: OrderDraft,
@@ -55,6 +65,13 @@ export async function createOrderDraft(
       };
     }
 
+    if (!isUnitType(item.unit)) {
+      return {
+        success: false,
+        error: "Each order item must have a valid unit.",
+      };
+    }
+
     if (!isMaterialType(item.materialType)) {
       return {
         success: false,
@@ -70,13 +87,45 @@ export async function createOrderDraft(
     }
   }
 
-  console.log("Server received draft order:", draftOrder);
+  const orderNumber = createTemporaryOrderNumber();
+
+  const createdOrder = await db.transaction(async (tx) => {
+    const [order] = await tx
+      .insert(orders)
+      .values({
+        orderNumber,
+        projectName: draftOrder.projectName.trim(),
+        productionNotes: draftOrder.productionNotes.trim(),
+        deadline: new Date(draftOrder.deadline),
+      })
+      .returning({
+        id: orders.id,
+        orderNumber: orders.orderNumber,
+      });
+
+    if (!order) {
+      throw new Error("Could not create order.");
+    }
+
+    await tx.insert(orderItems).values(
+      draftOrder.items.map((item) => ({
+        orderId: order.id,
+        name: item.name.trim(),
+        quantity: item.quantity,
+        unit: item.unit,
+        materialType: item.materialType,
+        thicknessMm: item.thicknessMm,
+      })),
+    );
+
+    return order;
+  });
 
   return {
     success: true,
     order: {
-      id: "temporary-order-id",
-      orderNumber: "RF-2026-TEMP",
+      id: String(createdOrder.id),
+      orderNumber: createdOrder.orderNumber,
     },
   };
 }
