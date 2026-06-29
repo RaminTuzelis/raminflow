@@ -76,33 +76,37 @@ export default async function OrderDetailsPage({
 
       <section className="mt-8">
         <h2 className="text-lg font-semibold text-white">Order items</h2>
-
-        <div className="mt-4 grid gap-4">
-          {order.items.map((item) => (
-            <article
-              key={item.id}
-              className="rounded-lg border border-slate-800 bg-slate-900/50 p-4"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <h3 className="font-medium text-white">{item.name}</h3>
-                <span className="text-sm text-slate-400">
-                  Quantity: {item.quantity} {unitLabels[item.unit]}
-                </span>
-              </div>
-              <dl className="mt-4 flex gap-6 rounded-md bg-slate-950 px-3 py-2 text-sm">
-                <div>
-                  <dt className="text-xs uppercase text-slate-500">Material</dt>
-                  <dd className="mt-1 text-slate-200">{item.materialType}</dd>
-                </div>
-                <div>
-                  <dt className="text-xs uppercase text-slate-500">
-                    Thickness
-                  </dt>
-                  <dd className="mt-1 text-slate-200">{item.thicknessMm} mm</dd>
-                </div>
-              </dl>
-            </article>
-          ))}
+        <div className="mt-4 overflow-hidden rounded-lg border border-slate-800">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-slate-950 text-xs uppercase text-slate-500">
+              <tr>
+                <th className="px-4 py-3 font-medium">#</th>
+                <th className="px-4 py-3 font-medium">Item</th>
+                <th className="px-4 py-3 font-medium">Quantity</th>
+                <th className="px-4 py-3 font-medium">Material</th>
+                <th className="px-4 py-3 font-medium">Thickness</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800 bg-slate-900/50">
+              {order.items.map((item, index) => (
+                <tr key={item.id} className="transition hover:bg-slate-800/60">
+                  <td className="px-4 py-3 text-slate-500">{index + 1}</td>
+                  <td className="px-4 py-3 font-medium text-white">
+                    {item.name}
+                  </td>
+                  <td className="px-4 py-3 text-slate-300">
+                    {item.quantity} {unitLabels[item.unit]}
+                  </td>
+                  <td className="px-4 py-3 text-slate-300">
+                    {item.materialType}
+                  </td>
+                  <td className="px-4 py-3 text-slate-300">
+                    {item.thicknessMm} mm
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
     </main>
