@@ -19,7 +19,7 @@ import { unitLabels, unitOptionLabels } from "@/lib/order-display";
 const labelClassName = "text-sm font-medium text-slate-200";
 
 const fieldClassName =
-  "w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20";
+  "w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20";
 
 type DraftListItem = OrderItemDraft & {
   clientId: string;
@@ -33,7 +33,7 @@ type AddedOrderItemProps = {
 
 function AddedOrderItem({ item, index, onRemove }: AddedOrderItemProps) {
   return (
-    <article className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border border-slate-700 bg-slate-950/60 px-4 py-3">
+    <article className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-slate-800 bg-slate-950/40 px-4 py-3">
       <span className="text-xs font-medium text-sky-300">#{index + 1}</span>
 
       <h3 className="min-w-40 flex-1 truncate font-medium text-white">
@@ -186,11 +186,11 @@ export function CreateOrderForm() {
         setSuccessMessage("");
         setLastDraftOrder(null);
       }}
-      className="mt-6 space-y-6 rounded-lg border border-slate-800 bg-slate-900/50 p-6"
+      className="mt-6 space-y-6 rounded-lg border border-slate-800 bg-slate-900/40 p-6 shadow-sm"
     >
       <div className="grid gap-2">
         <label className={labelClassName} htmlFor="projectName">
-          Project name:
+          Project name
         </label>
         <input
           className={fieldClassName}
@@ -202,7 +202,7 @@ export function CreateOrderForm() {
       </div>
       <div className="grid gap-2">
         <label className={labelClassName} htmlFor="deadline">
-          Deadline:
+          Deadline
         </label>
         <input
           className={fieldClassName}
@@ -226,9 +226,9 @@ export function CreateOrderForm() {
         />
       </div>
 
-      <fieldset className="space-y-4 border-t border-slate-800 pt-6">
-        <legend className="px-2 text-lg font-medium text-white">
-          Order item
+      <fieldset className="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-5">
+        <legend className="px-2 text-sm font-semibold uppercase tracking-wider text-slate-500">
+          Add order item
         </legend>
         <div className="grid gap-2">
           <label className={labelClassName} htmlFor="itemName">
@@ -409,10 +409,10 @@ export function CreateOrderForm() {
           </p>
         </div>
         <button
-          className={`rounded-md px-4 py-2 font-medium text-slate-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 ${
+          className={`rounded-lg border px-4 py-2 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 ${
             successMessage
-              ? "cursor-not-allowed bg-emerald-500 focus:ring-emerald-400"
-              : "bg-sky-500 hover:bg-sky-400 focus:ring-sky-400"
+              ? "cursor-not-allowed border-emerald-500/40 bg-emerald-500/10 text-emerald-300 focus:ring-emerald-400"
+              : "border-sky-500/40 bg-sky-500/10 text-sky-300 hover:bg-sky-500/20 focus:ring-sky-400"
           }`}
           disabled={Boolean(successMessage) || isSubmitting}
           type="submit"

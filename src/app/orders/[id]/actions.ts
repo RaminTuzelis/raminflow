@@ -1,5 +1,9 @@
 "use server";
 
+import { db } from "@/db/client";
+import { orders } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { isOrderStatus } from "@/lib/order-options";
 
 export async function updateOrderStatus(formData: FormData) {
@@ -14,8 +18,14 @@ export async function updateOrderStatus(formData: FormData) {
     throw new Error("Order status is invalid.");
   }
 
-  console.log({
-    orderId,
-    nextStatus,
-  });
+  await db
+    .update(orders)
+    .set({
+      status: nextStatus,
+      updatedAt: new Date(),
+    })
+    .where(eq(orders.id, orderId));
+
+  revalidatePath(`/orders/${orderId}`);
+  revalidatePath(`/`);
 }
