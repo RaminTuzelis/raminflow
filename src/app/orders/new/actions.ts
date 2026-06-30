@@ -1,5 +1,6 @@
 "use server";
 
+import { eq, sql } from "drizzle-orm";
 import type { OrderDraft } from "@/types/order";
 import {
   isMaterialType,
@@ -7,7 +8,8 @@ import {
   isUnitType,
 } from "@/lib/order-options";
 import { db } from "@/db/client";
-import { orderItems, orders } from "@/db/schema";
+import { orderItems, orderNumberCounters, orders } from "@/db/schema";
+import { formatOrderNumber } from "@/lib/order-number";
 
 type CreateOrderDraftResult =
   | {
@@ -21,10 +23,6 @@ type CreateOrderDraftResult =
       success: false;
       error: string;
     };
-
-function createTemporaryOrderNumber() {
-  return `RF-${new Date().getFullYear()}-${Date.now()}`;
-}
 
 export async function createOrderDraft(
   draftOrder: OrderDraft,
@@ -87,9 +85,34 @@ export async function createOrderDraft(
     }
   }
 
-  const orderNumber = createTemporaryOrderNumber();
-
   const createdOrder = await db.transaction(async (tx) => {
+    const year = new Date().getFullYear();
+
+    await tx
+      .insert(orderNumberCounters)
+      .values({
+        year,
+        nextNumber: 1,
+      })
+      .onConflictDoNothing();
+
+    const [counter] = await tx
+      .update(orderNumberCounters)
+      .set({
+        nextNumber: sql`${orderNumberCounters.nextNumber} + 1`,
+      })
+      .where(eq(orderNumberCounters.year, year))
+      .returning({
+        nextNumber: orderNumberCounters.nextNumber,
+      });
+
+    if (!counter) {
+      throw new Error("Could not reserve order number.");
+    }
+
+    const sequenceNumber = counter.nextNumber - 1;
+    const orderNumber = formatOrderNumber(year, sequenceNumber);
+
     const [order] = await tx
       .insert(orders)
       .values({

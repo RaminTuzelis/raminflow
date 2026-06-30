@@ -47,3 +47,8 @@ export const orderStatusHistory = pgTable("order_status_history", {
   toStatus: orderStatus("to_status").notNull(),
   changedAt: timestamp("changed_at", { mode: "date" }).notNull().defaultNow(),
 });
+
+export const orderNumberCounters = pgTable("order_number_counters", {
+  year: integer("year").primaryKey(),
+  nextNumber: integer("next_number").notNull().default(1),
+});
