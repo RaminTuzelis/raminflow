@@ -19,6 +19,13 @@ export type OrderItem = {
   thicknessMm: number;
 };
 
+export type OrderStatusHistory = {
+  id: string;
+  fromStatus: OrderStatus;
+  toStatus: OrderStatus;
+  changedAt: string;
+};
+
 export type Order = {
   id: string;
   orderNumber: string;
@@ -28,6 +35,7 @@ export type Order = {
   status: OrderStatus;
   updatedAt: string;
   items: OrderItem[];
+  statusHistory: OrderStatusHistory[];
 };
 
 export type OrderItemDraft = Omit<OrderItem, "id">;

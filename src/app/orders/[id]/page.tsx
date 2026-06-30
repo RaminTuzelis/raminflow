@@ -102,6 +102,51 @@ export default async function OrderDetailsPage({
         </dl>
       </section>
 
+      <section className="mt-8 rounded-lg border border-slate-800 bg-slate-900/40 p-5">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
+            Status history
+          </h2>
+
+          <span className="text-xs text-slate-500">
+            {order.statusHistory.length} change
+            {order.statusHistory.length === 1 ? "" : "s"}
+          </span>
+        </div>
+
+        {order.statusHistory.length === 0 ? (
+          <p className="mt-3 text-sm text-slate-400">
+            No status changes recorded yet.
+          </p>
+        ) : (
+          <ol className="mt-4 divide-y divide-slate-800">
+            {order.statusHistory.map((entry) => (
+              <li
+                key={entry.id}
+                className="grid gap-3 py-3 sm:grid-cols-[11rem_1fr]"
+              >
+                <time
+                  dateTime={entry.changedAt}
+                  className="text-sm text-slate-500"
+                >
+                  {dateTimeFormatter.format(new Date(entry.changedAt))}
+                </time>
+
+                <div className="flex flex-wrap items-center gap-2 text-sm">
+                  <span className="text-slate-400">
+                    {statusLabels[entry.fromStatus]}
+                  </span>
+                  <span className="text-slate-600">→</span>
+                  <span className="font-medium text-slate-100">
+                    {statusLabels[entry.toStatus]}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+
       {order.productionNotes && (
         <section className="mt-8 rounded-lg border border-slate-800 bg-slate-900/50 p-5">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">

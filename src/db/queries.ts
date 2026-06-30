@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
-import { orderItems, orders } from "@/db/schema";
+import { orderItems, orders, orderStatusHistory } from "@/db/schema";
 import type { Order } from "@/types/order";
 
 export async function getOrders(): Promise<Order[]> {
@@ -25,6 +25,7 @@ export async function getOrders(): Promise<Order[]> {
         materialType: item.materialType,
         thicknessMm: item.thicknessMm,
       })),
+    statusHistory: [],
   }));
 }
 
@@ -51,6 +52,12 @@ export async function getOrderById(id: string): Promise<Order | null> {
     .where(eq(orderItems.orderId, order.id))
     .orderBy(orderItems.id);
 
+  const history = await db
+    .select()
+    .from(orderStatusHistory)
+    .where(eq(orderStatusHistory.orderId, order.id))
+    .orderBy(orderStatusHistory.changedAt);
+
   return {
     id: String(order.id),
     orderNumber: order.orderNumber,
@@ -66,6 +73,12 @@ export async function getOrderById(id: string): Promise<Order | null> {
       unit: item.unit,
       materialType: item.materialType,
       thicknessMm: item.thicknessMm,
+    })),
+    statusHistory: history.map((entry) => ({
+      id: String(entry.id),
+      fromStatus: entry.fromStatus,
+      toStatus: entry.toStatus,
+      changedAt: entry.changedAt.toISOString(),
     })),
   };
 }
