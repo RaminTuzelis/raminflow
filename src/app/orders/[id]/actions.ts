@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db/client";
-import { orders } from "@/db/schema";
+import { orderStatusHistory, orders } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { isOrderStatus } from "@/lib/order-options";
@@ -18,13 +18,37 @@ export async function updateOrderStatus(formData: FormData) {
     throw new Error("Order status is invalid.");
   }
 
-  await db
-    .update(orders)
-    .set({
-      status: nextStatus,
-      updatedAt: new Date(),
+  const [currentOrder] = await db
+    .select({
+      status: orders.status,
     })
-    .where(eq(orders.id, orderId));
+    .from(orders)
+    .where(eq(orders.id, orderId))
+    .limit(1);
+
+  if (!currentOrder) {
+    throw new Error("Order was not found.");
+  }
+
+  if (currentOrder.status === nextStatus) {
+    return;
+  }
+
+  await db.transaction(async (tx) => {
+    await tx.insert(orderStatusHistory).values({
+      orderId,
+      fromStatus: currentOrder.status,
+      toStatus: nextStatus,
+    });
+
+    await tx
+      .update(orders)
+      .set({
+        status: nextStatus,
+        updatedAt: new Date(),
+      })
+      .where(eq(orders.id, orderId));
+  });
 
   revalidatePath(`/orders/${orderId}`);
   revalidatePath(`/`);

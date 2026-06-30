@@ -37,3 +37,13 @@ export const orderItems = pgTable("order_items", {
   materialType: materialType("material_type").notNull(),
   thicknessMm: integer("thickness_mm").notNull(),
 });
+
+export const orderStatusHistory = pgTable("order_status_history", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id")
+    .notNull()
+    .references(() => orders.id, { onDelete: "cascade" }),
+  fromStatus: orderStatus("from_status").notNull(),
+  toStatus: orderStatus("to_status").notNull(),
+  changedAt: timestamp("changed_at", { mode: "date" }).notNull().defaultNow(),
+});

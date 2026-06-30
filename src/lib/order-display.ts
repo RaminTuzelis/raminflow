@@ -2,11 +2,13 @@ import type { OrderStatus, UnitType } from "@/types/order";
 
 export const dateFormatter = new Intl.DateTimeFormat("lt-LT", {
   dateStyle: "short",
+  timeZone: "Europe/Vilnius",
 });
 
 export const dateTimeFormatter = new Intl.DateTimeFormat("lt-LT", {
   dateStyle: "short",
   timeStyle: "short",
+  timeZone: "Europe/Vilnius",
 });
 
 export const statusLabels: Record<OrderStatus, string> = {
