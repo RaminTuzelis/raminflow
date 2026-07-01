@@ -41,6 +41,19 @@ export async function createOrderDraft(
     };
   }
 
+  const deadlineDate = new Date(draftOrder.deadline);
+  const today = new Date();
+
+  today.setHours(0, 0, 0, 0);
+  deadlineDate.setHours(0, 0, 0, 0);
+
+  if (deadlineDate < today) {
+    return {
+      success: false,
+      error: "Deadline cannot be in the past.",
+    };
+  }
+
   if (draftOrder.items.length === 0) {
     return {
       success: false,

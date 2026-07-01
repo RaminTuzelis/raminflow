@@ -59,32 +59,16 @@ function AddedOrderItem({ item, index, onRemove }: AddedOrderItemProps) {
   );
 }
 
-type DeveloperPreviewProps = {
-  draftOrder: OrderDraft;
-};
-
-function DeveloperPreview({ draftOrder }: DeveloperPreviewProps) {
-  return (
-    <section className="rounded-lg border border-slate-800 bg-slate-950 p-4">
-      <h2 className="text-sm font-semibold uppercase text-slate-500">
-        Developer preview
-      </h2>
-      <pre className="mt-3 overflow-x-auto text-xs text-slate-300">
-        {JSON.stringify(draftOrder, null, 2)}
-      </pre>
-    </section>
-  );
-}
-
 export function CreateOrderForm() {
   const [quantity, setQuantity] = useState(1);
   const [items, setItems] = useState<DraftListItem[]>([]);
   const [formError, setFormError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [lastDraftOrder, setLastDraftOrder] = useState<OrderDraft | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState("");
   const itemNameInputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const todayDateInputValue = new Date().toISOString().slice(0, 10);
 
   function handleAddItem(event: MouseEvent<HTMLButtonElement>) {
     const form = event.currentTarget.form;
@@ -118,7 +102,6 @@ export function CreateOrderForm() {
     );
     setSuccessMessage("");
     setCreatedOrderId("");
-    setLastDraftOrder(null);
   }
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
@@ -155,18 +138,17 @@ export function CreateOrderForm() {
 
       if (!createdOrder.success) {
         setSuccessMessage("");
-        setLastDraftOrder(null);
         setFormError(createdOrder.error);
         return;
       }
-
-      setLastDraftOrder(draftOrder);
       setFormError("");
       setCreatedOrderId(createdOrder.order.id);
-      setSuccessMessage(`Draft ${createdOrder.order.orderNumber} created.`);
+      setSuccessMessage(`Order ${createdOrder.order.orderNumber} created.`);
+      formRef.current?.reset();
+      setItems([]);
+      setQuantity(1);
     } catch (error) {
       setSuccessMessage("");
-      setLastDraftOrder(null);
 
       if (error instanceof Error) {
         setFormError(error.message);
@@ -181,10 +163,10 @@ export function CreateOrderForm() {
 
   return (
     <form
+      ref={formRef}
       onSubmit={handleSubmit}
       onChange={() => {
         setSuccessMessage("");
-        setLastDraftOrder(null);
       }}
       className="mt-6 space-y-6 rounded-lg border border-slate-800 bg-slate-900/40 p-6 shadow-sm"
     >
@@ -205,10 +187,11 @@ export function CreateOrderForm() {
           Deadline
         </label>
         <input
-          className={fieldClassName}
+          className={`${fieldClassName} [&::-webkit-calendar-picker-indicator]:invert`}
           id="deadline"
           type="date"
           name="deadline"
+          min={todayDateInputValue}
           required
         />
       </div>
@@ -405,7 +388,7 @@ export function CreateOrderForm() {
             {items.length} order item{items.length === 1 ? "" : "s"} added
           </p>
           <p className="mt-1 text-sm text-slate-500">
-            Save the draft after all required positions are added.
+            Save the order after all required positions are added.
           </p>
         </div>
         <button
@@ -420,11 +403,10 @@ export function CreateOrderForm() {
           {isSubmitting
             ? "Saving..."
             : successMessage
-              ? "Draft saved"
-              : "Save draft"}
+              ? "Order saved"
+              : "Save order"}
         </button>
       </div>
-      {lastDraftOrder && <DeveloperPreview draftOrder={lastDraftOrder} />}
     </form>
   );
 }
