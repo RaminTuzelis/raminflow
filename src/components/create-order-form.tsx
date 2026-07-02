@@ -167,6 +167,7 @@ export function CreateOrderForm() {
       onSubmit={handleSubmit}
       onChange={() => {
         setSuccessMessage("");
+        setCreatedOrderId("");
       }}
       className="mt-6 space-y-6 rounded-lg border border-slate-800 bg-slate-900/40 p-6 shadow-sm"
     >
@@ -373,12 +374,14 @@ export function CreateOrderForm() {
         <div className="flex flex-col gap-3 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300 sm:flex-row sm:items-center sm:justify-between">
           <p>{successMessage}</p>
 
-          <Link
-            href={`/orders/${createdOrderId}`}
-            className="font-medium text-emerald-100 underline underline-offset-4 transition hover:text-white"
-          >
-            View order
-          </Link>
+          {createdOrderId && (
+            <Link
+              href={`/orders/${createdOrderId}`}
+              className="font-medium text-emerald-100 underline underline-offset-4 transition hover:text-white"
+            >
+              View order
+            </Link>
+          )}
         </div>
       )}
 
@@ -388,7 +391,7 @@ export function CreateOrderForm() {
             {items.length} order item{items.length === 1 ? "" : "s"} added
           </p>
           <p className="mt-1 text-sm text-slate-500">
-            Save the order after all required positions are added.
+            Create the order after all required positions are added.
           </p>
         </div>
         <button
@@ -401,10 +404,10 @@ export function CreateOrderForm() {
           type="submit"
         >
           {isSubmitting
-            ? "Saving..."
+            ? "Creating..."
             : successMessage
-              ? "Order saved"
-              : "Save order"}
+              ? "Order created"
+              : "Create order"}
         </button>
       </div>
     </form>
