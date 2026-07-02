@@ -74,11 +74,27 @@ export function OrderList({ orders }: OrderListProps) {
             </select>
           </div>
         </div>
-        <p className="whitespace-nowrap text-sm text-slate-500">
-          {hasActiveFilters
-            ? `Showing ${filteredOrders.length} of ${orders.length} orders`
-            : `Showing all ${orders.length} orders`}
-        </p>
+
+        <div className="flex items-center gap-3">
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery("");
+                setSelectedStatus("ALL");
+              }}
+              className="whitespace-nowrap rounded-lg border border-slate-700 px-3 py-2 text-sm font-medium text-slate-300 transition hover:border-sky-500 hover:text-sky-300"
+            >
+              Clear filters
+            </button>
+          )}
+
+          <p className="whitespace-nowrap text-sm text-slate-500">
+            {hasActiveFilters
+              ? `Showing ${filteredOrders.length} of ${orders.length} orders`
+              : `Showing all ${orders.length} orders`}
+          </p>
+        </div>
       </div>
       <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-900/30 shadow-sm">
         <table className="w-full min-w-190 border-collapse text-left text-sm">
