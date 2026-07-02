@@ -18,22 +18,13 @@ export const unitType = pgEnum("unit_type", unitTypes);
 
 export const userRole = pgEnum("user_role", userRoles);
 
-export const departments = pgTable("departments", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull().unique(),
-  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
-});
-
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  departmentId: integer("department_id")
-    .notNull()
-    .references(() => departments.id, { onDelete: "restrict" }),
   role: userRole("role").notNull(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   title: text("title").notNull().default(""),
+  avatarUrl: text("avatar_url"),
   passwordHash: text("password_hash").notNull(),
   isActive: boolean("is_active").notNull().default(true),
   mustChangePassword: boolean("must_change_password").notNull().default(true),

@@ -36,6 +36,13 @@
       "when": 1782844534621,
       "tag": "0004_free_the_santerians",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1783002782357,
+      "tag": "0005_special_hannibal_king",
+      "breakpoints": true
     }
   ]
 }
