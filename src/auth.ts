@@ -4,6 +4,7 @@ import argon2 from "argon2";
 import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { users } from "@/db/schema";
+import type { UserRole } from "@/types/user";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -49,8 +50,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           id: String(currentUser.id),
           email: currentUser.email,
           name: currentUser.name,
+          role: currentUser.role,
         };
       },
     }),
   ],
+  callbacks: {
+    jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role as UserRole;
+      }
+
+      return token;
+    },
+    session({ session, token }) {
+      if (session.user) {
+        session.user.id = String(token.id);
+        session.user.role = token.role as UserRole;
+      }
+
+      return session;
+    },
+  },
 });

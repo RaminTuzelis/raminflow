@@ -60,12 +60,8 @@
           "name": "order_items_order_id_orders_id_fk",
           "tableFrom": "order_items",
           "tableTo": "orders",
-          "columnsFrom": [
-            "order_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["order_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -146,12 +142,8 @@
           "name": "order_status_history_order_id_orders_id_fk",
           "tableFrom": "order_status_history",
           "tableTo": "orders",
-          "columnsFrom": [
-            "order_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["order_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -227,9 +219,7 @@
         "orders_order_number_unique": {
           "name": "orders_order_number_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "order_number"
-          ]
+          "columns": ["order_number"]
         }
       },
       "policies": {},
@@ -320,9 +310,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -334,12 +322,7 @@
     "public.material_type": {
       "name": "material_type",
       "schema": "public",
-      "values": [
-        "PP",
-        "PE",
-        "PVC",
-        "PVDF"
-      ]
+      "values": ["PP", "PE", "PVC", "PVDF"]
     },
     "public.order_status": {
       "name": "order_status",
@@ -356,22 +339,12 @@
     "public.unit_type": {
       "name": "unit_type",
       "schema": "public",
-      "values": [
-        "PCS",
-        "M",
-        "M2",
-        "KG"
-      ]
+      "values": ["PCS", "M", "M2", "KG"]
     },
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
-      "values": [
-        "ADMIN",
-        "ADMINISTRATION",
-        "PRODUCTION_MANAGER",
-        "WORKER"
-      ]
+      "values": ["ADMIN", "ADMINISTRATION", "PRODUCTION_MANAGER", "WORKER"]
     }
   },
   "schemas": {},

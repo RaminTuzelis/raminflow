@@ -1,5 +1,5 @@
 import { getOrderById } from "@/db/queries";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import {
   dateFormatter,
@@ -11,6 +11,7 @@ import { OrderStatusBadge } from "@/components/order-status-badge";
 import { updateOrderStatus } from "./actions";
 import { statusOptions } from "@/lib/order-options";
 import { StatusUpdateSubmitButton } from "@/components/status-update-submit-button";
+import { auth } from "@/auth";
 
 type OrderDetailsPageProps = {
   params: Promise<{ id: string }>;
@@ -19,6 +20,18 @@ type OrderDetailsPageProps = {
 export default async function OrderDetailsPage({
   params,
 }: OrderDetailsPageProps) {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  const canUpdateStatus = [
+    "ADMIN",
+    "ADMINISTRATION",
+    "PRODUCTION_MANAGER",
+  ].includes(session.user.role);
+
   const { id } = await params;
   const order = await getOrderById(id);
 
@@ -65,7 +78,8 @@ export default async function OrderDetailsPage({
                 key={order.status}
                 name="status"
                 defaultValue={order.status}
-                className="min-w-44 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-sky-500"
+                disabled={!canUpdateStatus}
+                className="min-w-44 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-sky-500 disabled:cursor-not-allowed disabled:border-slate-800 disabled:text-slate-500"
               >
                 {statusOptions.map((status) => (
                   <option key={status} value={status}>
@@ -74,8 +88,14 @@ export default async function OrderDetailsPage({
                 ))}
               </select>
 
-              <StatusUpdateSubmitButton />
+              <StatusUpdateSubmitButton disabled={!canUpdateStatus} />
             </div>
+
+            {!canUpdateStatus && (
+              <p className="mt-2 text-xs text-slate-500">
+                Your role can view this order, but cannot update its status.
+              </p>
+            )}
           </form>
         </div>
 

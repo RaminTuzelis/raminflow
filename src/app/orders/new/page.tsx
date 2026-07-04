@@ -1,7 +1,14 @@
 import { CreateOrderForm } from "@/components/create-order-form";
 import Link from "next/link";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
-export default function NewOrderPage() {
+export default async function NewOrderPage() {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect("/login");
+  }
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
       <Link

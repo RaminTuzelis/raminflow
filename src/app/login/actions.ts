@@ -6,13 +6,9 @@ export async function loginUser(formData: FormData): Promise<void> {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
 
-  try {
-    await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-  } catch (error) {
-    console.log("Auth sign in failed:", error);
-  }
+  await signIn("credentials", {
+    email,
+    password,
+    redirectTo: "/",
+  });
 }

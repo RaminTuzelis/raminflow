@@ -10,6 +10,7 @@ import {
 import { db } from "@/db/client";
 import { orderItems, orderNumberCounters, orders } from "@/db/schema";
 import { formatOrderNumber } from "@/lib/order-number";
+import { auth } from "@/auth";
 
 type CreateOrderDraftResult =
   | {
@@ -27,6 +28,15 @@ type CreateOrderDraftResult =
 export async function createOrderDraft(
   draftOrder: OrderDraft,
 ): Promise<CreateOrderDraftResult> {
+  const session = await auth();
+
+  if (!session?.user) {
+    return {
+      success: false,
+      error: "You must be signed in to create an order.",
+    };
+  }
+
   if (!draftOrder.projectName.trim()) {
     return {
       success: false,
