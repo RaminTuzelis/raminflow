@@ -41,16 +41,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        if (currentUser.mustChangePassword) {
-          console.log("Auth user must change password");
-          return null;
-        }
-
         return {
           id: String(currentUser.id),
           email: currentUser.email,
           name: currentUser.name,
           role: currentUser.role,
+          mustChangePassword: currentUser.mustChangePassword,
         };
       },
     }),
@@ -60,6 +56,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.id = user.id;
         token.role = user.role as UserRole;
+        token.mustChangePassword = user.mustChangePassword;
       }
 
       return token;
@@ -68,6 +65,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.id = String(token.id);
         session.user.role = token.role as UserRole;
+        session.user.mustChangePassword = Boolean(token.mustChangePassword);
       }
 
       return session;

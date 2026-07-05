@@ -12,6 +12,10 @@ export default async function Home() {
     redirect("/login");
   }
 
+  if (session.user.mustChangePassword) {
+    redirect("/change-password");
+  }
+
   const canCreate = canCreateOrder(session.user.role);
 
   const orders = await getOrders();
