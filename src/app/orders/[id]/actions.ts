@@ -6,13 +6,7 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { isOrderStatus } from "@/lib/order-options";
 import { auth } from "@/auth";
-import type { UserRole } from "@/types/user";
-
-const statusUpdateRoles: UserRole[] = [
-  "ADMIN",
-  "ADMINISTRATION",
-  "PRODUCTION_MANAGER",
-];
+import { canUpdateOrderStatus } from "@/lib/permissions";
 
 export async function updateOrderStatus(formData: FormData) {
   const session = await auth();
@@ -21,7 +15,7 @@ export async function updateOrderStatus(formData: FormData) {
     throw new Error("You must be signed in to update order status.");
   }
 
-  if (!statusUpdateRoles.includes(session.user.role)) {
+  if (!canUpdateOrderStatus(session.user.role)) {
     throw new Error("You are not allowed to update order status.");
   }
 

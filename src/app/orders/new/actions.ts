@@ -11,6 +11,7 @@ import { db } from "@/db/client";
 import { orderItems, orderNumberCounters, orders } from "@/db/schema";
 import { formatOrderNumber } from "@/lib/order-number";
 import { auth } from "@/auth";
+import { canCreateOrder } from "@/lib/permissions";
 
 type CreateOrderDraftResult =
   | {
@@ -34,6 +35,13 @@ export async function createOrderDraft(
     return {
       success: false,
       error: "You must be signed in to create an order.",
+    };
+  }
+
+  if (!canCreateOrder(session.user.role)) {
+    return {
+      success: false,
+      error: "You are not allowed to create orders.",
     };
   }
 

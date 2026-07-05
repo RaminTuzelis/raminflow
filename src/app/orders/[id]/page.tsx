@@ -12,6 +12,7 @@ import { updateOrderStatus } from "./actions";
 import { statusOptions } from "@/lib/order-options";
 import { StatusUpdateSubmitButton } from "@/components/status-update-submit-button";
 import { auth } from "@/auth";
+import { canUpdateOrderStatus } from "@/lib/permissions";
 
 type OrderDetailsPageProps = {
   params: Promise<{ id: string }>;
@@ -26,11 +27,7 @@ export default async function OrderDetailsPage({
     redirect("/login");
   }
 
-  const canUpdateStatus = [
-    "ADMIN",
-    "ADMINISTRATION",
-    "PRODUCTION_MANAGER",
-  ].includes(session.user.role);
+  const canUpdateStatus = canUpdateOrderStatus(session.user.role);
 
   const { id } = await params;
   const order = await getOrderById(id);

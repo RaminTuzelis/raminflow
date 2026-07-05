@@ -3,6 +3,7 @@ import { OrderList } from "@/components/order-list";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { canCreateOrder } from "@/lib/permissions";
 
 export default async function Home() {
   const session = await auth();
@@ -10,6 +11,8 @@ export default async function Home() {
   if (!session?.user) {
     redirect("/login");
   }
+
+  const canCreate = canCreateOrder(session.user.role);
 
   const orders = await getOrders();
   return (
@@ -24,12 +27,27 @@ export default async function Home() {
           </h1>
         </div>
 
-        <Link
-          href="/orders/new"
-          className="inline-flex items-center justify-center rounded-lg border border-sky-500/40 bg-sky-500/10 px-4 py-2 text-sm font-semibold text-sky-300 transition hover:bg-sky-500/20"
-        >
-          Create order
-        </Link>
+        {canCreate ? (
+          <Link
+            href="/orders/new"
+            className="inline-flex items-center justify-center rounded-lg border border-sky-500/40 bg-sky-500/10 px-4 py-2 text-sm font-semibold text-sky-300 transition hover:bg-sky-500/20"
+          >
+            Create order
+          </Link>
+        ) : (
+          <div className="text-left sm:text-right">
+            <button
+              type="button"
+              disabled
+              className="inline-flex cursor-not-allowed items-center justify-center rounded-lg border border-slate-800 bg-slate-900/60 px-4 py-2 text-sm font-semibold text-slate-500"
+            >
+              Create order
+            </button>
+            <p className="mt-2 text-xs text-slate-500">
+              Your role can view orders, but cannot create new ones.
+            </p>
+          </div>
+        )}
       </div>
       <OrderList orders={orders} />
     </main>
