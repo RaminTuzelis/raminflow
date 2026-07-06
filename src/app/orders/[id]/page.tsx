@@ -49,23 +49,26 @@ export default async function OrderDetailsPage({
       <section className="mt-6 rounded-lg border border-slate-800 bg-slate-900/40 p-6 shadow-sm">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white">
-              {order.orderNumber}
-            </h1>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <h1 className="text-3xl font-bold tracking-tight text-white">
+                {order.orderNumber}
+              </h1>
+
+              {canEdit && (
+                <Link
+                  href={`/orders/${order.id}/edit`}
+                  className="inline-flex w-fit items-center justify-center rounded-md border border-slate-800 bg-slate-950/40 px-3 py-1.5 text-xs font-semibold text-slate-400 transition hover:border-sky-500/60 hover:text-sky-300"
+                >
+                  Edit order
+                </Link>
+              )}
+            </div>
 
             <p className="mt-2 text-lg text-slate-400">{order.projectName}</p>
 
             <div className="mt-5">
               <OrderStatusBadge status={order.status} />
             </div>
-            {canEdit && (
-              <Link
-                href={`/orders/${order.id}/edit`}
-                className="mt-4 inline-flex items-center justify-center rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-sky-500 hover:text-sky-300"
-              >
-                Edit order
-              </Link>
-            )}
           </div>
 
           <form action={updateOrderStatus} className="lg:min-w-80">
