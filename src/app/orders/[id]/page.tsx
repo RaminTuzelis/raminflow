@@ -12,7 +12,7 @@ import { updateOrderStatus } from "./actions";
 import { statusOptions } from "@/lib/order-options";
 import { StatusUpdateSubmitButton } from "@/components/status-update-submit-button";
 import { auth } from "@/auth";
-import { canUpdateOrderStatus } from "@/lib/permissions";
+import { canUpdateOrderStatus, canEditOrder } from "@/lib/permissions";
 
 type OrderDetailsPageProps = {
   params: Promise<{ id: string }>;
@@ -28,6 +28,7 @@ export default async function OrderDetailsPage({
   }
 
   const canUpdateStatus = canUpdateOrderStatus(session.user.role);
+  const canEdit = canEditOrder(session.user.role);
 
   const { id } = await params;
   const order = await getOrderById(id);
@@ -57,6 +58,14 @@ export default async function OrderDetailsPage({
             <div className="mt-5">
               <OrderStatusBadge status={order.status} />
             </div>
+            {canEdit && (
+              <Link
+                href={`/orders/${order.id}/edit`}
+                className="mt-4 inline-flex items-center justify-center rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-sky-500 hover:text-sky-300"
+              >
+                Edit order
+              </Link>
+            )}
           </div>
 
           <form action={updateOrderStatus} className="lg:min-w-80">
