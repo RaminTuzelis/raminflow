@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { updateOrderHeader } from "@/app/orders/[id]/edit/actions";
 import { OrderEditSubmitButton } from "@/components/order-edit-submit-button";
+import { unitLabels } from "@/lib/order-display";
 
 const labelClassName = "text-sm font-medium text-slate-200";
 
@@ -111,6 +112,47 @@ export default async function EditOrderPage({ params }: EditOrderPageProps) {
             <OrderEditSubmitButton />
           </div>
         </form>
+      </section>
+      <section className="mt-8">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-xl font-semibold text-white">Order items</h2>
+          <p className="text-sm text-slate-500">
+            Items editing will be added later.
+          </p>
+        </div>
+        <div className="mt-4 overflow-hidden rounded-lg border border-slate-800">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-slate-950 text-xs uppercase tracking-wider text-slate-500">
+              <tr>
+                <th className="px-4 py-3 font-medium">#</th>
+                <th className="px-4 py-3 font-medium">Item</th>
+                <th className="px-4 py-3 font-medium">Quantity</th>
+                <th className="px-4 py-3 font-medium">Material</th>
+                <th className="px-4 py-3 font-medium">Thickness</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800 bg-slate-900/40">
+              {order.items.map((item, index) => (
+                <tr key={item.id} className="transition hover:bg-slate-800/60">
+                  <td className="px-4 py-3 text-slate-500">{index + 1}</td>
+                  <td className="px-4 py-3 font-medium text-white">
+                    {item.name}
+                  </td>
+                  <td className="px-4 py-3 text-slate-300">
+                    {item.quantity} {unitLabels[item.unit]}
+                  </td>
+
+                  <td className="px-4 py-3 text-slate-300">
+                    {item.materialType}
+                  </td>
+                  <td className="px-4 py-3 text-slate-300">
+                    {item.thicknessMm} mm
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
     </main>
   );
