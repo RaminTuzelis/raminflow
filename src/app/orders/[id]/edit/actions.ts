@@ -2,11 +2,16 @@
 
 import { auth } from "@/auth";
 import { db } from "@/db/client";
-import { orders } from "@/db/schema";
+import { orderItems, orders } from "@/db/schema";
 import { canEditOrder } from "@/lib/permissions";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import {
+  isMaterialType,
+  isThicknessOption,
+  isUnitType,
+} from "@/lib/order-options";
 
 export async function updateOrderHeader(formData: FormData) {
   const session = await auth();
@@ -55,4 +60,60 @@ export async function updateOrderHeader(formData: FormData) {
   revalidatePath(`/orders/${orderId}`);
   revalidatePath("/");
   redirect(`/orders/${orderId}`);
+}
+
+export async function addOrderItem(formData: FormData) {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("You must be signed in to add order items.");
+  }
+
+  if (!canEditOrder(session.user.role)) {
+    throw new Error("You are not allowed to edit orders.");
+  }
+
+  const orderId = Number(formData.get("orderId"));
+  const itemName = String(formData.get("itemName") ?? "");
+  const quantity = Number(formData.get("quantity"));
+  const unit = String(formData.get("unit") ?? "");
+  const materialType = String(formData.get("materialType") ?? "");
+  const thicknessMm = Number(formData.get("thicknessMm"));
+
+  if (!Number.isInteger(orderId)) {
+    throw new Error("Order id is invalid.");
+  }
+
+  if (itemName.trim() === "") {
+    throw new Error("Item name is required.");
+  }
+
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    throw new Error("Quantity must be at least 1");
+  }
+
+  if (!isUnitType(unit)) {
+    throw new Error("Unit is invalid.");
+  }
+
+  if (!isMaterialType(materialType)) {
+    throw new Error("Material is invalid.");
+  }
+
+  if (!isThicknessOption(thicknessMm)) {
+    throw new Error("Thickness is invalid.");
+  }
+
+  await db.insert(orderItems).values({
+    orderId,
+    name: itemName.trim(),
+    quantity,
+    unit,
+    materialType,
+    thicknessMm,
+  });
+
+  revalidatePath(`/orders/${orderId}/edit`);
+  revalidatePath(`/orders/${orderId}`);
+  revalidatePath("/");
 }
