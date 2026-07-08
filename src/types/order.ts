@@ -26,6 +26,11 @@ export type OrderStatusHistory = {
   changedAt: string;
 };
 
+export type OrderCreator = {
+  id: string;
+  name: string;
+};
+
 export type Order = {
   id: string;
   orderNumber: string;
@@ -33,6 +38,7 @@ export type Order = {
   productionNotes: string;
   deadline: string;
   status: OrderStatus;
+  createdBy: OrderCreator;
   updatedAt: string;
   items: OrderItem[];
   statusHistory: OrderStatusHistory[];

@@ -1,22 +1,36 @@
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
-import { orderItems, orders, orderStatusHistory } from "@/db/schema";
+import { orderItems, orders, orderStatusHistory, users } from "@/db/schema";
 import type { Order } from "@/types/order";
 
 export async function getOrders(): Promise<Order[]> {
-  const orderRows = await db.select().from(orders).orderBy(desc(orders.id));
   const itemRows = await db.select().from(orderItems);
+  const orderRows = await db
+    .select({
+      order: orders,
+      creator: {
+        id: users.id,
+        name: users.name,
+      },
+    })
+    .from(orders)
+    .innerJoin(users, eq(orders.createdByUserId, users.id))
+    .orderBy(desc(orders.id));
 
-  return orderRows.map((order) => ({
-    id: String(order.id),
-    orderNumber: order.orderNumber,
-    projectName: order.projectName,
-    productionNotes: order.productionNotes,
-    deadline: order.deadline.toISOString(),
-    status: order.status,
-    updatedAt: order.updatedAt.toISOString(),
+  return orderRows.map((row) => ({
+    id: String(row.order.id),
+    orderNumber: row.order.orderNumber,
+    projectName: row.order.projectName,
+    productionNotes: row.order.productionNotes,
+    deadline: row.order.deadline.toISOString(),
+    status: row.order.status,
+    createdBy: {
+      id: String(row.creator.id),
+      name: row.creator.name,
+    },
+    updatedAt: row.order.updatedAt.toISOString(),
     items: itemRows
-      .filter((item) => item.orderId === order.id)
+      .filter((item) => item.orderId === row.order.id)
       .map((item) => ({
         id: String(item.id),
         name: item.name,
@@ -36,15 +50,24 @@ export async function getOrderById(id: string): Promise<Order | null> {
     return null;
   }
 
-  const [order] = await db
-    .select()
+  const [orderRow] = await db
+    .select({
+      order: orders,
+      creator: {
+        id: users.id,
+        name: users.name,
+      },
+    })
     .from(orders)
+    .innerJoin(users, eq(orders.createdByUserId, users.id))
     .where(eq(orders.id, orderId))
     .limit(1);
 
-  if (!order) {
+  if (!orderRow) {
     return null;
   }
+
+  const { order, creator } = orderRow;
 
   const items = await db
     .select()
@@ -65,6 +88,10 @@ export async function getOrderById(id: string): Promise<Order | null> {
     productionNotes: order.productionNotes,
     deadline: order.deadline.toISOString(),
     status: order.status,
+    createdBy: {
+      id: String(creator.id),
+      name: creator.name,
+    },
     updatedAt: order.updatedAt.toISOString(),
     items: items.map((item) => ({
       id: String(item.id),

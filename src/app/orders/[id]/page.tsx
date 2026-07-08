@@ -108,12 +108,11 @@ export default async function OrderDetailsPage({
           </form>
         </div>
 
-        <dl className="mt-8 grid gap-6 border-t border-slate-800 pt-6 sm:grid-cols-2">
+        <dl className="mt-8 grid gap-6 border-t border-slate-800 pt-6 sm:grid-cols-3">
           <div>
             <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Deadline
             </dt>
-
             <dd className="mt-1 text-base text-slate-200">
               {dateFormatter.format(new Date(order.deadline))}
             </dd>
@@ -126,6 +125,15 @@ export default async function OrderDetailsPage({
 
             <dd className="mt-1 text-base text-slate-200">
               {dateTimeFormatter.format(new Date(order.updatedAt))}
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Created by
+            </dt>
+            <dd className="mt-1 text-base text-slate-200">
+              {order.createdBy.name}
             </dd>
           </div>
         </dl>

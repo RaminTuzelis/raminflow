@@ -148,6 +148,7 @@ export async function createOrderDraft(
       .insert(orders)
       .values({
         orderNumber,
+        createdByUserId: Number(session.user.id),
         projectName: draftOrder.projectName.trim(),
         productionNotes: draftOrder.productionNotes.trim(),
         deadline: new Date(draftOrder.deadline),

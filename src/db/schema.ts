@@ -39,6 +39,9 @@ export const orders = pgTable("orders", {
   productionNotes: text("production_notes").notNull().default(""),
   deadline: timestamp("deadline", { mode: "date" }).notNull(),
   status: orderStatus("status").notNull().default("DRAFT"),
+  createdByUserId: integer("created_by_user_id")
+    .notNull()
+    .references(() => users.id),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 });
