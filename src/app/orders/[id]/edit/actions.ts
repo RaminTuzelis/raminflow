@@ -148,3 +148,66 @@ export async function removeOrderItem(formData: FormData) {
   revalidatePath(`/orders/${orderId}`);
   revalidatePath("/");
 }
+
+export async function updateOrderItem(formData: FormData) {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("You must be signed in to edit order items.");
+  }
+
+  if (!canEditOrder(session.user.role)) {
+    throw new Error("You are not allowed to edit orders.");
+  }
+
+  const orderId = Number(formData.get("orderId"));
+  const itemId = Number(formData.get("itemId"));
+  const itemName = String(formData.get("itemName") ?? "");
+  const quantity = Number(formData.get("quantity"));
+  const unit = String(formData.get("unit") ?? "");
+  const materialType = String(formData.get("materialType") ?? "");
+  const thicknessMm = Number(formData.get("thicknessMm"));
+
+  if (!Number.isInteger(orderId)) {
+    throw new Error("Order id is invalid.");
+  }
+
+  if (!Number.isInteger(itemId)) {
+    throw new Error("Item id is invalid.");
+  }
+
+  if (itemName.trim() === "") {
+    throw new Error("Item name is required.");
+  }
+
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    throw new Error("Quantity must be at least 1.");
+  }
+
+  if (!isUnitType(unit)) {
+    throw new Error("Unit is invalid.");
+  }
+
+  if (!isMaterialType(materialType)) {
+    throw new Error("Material is invalid.");
+  }
+
+  if (!isThicknessOption(thicknessMm)) {
+    throw new Error("Thickness is invalid.");
+  }
+
+  await db
+    .update(orderItems)
+    .set({
+      name: itemName.trim(),
+      quantity,
+      unit,
+      materialType,
+      thicknessMm,
+    })
+    .where(and(eq(orderItems.id, itemId), eq(orderItems.orderId, orderId)));
+
+  revalidatePath(`/orders/${orderId}/edit`);
+  revalidatePath(`/orders/${orderId}`);
+  revalidatePath("/");
+}

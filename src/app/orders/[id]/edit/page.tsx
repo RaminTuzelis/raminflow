@@ -7,6 +7,7 @@ import {
   addOrderItem,
   removeOrderItem,
   updateOrderHeader,
+  updateOrderItem,
 } from "@/app/orders/[id]/edit/actions";
 import { OrderEditSubmitButton } from "@/components/order-edit-submit-button";
 import { OrderEditAddItemSubmitButton } from "@/components/order-edit-add-item-submit-button";
@@ -264,6 +265,7 @@ export default async function EditOrderPage({ params }: EditOrderPageProps) {
             orderId={order.id}
             items={order.items}
             removeAction={removeOrderItem}
+            updateAction={updateOrderItem}
           />
         </section>
       </div>

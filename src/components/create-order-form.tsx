@@ -51,7 +51,7 @@ function AddedOrderItem({ item, index, onRemove }: AddedOrderItemProps) {
       <button
         type="button"
         onClick={() => onRemove(item.clientId)}
-        className="text-sm text-red-400 transition hover:text-red-300"
+        className="inline-flex items-center justify-center rounded-md border border-red-500/30 bg-red-500/5 px-3 py-1.5 text-sm font-semibold text-red-300 transition hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-200"
       >
         Remove
       </button>
