@@ -2,10 +2,16 @@ import type { OrderItem } from "@/types/order";
 import { unitLabels } from "@/lib/order-display";
 
 type OrderEditItemsTableProps = {
+  orderId: string;
   items: OrderItem[];
+  removeAction: (formData: FormData) => Promise<void>;
 };
 
-export function OrderEditItemsTable({ items }: OrderEditItemsTableProps) {
+export function OrderEditItemsTable({
+  orderId,
+  items,
+  removeAction,
+}: OrderEditItemsTableProps) {
   return (
     <div className="mt-6 overflow-hidden rounded-2xl border border-slate-800">
       <table className="w-full text-left text-sm">
@@ -38,12 +44,16 @@ export function OrderEditItemsTable({ items }: OrderEditItemsTableProps) {
               </td>
 
               <td className="px-4 py-3 text-right">
-                <button
-                  type="button"
-                  className="text-sm font-medium text-red-400 transition hover:text-red-300"
-                >
-                  Remove
-                </button>
+                <form action={removeAction}>
+                  <input type="hidden" name="orderId" value={orderId} />
+                  <input type="hidden" name="itemId" value={item.id} />
+                  <button
+                    type="submit"
+                    className="text-sm font-medium text-red-400 transition hover:text-red-300"
+                  >
+                    Remove
+                  </button>
+                </form>
               </td>
             </tr>
           ))}

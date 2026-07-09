@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/db/client";
 import { orderItems, orders } from "@/db/schema";
 import { canEditOrder } from "@/lib/permissions";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
@@ -112,6 +112,37 @@ export async function addOrderItem(formData: FormData) {
     materialType,
     thicknessMm,
   });
+
+  revalidatePath(`/orders/${orderId}/edit`);
+  revalidatePath(`/orders/${orderId}`);
+  revalidatePath("/");
+}
+
+export async function removeOrderItem(formData: FormData) {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("You must be signed in to remove order items.");
+  }
+
+  if (!canEditOrder(session.user.role)) {
+    throw new Error("You are not allowed to edit orders.");
+  }
+
+  const orderId = Number(formData.get("orderId"));
+  const itemId = Number(formData.get("itemId"));
+
+  if (!Number.isInteger(orderId)) {
+    throw new Error("Order id is invalid.");
+  }
+
+  if (!Number.isInteger(itemId)) {
+    throw new Error("Item id is invalid.");
+  }
+
+  await db
+    .delete(orderItems)
+    .where(and(eq(orderItems.id, itemId), eq(orderItems.orderId, orderId)));
 
   revalidatePath(`/orders/${orderId}/edit`);
   revalidatePath(`/orders/${orderId}`);

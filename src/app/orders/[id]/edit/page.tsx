@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import {
   addOrderItem,
+  removeOrderItem,
   updateOrderHeader,
 } from "@/app/orders/[id]/edit/actions";
 import { OrderEditSubmitButton } from "@/components/order-edit-submit-button";
@@ -259,7 +260,11 @@ export default async function EditOrderPage({ params }: EditOrderPageProps) {
               </div>
             </fieldset>
           </form>
-          <OrderEditItemsTable items={order.items} />
+          <OrderEditItemsTable
+            orderId={order.id}
+            items={order.items}
+            removeAction={removeOrderItem}
+          />
         </section>
       </div>
     </main>
