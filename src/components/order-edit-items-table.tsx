@@ -1,5 +1,6 @@
 import type { OrderItem } from "@/types/order";
 import { unitLabels } from "@/lib/order-display";
+import { OrderEditRemoveItemButton } from "@/components/order-edit-remove-item-button";
 
 type OrderEditItemsTableProps = {
   orderId: string;
@@ -47,12 +48,7 @@ export function OrderEditItemsTable({
                 <form action={removeAction}>
                   <input type="hidden" name="orderId" value={orderId} />
                   <input type="hidden" name="itemId" value={item.id} />
-                  <button
-                    type="submit"
-                    className="text-sm font-medium text-red-400 transition hover:text-red-300"
-                  >
-                    Remove
-                  </button>
+                  <OrderEditRemoveItemButton />
                 </form>
               </td>
             </tr>
