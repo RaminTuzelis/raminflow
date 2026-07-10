@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { changePassword } from "@/app/change-password/actions";
+import Link from "next/link";
 
 export default async function ChangePasswordPage() {
   const session = await auth();
@@ -9,12 +10,19 @@ export default async function ChangePasswordPage() {
     redirect("/login");
   }
 
-  if (!session.user.mustChangePassword) {
-    redirect("/");
-  }
+  const isRequiredPasswordChange = session.user.mustChangePassword;
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-4 py-8">
+      {!isRequiredPasswordChange && (
+        <Link
+          href="/account"
+          className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-sky-400 transition hover:text-sky-300"
+        >
+          <span aria-hidden="true">←</span>
+          Back to account
+        </Link>
+      )}
       <p className="text-sm font-medium uppercase tracking-wider text-slate-500">
         RaminFlow
       </p>
@@ -24,7 +32,9 @@ export default async function ChangePasswordPage() {
       </h1>
 
       <p className="mt-3 text-sm leading-6 text-slate-400">
-        You need to change your temporary password before using RaminFlow.
+        {isRequiredPasswordChange
+          ? "You need to change your temporary password before using RaminFlow."
+          : "Update your password to keep your account secure."}
       </p>
 
       <form

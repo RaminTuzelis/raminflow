@@ -63,6 +63,13 @@ export default async function Home() {
               </p>
             </div>
 
+            <Link
+              href="/account"
+              className="rounded-md border border-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-400 transition hover:border-sky-500/60 hover:text-sky-300"
+            >
+              Account
+            </Link>
+
             <form action={logoutUser}>
               <button
                 type="submit"
