@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { auth } from "@/auth";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { canManageUsers } from "@/lib/permissions";
 
 function calculateAge(birthDate: string) {
   const today = new Date();
@@ -37,6 +38,8 @@ export default async function AccountPage() {
   if (!user) {
     notFound();
   }
+
+  const canManageUserAccounts = canManageUsers(session.user.role);
 
   return (
     <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
@@ -108,6 +111,19 @@ export default async function AccountPage() {
           </div>
         </div>
 
+        {canManageUserAccounts && (
+          <div className="mt-6 border-t border-slate-800 pt-6">
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+              Administration
+            </p>
+            <Link
+              href="/admin/users"
+              className="mt-3 inline-flex items-center justify-center rounded-md border border-slate-800 px-3 py-1.5 text-sm font-semibold text-slate-300 transition hover:border-sky-500/60 hover:text-sky-300"
+            >
+              Manage users
+            </Link>
+          </div>
+        )}
         <div className="mt-6 flex justify-end border-t border-slate-800 pt-6">
           <Link
             href="/change-password"

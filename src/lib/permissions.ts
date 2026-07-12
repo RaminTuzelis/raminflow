@@ -18,6 +18,8 @@ const orderEditRoles: UserRole[] = [
   "PRODUCTION_MANAGER",
 ];
 
+const userManageRoles: UserRole[] = ["ADMIN"];
+
 export function canUpdateOrderStatus(role: UserRole) {
   return orderStatusUpdateRoles.includes(role);
 }
@@ -28,4 +30,8 @@ export function canCreateOrder(role: UserRole) {
 
 export function canEditOrder(role: UserRole) {
   return orderEditRoles.includes(role);
+}
+
+export function canManageUsers(role: UserRole) {
+  return userManageRoles.includes(role);
 }
