@@ -1,6 +1,7 @@
 import { materialTypes, orderStatuses, unitTypes } from "@/lib/order-constants";
 import { userRoles } from "@/lib/user-constants";
 import {
+  date,
   integer,
   pgEnum,
   pgTable,
@@ -28,6 +29,7 @@ export const users = pgTable("users", {
   passwordHash: text("password_hash").notNull(),
   isActive: boolean("is_active").notNull().default(true),
   mustChangePassword: boolean("must_change_password").notNull().default(true),
+  birthDate: date("birth_date", { mode: "string" }),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 });

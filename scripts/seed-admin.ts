@@ -43,6 +43,7 @@ async function seedAdmin() {
     email,
     title,
     passwordHash,
+    birthDate: "2000-01-01",
   });
   console.log(`Admin user created: ${email}`);
 }
