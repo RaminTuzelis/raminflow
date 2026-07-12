@@ -51,7 +51,7 @@ export default async function AccountPage() {
         Back to orders
       </Link>
       <div>
-        <p className="mt-6 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
           Account
         </p>
         <h1 className="mt-3 text-3xl font-bold tracking-tight text-white">

@@ -26,10 +26,10 @@ export default async function Home() {
       <div className="mb-8 flex flex-col gap-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="text-left">
-            <p className="text-sm font-medium uppercase tracking-wider text-slate-500">
+            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
               Production
             </p>
-            <div className="mt-1 flex flex-wrap items-center gap-4">
+            <div className="mt-3 flex flex-wrap items-center gap-4">
               <h1 className="text-3xl font-bold tracking-tight text-white">
                 Orders
               </h1>
