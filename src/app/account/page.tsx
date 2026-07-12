@@ -5,6 +5,24 @@ import { auth } from "@/auth";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 
+function calculateAge(birthDate: string) {
+  const today = new Date();
+  const birth = new Date(birthDate);
+
+  let age = today.getFullYear() - birth.getFullYear();
+
+  const hasBirthdayPassedThisYear =
+    today.getMonth() > birth.getMonth() ||
+    (today.getMonth() === birth.getMonth() &&
+      today.getDate() >= birth.getDate());
+
+  if (!hasBirthdayPassedThisYear) {
+    age -= 1;
+  }
+
+  return age;
+}
+
 export default async function AccountPage() {
   const session = await auth();
 
@@ -47,17 +65,49 @@ export default async function AccountPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-white">{user.name}</h2>
-            <p className="text-sm text-slate-400">{user.email}</p>
           </div>
         </div>
-        <div className="mt-6 border-t border-slate-800 pt-6">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-            Title
-          </p>
-          <p className="mt-1 text-sm font-medium text-slate-200">
-            {user.title || "Not set"}
-          </p>
+
+        <div className="mt-6 grid gap-6 border-t border-slate-800 pt-6 sm:grid-cols-2">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+              Email
+            </p>
+            <p className="mt-1 text-sm font-medium text-slate-200">
+              {user.email}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+              Title
+            </p>
+            <p className="mt-1 text-sm font-medium text-slate-200">
+              {user.title || "Not set"}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+              Birth date
+            </p>
+            <p className="mt-1 text-sm font-medium text-slate-200">
+              {user.birthDate || "Not set"}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+              Age
+            </p>
+            <p className="mt-2 text-sm font-medium text-slate-200">
+              {user.birthDate
+                ? `${calculateAge(user.birthDate)} years old`
+                : "Not set"}
+            </p>
+          </div>
         </div>
+
         <div className="mt-6 flex justify-end border-t border-slate-800 pt-6">
           <Link
             href="/change-password"
