@@ -9,6 +9,7 @@ const adminName = process.env.SEED_ADMIN_NAME;
 const adminEmail = process.env.SEED_ADMIN_EMAIL;
 const adminPassword = process.env.SEED_ADMIN_PASSWORD;
 const adminTitle = process.env.SEED_ADMIN_TITLE;
+const adminBirthDate = process.env.SEED_ADMIN_BIRTH_DATE;
 
 function requireEnv(name: string, value: string | undefined) {
   if (!value) {
@@ -23,6 +24,7 @@ async function seedAdmin() {
   const email = requireEnv("SEED_ADMIN_EMAIL", adminEmail);
   const password = requireEnv("SEED_ADMIN_PASSWORD", adminPassword);
   const title = requireEnv("SEED_ADMIN_TITLE", adminTitle);
+  const birthDate = requireEnv("SEED_ADMIN_BIRTH_DATE", adminBirthDate);
 
   console.log(`Preparing admin user: ${email}`);
 
@@ -43,7 +45,7 @@ async function seedAdmin() {
     email,
     title,
     passwordHash,
-    birthDate: "2000-01-01",
+    birthDate,
   });
   console.log(`Admin user created: ${email}`);
 }
