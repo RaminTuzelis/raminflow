@@ -44,7 +44,7 @@ export default async function AdminUsersPage() {
 
       <div className="mt-2 flex justify-end">
         <p className="whitespace-nowrap text-sm text-slate-500">
-          {userRows.length} users found.
+          {userRows.length} {userRows.length === 1 ? "user" : "users"} found.
         </p>
       </div>
 

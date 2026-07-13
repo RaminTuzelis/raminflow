@@ -3,6 +3,8 @@ import { canManageUsers } from "@/lib/permissions";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { userRoles } from "@/lib/user-constants";
+import { createUser } from "@/app/admin/users/new/actions";
+import { CreateUserSubmitButton } from "@/components/create-user-submit-button";
 
 export default async function NewUserPage() {
   const session = await auth();
@@ -24,12 +26,18 @@ export default async function NewUserPage() {
         <span aria-hidden="true">←</span>
         Back to users
       </Link>
+      <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        Administration
+      </p>
 
-      <h1 className="mt-6 text-3xl font-bold tracking-tight text-white">
+      <h1 className="mt-4 text-3xl font-bold tracking-tight text-white">
         Create user
       </h1>
 
-      <form className="mt-8 space-y-5 rounded-lg border border-slate-800 bg-slate-900/40 p-6">
+      <form
+        action={createUser}
+        className="mt-8 space-y-5 rounded-lg border border-slate-800 bg-slate-900/40 p-6"
+      >
         <div className="grid gap-2">
           <label htmlFor="name" className="text-sm font-medium text-slate-200">
             Name
@@ -85,6 +93,7 @@ export default async function NewUserPage() {
             type="text"
             id="title"
             name="title"
+            required
             className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
           />
         </div>
@@ -123,6 +132,9 @@ export default async function NewUserPage() {
           <p className="text-xs leading-5 text-slate-500">
             The user will be required to change this password after signing in.
           </p>
+        </div>
+        <div className="flex justify-end border-t border-slate-800 pt-5">
+          <CreateUserSubmitButton />
         </div>
       </form>
     </main>
