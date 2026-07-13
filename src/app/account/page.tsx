@@ -5,24 +5,7 @@ import { auth } from "@/auth";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { canManageUsers } from "@/lib/permissions";
-
-function calculateAge(birthDate: string) {
-  const today = new Date();
-  const birth = new Date(birthDate);
-
-  let age = today.getFullYear() - birth.getFullYear();
-
-  const hasBirthdayPassedThisYear =
-    today.getMonth() > birth.getMonth() ||
-    (today.getMonth() === birth.getMonth() &&
-      today.getDate() >= birth.getDate());
-
-  if (!hasBirthdayPassedThisYear) {
-    age -= 1;
-  }
-
-  return age;
-}
+import { calculateAge } from "@/lib/date-utils";
 
 export default async function AccountPage() {
   const session = await auth();

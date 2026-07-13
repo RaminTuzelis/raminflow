@@ -64,7 +64,14 @@ export default async function AdminUsersPage() {
           <tbody className="divide-y divide-slate-800">
             {userRows.map((user) => (
               <tr key={user.id} className="text-slate-200">
-                <td className="px-4 py-3 font-medium">{user.name}</td>
+                <td className="px-4 py-3 font-medium">
+                  <Link
+                    href={`/admin/users/${user.id}`}
+                    className="text-sky-400 transition hover:text-sky-300"
+                  >
+                    {user.name}
+                  </Link>
+                </td>
                 <td className="px-4 py-3 text-slate-400">{user.email}</td>
                 <td className="px-4 py-3 text-slate-400">{user.role}</td>
                 <td className="px-4 py-3 text-slate-400">
