@@ -6,6 +6,8 @@ import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { calculateAge } from "@/lib/date-utils";
+import { AdminUserEditButton } from "@/components/admin-user-edit-button";
+import { updateUser } from "@/app/admin/users/[id]/actions";
 
 type AdminUserPageProps = {
   params: Promise<{ id: string }>;
@@ -49,9 +51,24 @@ export default async function AdminUserPage({ params }: AdminUserPageProps) {
       <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
         Administration
       </p>
-      <h1 className="mt-4 text-3xl font-bold tracking-tight text-white">
-        {selectedUser.name}
-      </h1>
+
+      <div className="mt-4 flex flex-wrap items-center gap-4">
+        <h1 className="text-3xl font-bold tracking-tight text-white">
+          {selectedUser.name}
+        </h1>
+        <AdminUserEditButton
+          user={{
+            id: selectedUser.id,
+            name: selectedUser.name,
+            email: selectedUser.email,
+            role: selectedUser.role,
+            title: selectedUser.title,
+            birthDate: selectedUser.birthDate,
+          }}
+          updateAction={updateUser}
+        />
+      </div>
+
       <p className="mt-2 text-sm text-slate-400">
         {selectedUser.title || "Title not set"}
       </p>
