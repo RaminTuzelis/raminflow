@@ -2,9 +2,12 @@ import { getOrders } from "@/db/queries";
 import { OrderList } from "@/components/order-list";
 import Link from "next/link";
 import { auth } from "@/auth";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { canCreateOrder } from "@/lib/permissions";
 import { logoutUser } from "@/app/logout/actions";
+import { db } from "@/db/client";
+import { users } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function Home() {
   const session = await auth();
@@ -17,8 +20,15 @@ export default async function Home() {
     redirect("/change-password");
   }
 
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, Number(session.user.id)),
+  });
+
+  if (!user) {
+    notFound();
+  }
+
   const canCreate = canCreateOrder(session.user.role);
-  const userRoleLabel = session.user.role.replaceAll("_", " ");
 
   const orders = await getOrders();
   return (
@@ -55,11 +65,9 @@ export default async function Home() {
 
           <div className="flex items-center gap-3 sm:justify-end">
             <div className="text-left sm:text-right">
-              <p className="text-sm font-medium text-slate-200">
-                {session.user.name}
-              </p>
+              <p className="text-sm font-medium text-slate-200">{user.name}</p>
               <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-                {userRoleLabel}
+                {user.title || "Title not set"}
               </p>
             </div>
 
