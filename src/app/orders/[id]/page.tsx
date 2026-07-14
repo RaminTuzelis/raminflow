@@ -71,41 +71,36 @@ export default async function OrderDetailsPage({
             </div>
           </div>
 
-          <form action={updateOrderStatus} className="lg:min-w-80">
-            <input type="hidden" name="orderId" value={order.id} />
+          {canUpdateStatus && (
+            <form action={updateOrderStatus} className="lg:min-w-80">
+              <input type="hidden" name="orderId" value={order.id} />
 
-            <label
-              htmlFor="status"
-              className="text-xs font-semibold uppercase tracking-wider text-slate-500"
-            >
-              Update status
-            </label>
-
-            <div className="mt-2 flex gap-2">
-              <select
-                id="status"
-                key={order.status}
-                name="status"
-                defaultValue={order.status}
-                disabled={!canUpdateStatus}
-                className="min-w-44 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-sky-500 disabled:cursor-not-allowed disabled:border-slate-800 disabled:text-slate-500"
+              <label
+                htmlFor="status"
+                className="text-xs font-semibold uppercase tracking-wider text-slate-500"
               >
-                {statusOptions.map((status) => (
-                  <option key={status} value={status}>
-                    {statusLabels[status]}
-                  </option>
-                ))}
-              </select>
+                Update status
+              </label>
 
-              <StatusUpdateSubmitButton disabled={!canUpdateStatus} />
-            </div>
+              <div className="mt-2 flex gap-2">
+                <select
+                  id="status"
+                  key={order.status}
+                  name="status"
+                  defaultValue={order.status}
+                  className="min-w-44 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-sky-500"
+                >
+                  {statusOptions.map((status) => (
+                    <option key={status} value={status}>
+                      {statusLabels[status]}
+                    </option>
+                  ))}
+                </select>
 
-            {!canUpdateStatus && (
-              <p className="mt-2 text-xs text-slate-500">
-                Your role can view this order, but cannot update its status.
-              </p>
-            )}
-          </form>
+                <StatusUpdateSubmitButton />
+              </div>
+            </form>
+          )}
         </div>
 
         <dl className="mt-8 grid gap-6 border-t border-slate-800 pt-6 sm:grid-cols-3">

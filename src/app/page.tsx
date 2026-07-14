@@ -33,21 +33,13 @@ export default async function Home() {
                 Orders
               </h1>
 
-              {canCreate ? (
+              {canCreate && (
                 <Link
                   href="/orders/new"
                   className="inline-flex items-center justify-center rounded-md border border-sky-500/40 bg-sky-500/10 px-3 py-1.5 text-xs font-semibold text-sky-300 transition hover:bg-sky-500/20"
                 >
                   Create order
                 </Link>
-              ) : (
-                <button
-                  type="button"
-                  disabled
-                  className="inline-flex cursor-not-allowed items-center justify-center rounded-md border border-slate-800 bg-slate-900/60 px-3 py-1.5 text-xs font-semibold text-slate-500"
-                >
-                  Create order
-                </button>
               )}
             </div>
           </div>
@@ -77,12 +69,6 @@ export default async function Home() {
             </form>
           </div>
         </div>
-
-        {!canCreate && (
-          <p className="text-sm font-medium uppercase tracking-wider text-slate-500">
-            Your role can view orders, but cannot create new ones.
-          </p>
-        )}
       </div>
       <OrderList orders={orders} />
     </main>
