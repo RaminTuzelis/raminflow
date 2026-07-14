@@ -7,7 +7,14 @@ import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import argon2 from "argon2";
 
-export async function changePassword(formData: FormData) {
+export type ChangePasswordState = {
+  error: string | null;
+};
+
+export async function changePassword(
+  _previousState: ChangePasswordState,
+  formData: FormData,
+): Promise<ChangePasswordState> {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
@@ -19,15 +26,21 @@ export async function changePassword(formData: FormData) {
   const confirmPassword = String(formData.get("confirmPassword") ?? "");
 
   if (!currentPassword || !newPassword || !confirmPassword) {
-    throw new Error("All password fields are required.");
+    return {
+      error: "All password fields are required.",
+    };
   }
 
   if (newPassword !== confirmPassword) {
-    throw new Error("New password and confirmation do not match.");
+    return {
+      error: "New password and confirmation do not match.",
+    };
   }
 
   if (newPassword.length < 8) {
-    throw new Error("New password must be at least 8 characters long.");
+    return {
+      error: "New password must be at least 8 characters long.",
+    };
   }
 
   const currentPasswordIsValid = await argon2.verify(
@@ -36,13 +49,15 @@ export async function changePassword(formData: FormData) {
   );
 
   if (!currentPasswordIsValid) {
-    throw new Error("Current password is incorrect.");
+    return {
+      error: "Current password is incorrect.",
+    };
   }
 
   if (newPassword === currentPassword) {
-    throw new Error(
-      "New password must be different from your current password.",
-    );
+    return {
+      error: "New password must be different from your current password.",
+    };
   }
 
   const newPasswordHash = await argon2.hash(newPassword);
@@ -57,4 +72,8 @@ export async function changePassword(formData: FormData) {
     .where(eq(users.id, currentUser.id));
 
   await signOut({ redirectTo: "/login" });
+
+  return {
+    error: null,
+  };
 }
