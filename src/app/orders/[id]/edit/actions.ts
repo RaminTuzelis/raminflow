@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/current-user";
 import { db } from "@/db/client";
 import { orderItems, orders } from "@/db/schema";
 import { canEditOrder } from "@/lib/permissions";
@@ -14,13 +14,13 @@ import {
 } from "@/lib/order-options";
 
 export async function updateOrderHeader(formData: FormData) {
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     throw new Error("You must be signed in to edit orders.");
   }
 
-  if (!canEditOrder(session.user.role)) {
+  if (!canEditOrder(currentUser.role)) {
     throw new Error("You are not allowed to edit orders.");
   }
 
@@ -63,13 +63,13 @@ export async function updateOrderHeader(formData: FormData) {
 }
 
 export async function addOrderItem(formData: FormData) {
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     throw new Error("You must be signed in to add order items.");
   }
 
-  if (!canEditOrder(session.user.role)) {
+  if (!canEditOrder(currentUser.role)) {
     throw new Error("You are not allowed to edit orders.");
   }
 
@@ -119,13 +119,13 @@ export async function addOrderItem(formData: FormData) {
 }
 
 export async function removeOrderItem(formData: FormData) {
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     throw new Error("You must be signed in to remove order items.");
   }
 
-  if (!canEditOrder(session.user.role)) {
+  if (!canEditOrder(currentUser.role)) {
     throw new Error("You are not allowed to edit orders.");
   }
 
@@ -150,13 +150,13 @@ export async function removeOrderItem(formData: FormData) {
 }
 
 export async function updateOrderItem(formData: FormData) {
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     throw new Error("You must be signed in to edit order items.");
   }
 
-  if (!canEditOrder(session.user.role)) {
+  if (!canEditOrder(currentUser.role)) {
     throw new Error("You are not allowed to edit orders.");
   }
 

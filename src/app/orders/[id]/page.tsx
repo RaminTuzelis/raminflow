@@ -11,7 +11,7 @@ import { OrderStatusBadge } from "@/components/order-status-badge";
 import { updateOrderStatus } from "./actions";
 import { statusOptions } from "@/lib/order-options";
 import { StatusUpdateSubmitButton } from "@/components/status-update-submit-button";
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/current-user";
 import { canUpdateOrderStatus, canEditOrder } from "@/lib/permissions";
 
 type OrderDetailsPageProps = {
@@ -21,14 +21,14 @@ type OrderDetailsPageProps = {
 export default async function OrderDetailsPage({
   params,
 }: OrderDetailsPageProps) {
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     redirect("/login");
   }
 
-  const canUpdateStatus = canUpdateOrderStatus(session.user.role);
-  const canEdit = canEditOrder(session.user.role);
+  const canUpdateStatus = canUpdateOrderStatus(currentUser.role);
+  const canEdit = canEditOrder(currentUser.role);
 
   const { id } = await params;
   const order = await getOrderById(id);

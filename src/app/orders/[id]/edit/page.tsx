@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/current-user";
 import { getOrderById } from "@/db/queries";
 import { canEditOrder } from "@/lib/permissions";
 import Link from "next/link";
@@ -29,13 +29,13 @@ type EditOrderPageProps = {
 };
 
 export default async function EditOrderPage({ params }: EditOrderPageProps) {
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     redirect("/login");
   }
 
-  if (!canEditOrder(session.user.role)) {
+  if (!canEditOrder(currentUser.role)) {
     redirect("/");
   }
 

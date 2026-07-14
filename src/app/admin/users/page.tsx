@@ -1,17 +1,17 @@
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/current-user";
 import { canManageUsers } from "@/lib/permissions";
 import { redirect } from "next/navigation";
 import { db } from "@/db/client";
 import Link from "next/link";
 
 export default async function AdminUsersPage() {
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     redirect("/login");
   }
 
-  if (!canManageUsers(session.user.role)) {
+  if (!canManageUsers(currentUser.role)) {
     redirect("/");
   }
 

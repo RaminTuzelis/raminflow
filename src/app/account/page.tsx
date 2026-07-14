@@ -1,28 +1,17 @@
-import { db } from "@/db/client";
-import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { auth } from "@/auth";
-import { notFound, redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/current-user";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { canManageUsers } from "@/lib/permissions";
 import { calculateAge } from "@/lib/date-utils";
 
 export default async function AccountPage() {
-  const session = await auth();
+  const user = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!user) {
     redirect("/login");
   }
 
-  const user = await db.query.users.findFirst({
-    where: eq(users.id, Number(session.user.id)),
-  });
-
-  if (!user) {
-    notFound();
-  }
-
-  const canManageUserAccounts = canManageUsers(session.user.role);
+  const canManageUserAccounts = canManageUsers(user.role);
 
   return (
     <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">

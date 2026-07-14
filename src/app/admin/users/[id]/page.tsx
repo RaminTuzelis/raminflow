@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/current-user";
 import { canManageUsers } from "@/lib/permissions";
 import { notFound, redirect } from "next/navigation";
 import { db } from "@/db/client";
@@ -15,13 +15,13 @@ type AdminUserPageProps = {
 
 export default async function AdminUserPage({ params }: AdminUserPageProps) {
   const { id } = await params;
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     redirect("/login");
   }
 
-  if (!canManageUsers(session.user.role)) {
+  if (!canManageUsers(currentUser.role)) {
     redirect("/");
   }
 

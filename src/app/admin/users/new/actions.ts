@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/current-user";
 import { canManageUsers } from "@/lib/permissions";
 import { isUserRole } from "@/lib/user-options";
 import { db } from "@/db/client";
@@ -11,13 +11,13 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function createUser(formData: FormData) {
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     throw new Error("You must be signed in to create users.");
   }
 
-  if (!canManageUsers(session.user.role)) {
+  if (!canManageUsers(currentUser.role)) {
     throw new Error("You are not allowed to manage users.");
   }
 

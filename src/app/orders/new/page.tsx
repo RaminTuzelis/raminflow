@@ -1,17 +1,17 @@
 import { CreateOrderForm } from "@/components/create-order-form";
 import Link from "next/link";
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/current-user";
 import { redirect } from "next/navigation";
 import { canCreateOrder } from "@/lib/permissions";
 
 export default async function NewOrderPage() {
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     redirect("/login");
   }
 
-  if (!canCreateOrder(session.user.role)) {
+  if (!canCreateOrder(currentUser.role)) {
     redirect("/");
   }
 

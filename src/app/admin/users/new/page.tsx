@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/current-user";
 import { canManageUsers } from "@/lib/permissions";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -7,13 +7,13 @@ import { createUser } from "@/app/admin/users/new/actions";
 import { CreateUserSubmitButton } from "@/components/create-user-submit-button";
 
 export default async function NewUserPage() {
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     redirect("/login");
   }
 
-  if (!canManageUsers(session.user.role)) {
+  if (!canManageUsers(currentUser.role)) {
     redirect("/");
   }
 

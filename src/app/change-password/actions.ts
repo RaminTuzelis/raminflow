@@ -1,24 +1,17 @@
 "use server";
 
-import { auth, signOut } from "@/auth";
+import { signOut } from "@/auth";
+import { getCurrentUser } from "@/lib/current-user";
 import { db } from "@/db/client";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import argon2 from "argon2";
 
 export async function changePassword(formData: FormData) {
-  const session = await auth();
-
-  if (!session?.user) {
-    throw new Error("You must be signed in to change your password.");
-  }
-
-  const currentUser = await db.query.users.findFirst({
-    where: eq(users.id, Number(session.user.id)),
-  });
+  const currentUser = await getCurrentUser();
 
   if (!currentUser) {
-    throw new Error("User was not found.");
+    throw new Error("You must be signed in to change your password.");
   }
 
   const currentPassword = String(formData.get("currentPassword") ?? "");
@@ -44,6 +37,12 @@ export async function changePassword(formData: FormData) {
 
   if (!currentPasswordIsValid) {
     throw new Error("Current password is incorrect.");
+  }
+
+  if (newPassword === currentPassword) {
+    throw new Error(
+      "New password must be different from your current password.",
+    );
   }
 
   const newPasswordHash = await argon2.hash(newPassword);

@@ -1,16 +1,16 @@
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/current-user";
 import { redirect } from "next/navigation";
 import { changePassword } from "@/app/change-password/actions";
 import Link from "next/link";
 
 export default async function ChangePasswordPage() {
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     redirect("/login");
   }
 
-  const isRequiredPasswordChange = session.user.mustChangePassword;
+  const isRequiredPasswordChange = currentUser.mustChangePassword;
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-4 py-8">

@@ -10,7 +10,7 @@ import {
 import { db } from "@/db/client";
 import { orderItems, orderNumberCounters, orders } from "@/db/schema";
 import { formatOrderNumber } from "@/lib/order-number";
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/current-user";
 import { canCreateOrder } from "@/lib/permissions";
 
 type CreateOrderDraftResult =
@@ -29,16 +29,16 @@ type CreateOrderDraftResult =
 export async function createOrderDraft(
   draftOrder: OrderDraft,
 ): Promise<CreateOrderDraftResult> {
-  const session = await auth();
+  const currentUser = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!currentUser) {
     return {
       success: false,
       error: "You must be signed in to create an order.",
     };
   }
 
-  if (!canCreateOrder(session.user.role)) {
+  if (!canCreateOrder(currentUser.role)) {
     return {
       success: false,
       error: "You are not allowed to create orders.",
@@ -148,7 +148,7 @@ export async function createOrderDraft(
       .insert(orders)
       .values({
         orderNumber,
-        createdByUserId: Number(session.user.id),
+        createdByUserId: currentUser.id,
         projectName: draftOrder.projectName.trim(),
         productionNotes: draftOrder.productionNotes.trim(),
         deadline: new Date(draftOrder.deadline),

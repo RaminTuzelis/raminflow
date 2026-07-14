@@ -1,34 +1,23 @@
 import { getOrders } from "@/db/queries";
 import { OrderList } from "@/components/order-list";
 import Link from "next/link";
-import { auth } from "@/auth";
-import { notFound, redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/current-user";
+import { redirect } from "next/navigation";
 import { canCreateOrder } from "@/lib/permissions";
 import { logoutUser } from "@/app/logout/actions";
-import { db } from "@/db/client";
-import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
 
 export default async function Home() {
-  const session = await auth();
+  const user = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!user) {
     redirect("/login");
   }
 
-  if (session.user.mustChangePassword) {
+  if (user.mustChangePassword) {
     redirect("/change-password");
   }
 
-  const user = await db.query.users.findFirst({
-    where: eq(users.id, Number(session.user.id)),
-  });
-
-  if (!user) {
-    notFound();
-  }
-
-  const canCreate = canCreateOrder(session.user.role);
+  const canCreate = canCreateOrder(user.role);
 
   const orders = await getOrders();
   return (
