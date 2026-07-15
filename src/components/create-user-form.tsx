@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
+import type { SubmitEvent } from "react";
 import {
   createUser,
   type CreateUserState,
@@ -16,13 +17,25 @@ export function CreateUserForm() {
     createUser,
     initialState,
   );
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState("");
+
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setHasEditedAfterSubmit(false);
+
+    const formData = new FormData(event.currentTarget);
+
+    startTransition(() => {
+      formAction(formData);
+    });
+  }
+
+  const [hasEditedAfterSubmit, setHasEditedAfterSubmit] = useState(false);
+  const showError = Boolean(state.error) && !hasEditedAfterSubmit && !isPending;
 
   return (
     <form
-      action={formAction}
+      onChange={() => setHasEditedAfterSubmit(true)}
+      onSubmit={handleSubmit}
       className="mt-8 space-y-5 rounded-lg border border-slate-800 bg-slate-900/40 p-6"
     >
       <div className="grid gap-2">
@@ -30,8 +43,6 @@ export function CreateUserForm() {
           Name
         </label>
         <input
-          value={name}
-          onChange={(event) => setName(event.target.value)}
           type="text"
           id="name"
           name="name"
@@ -44,8 +55,6 @@ export function CreateUserForm() {
           Email
         </label>
         <input
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
           type="email"
           id="email"
           name="email"
@@ -62,8 +71,7 @@ export function CreateUserForm() {
           id="role"
           name="role"
           required
-          value={role}
-          onChange={(event) => setRole(event.target.value)}
+          defaultValue=""
           className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
         >
           <option value="" disabled>
@@ -125,7 +133,7 @@ export function CreateUserForm() {
           The user will be required to change this password after signing in.
         </p>
       </div>
-      {state.error && (
+      {showError && (
         <p
           id="create-user-error"
           role="alert"
