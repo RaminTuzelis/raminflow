@@ -4,7 +4,7 @@
 
 RaminFlow should reduce duplicate data entry when administration has already entered order data in the existing accounting workflow and received an Excel export. The import should populate editable order-item drafts; it must not silently create database records from an unreviewed file.
 
-This plan is based on the representative workbook committed as `docs/Test_data.xlsx`. Karolis explicitly approved this file for use as shared test data so the import shape can be inspected on every development computer. It is parser input, not an order attachment, and future samples must still be reviewed before they are committed.
+This plan is based on the representative workbook committed as `docs/Test_data.xlsx`. Karolis explicitly approved this file for use as shared test data so the import shape can be inspected on every development computer. It is parser input, not an order attachment, and future samples must still be reviewed and stripped of unnecessary personal metadata before they are committed.
 
 The Create Order screen should ultimately support two complementary item-entry modes:
 
@@ -28,11 +28,11 @@ Users should not need to delete pricing columns, formulas, or blank formatted ro
 
 ## Shared Test Workbook
 
-The tracked sample is `docs/Test_data.xlsx`. Its filename is deliberately generic so application code and tests do not depend on a customer or project name. The importer must likewise ignore the workbook filename as authoritative order data.
+The tracked sample is `docs/Test_data.xlsx`, an Office Open XML workbook with a detectable header row and adjacent accounting calculations. Its filename is deliberately generic so application code and tests do not depend on a customer or project name. The importer must likewise ignore the workbook filename as authoritative order data.
 
 ## Observed Workbook Shape
 
-The first anonymized sample has these characteristics:
+The first shared sample has these characteristics:
 
 - `.xlsx` format;
 - one worksheet;
@@ -43,7 +43,7 @@ The first anonymized sample has these characteristics:
 - material is implied by calculation headings rather than stored as a reliable row value;
 - an item row may not have a sequence number, so sequence number cannot decide whether the row is valid.
 
-The parser must therefore detect headers by normalized labels and inspect relevant cells. It must not import every row in the worksheet's used range.
+The parser must therefore detect headers by normalized labels and inspect relevant cells. It must not import every row in the worksheet's used range. A future unknown or headerless production list may justify a user-guided column-mapping workflow, but one unverified manually prepared file is not enough evidence to define a positional import profile.
 
 ## Initial Field Mapping
 
@@ -61,8 +61,8 @@ Header aliases should be explicit and testable. The first known Lithuanian label
 
 ## Parsing Rules
 
-1. Accept only explicitly supported spreadsheet formats. Start with `.xlsx`; add CSV only after a real sample requires it.
-2. Reject macro-enabled or legacy binary workbooks in the first version.
+1. Accept only explicitly supported spreadsheet formats. Start with `.xlsx`; add CSV or another legacy format only after a reviewed real sample requires it.
+2. Reject macro-enabled or legacy workbooks in the first version.
 3. Enforce a small configurable file-size limit before parsing.
 4. Read cell values without executing macros or spreadsheet formulas.
 5. Find a worksheet and header row containing the required normalized labels.
@@ -71,8 +71,9 @@ Header aliases should be explicit and testable. The first known Lithuanian label
 8. Treat a partially populated relevant row as an item with validation errors, not as an empty row.
 9. Preserve the source row number for understandable error messages.
 10. Normalize whitespace, decimal commas/dots, and known unit spellings.
-11. Do not automatically merge duplicate-looking rows; separate rows may represent intentional items.
-12. Do not use the filename as trusted order data. It may only be offered as an editable project-name suggestion.
+11. Treat material or thickness parsed from a description as a preview suggestion, not unquestioned structured data.
+12. Do not automatically merge duplicate-looking rows; separate rows may represent intentional items.
+13. Do not use the filename as trusted order data. It may only be offered as an editable project-name suggestion.
 
 ## Preview And Error UX
 
@@ -131,7 +132,7 @@ The later attachment feature needs its own storage, metadata, access control, fi
 - Should the original workbook later be retained as an authorized order attachment?
 - Does the installed accounting-system version provide a supported integration interface worth considering later?
 
-The next evidence needed is one or two additional reviewed export shapes. Implementation should begin only after comparing them with `docs/Test_data.xlsx` and confirming the smallest stable mapping.
+The next evidence needed is one or two additional reviewed and sanitized export shapes. Implementation should begin only after comparing them with `docs/Test_data.xlsx` and confirming the smallest stable mapping.
 
 ## Related Design Work
 
