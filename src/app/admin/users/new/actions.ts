@@ -10,7 +10,14 @@ import argon2 from "argon2";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export async function createUser(formData: FormData) {
+export type CreateUserState = {
+  error: string | null;
+};
+
+export async function createUser(
+  _previousState: CreateUserState,
+  formData: FormData,
+): Promise<CreateUserState> {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
@@ -29,36 +36,50 @@ export async function createUser(formData: FormData) {
   const temporaryPassword = String(formData.get("temporaryPassword") ?? "");
 
   if (!name.trim()) {
-    throw new Error("Name is required.");
+    return {
+      error: "Name is required.",
+    };
   }
 
   if (!email.trim()) {
-    throw new Error("Email is required.");
+    return {
+      error: "Email is required.",
+    };
   }
 
   const normalizedEmail = email.trim().toLowerCase();
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailPattern.test(normalizedEmail)) {
-    throw new Error("Email address is invalid.");
+    return {
+      error: "Email address is invalid.",
+    };
   }
 
   if (!isUserRole(role)) {
-    throw new Error("Role is invalid.");
+    return {
+      error: "Role is invalid.",
+    };
   }
 
   if (!title.trim()) {
-    throw new Error("Title is required.");
+    return {
+      error: "Title is required.",
+    };
   }
 
   if (temporaryPassword.length < 8) {
-    throw new Error("Temporary password must be at least 8 characters long.");
+    return {
+      error: "Temporary password must be at least 8 characters long.",
+    };
   }
 
   const birthDatePattern = /^\d{4}-\d{2}-\d{2}$/;
 
   if (birthDate !== "" && !birthDatePattern.test(birthDate)) {
-    throw new Error("Birth date is invalid.");
+    return {
+      error: "Birth date is invalid.",
+    };
   }
 
   if (birthDate !== "") {
@@ -69,7 +90,9 @@ export async function createUser(formData: FormData) {
       parsedBirthDate.toISOString().slice(0, 10) === birthDate;
 
     if (!isRealDate) {
-      throw new Error("Birth date is invalid.");
+      return {
+        error: "Birth date is invalid.",
+      };
     }
 
     const todayInVilnius = new Intl.DateTimeFormat("en-CA", {
@@ -80,7 +103,9 @@ export async function createUser(formData: FormData) {
     }).format(new Date());
 
     if (birthDate > todayInVilnius) {
-      throw new Error("Birth date cannot be in the future.");
+      return {
+        error: "Birth date cannot be in the future.",
+      };
     }
   }
 
@@ -89,7 +114,9 @@ export async function createUser(formData: FormData) {
   });
 
   if (existingUser) {
-    throw new Error("A user with this email already exists.");
+    return {
+      error: "A user with this email already exists.",
+    };
   }
 
   const passwordHash = await argon2.hash(temporaryPassword);
