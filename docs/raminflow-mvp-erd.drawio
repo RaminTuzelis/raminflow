@@ -1,107 +1,124 @@
-<mxfile host="app.diagrams.net" modified="2026-07-07T00:00:00.000Z" agent="Codex" version="26.0.0">
-  <diagram id="raminflow-mvp-erd-v2" name="RaminFlow MVP v2 ERD">
-    <mxGraphModel dx="1800" dy="1050" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1350" math="0" shadow="0">
+<mxfile host="app.diagrams.net" modified="2026-07-15T00:00:00.000Z" agent="Codex" version="26.0.0">
+  <diagram id="raminflow-mvp-erd-v3" name="RaminFlow MVP v3 ERD">
+    <mxGraphModel dx="2000" dy="1150" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2450" pageHeight="1350" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
 
-        <mxCell id="title" value="RAMINFLOW MVP v2 DATABASE MODEL" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=42;fontStyle=1;fontColor=#0f172a;" vertex="1" parent="1">
-          <mxGeometry x="310" y="30" width="1580" height="70" as="geometry" />
+        <mxCell id="title" value="RAMINFLOW MVP v3 DATABASE MODEL" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=42;fontStyle=1;fontColor=#0f172a;" vertex="1" parent="1">
+          <mxGeometry x="330" y="25" width="1780" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="subtitle" value="Current learning version: authentication, roles, order creation, yearly numbering, status history, and order header editing." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=17;fontColor=#475569;" vertex="1" parent="1">
-          <mxGeometry x="300" y="95" width="1600" height="40" as="geometry" />
-        </mxCell>
-
-        <mxCell id="database-frame" value="IMPLEMENTED DATABASE FOUNDATION" style="swimlane;html=1;startSize=44;rounded=0;fontStyle=1;fontSize=18;fillColor=#1F2937;strokeColor=#64748b;fontColor=#FFFFFF;" vertex="1" parent="1">
-          <mxGeometry x="70" y="160" width="2060" height="880" as="geometry" />
+        <mxCell id="subtitle" value="Implemented PostgreSQL foundation aligned with src/db/schema.ts - planned workflows and schema growth are separated from current tables." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=17;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="260" y="85" width="1920" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="identity-area" value="IDENTITY AND ACCESS" style="swimlane;html=1;startSize=34;rounded=0;fontStyle=1;fontSize=15;fillColor=#e1d5e7;strokeColor=#9673a6;opacity=45;" vertex="1" parent="database-frame">
-          <mxGeometry x="30" y="70" width="420" height="750" as="geometry" />
+        <mxCell id="implemented-frame" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="1550" height="1090" as="geometry" />
         </mxCell>
-        <mxCell id="orders-area" value="ORDER WORKFLOW" style="swimlane;html=1;startSize=34;rounded=0;fontStyle=1;fontSize=15;fillColor=#dae8fc;strokeColor=#6c8ebf;opacity=45;" vertex="1" parent="database-frame">
-          <mxGeometry x="500" y="70" width="880" height="750" as="geometry" />
-        </mxCell>
-        <mxCell id="support-area" value="SUPPORTING DATA AND NEXT EXTENSIONS" style="swimlane;html=1;startSize=34;rounded=0;fontStyle=1;fontSize=15;fillColor=#fff2cc;strokeColor=#d6b656;opacity=45;" vertex="1" parent="database-frame">
-          <mxGeometry x="1430" y="70" width="580" height="750" as="geometry" />
+        <mxCell id="implemented-header" value="IMPLEMENTED DATABASE FOUNDATION" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#1e293b;fontColor=#ffffff;fontStyle=1;fontSize=20;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="1550" height="52" as="geometry" />
         </mxCell>
 
-        <mxCell id="users" value="users" style="swimlane;html=1;startSize=30;rounded=0;fontStyle=1;fontSize=13;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="database-frame">
-          <mxGeometry x="70" y="140" width="330" height="320" as="geometry" />
+        <mxCell id="identity-area" value="IDENTITY AND ACCESS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#9673a6;fontStyle=1;fontSize=15;align=center;verticalAlign=middle;opacity=65;" vertex="1" parent="1">
+          <mxGeometry x="75" y="235" width="400" height="38" as="geometry" />
         </mxCell>
-        <mxCell id="users-fields" value="PK  id: serial int&lt;br&gt;&lt;br&gt;role: user_role&lt;br&gt;name: text&lt;br&gt;email: text unique&lt;br&gt;title: text&lt;br&gt;avatar_url: text nullable&lt;br&gt;password_hash: text&lt;br&gt;is_active: boolean&lt;br&gt;must_change_password: boolean&lt;br&gt;created_at: timestamp&lt;br&gt;updated_at: timestamp" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacing=10;fontSize=12;fontColor=#111827;" vertex="1" parent="users">
-          <mxGeometry y="30" width="330" height="290" as="geometry" />
-        </mxCell>
-
-        <mxCell id="roles-note" value="Current roles&lt;br&gt;&lt;br&gt;ADMIN&lt;br&gt;ADMINISTRATION&lt;br&gt;PRODUCTION_MANAGER&lt;br&gt;WORKER&lt;br&gt;&lt;br&gt;Role controls permissions. Job title stays in users.title." style="rounded=0;whiteSpace=wrap;html=1;fontSize=13;align=left;verticalAlign=top;fillColor=#f3e8ff;strokeColor=#9673a6;fontColor=#111827;spacing=12;" vertex="1" parent="database-frame">
-          <mxGeometry x="70" y="510" width="330" height="220" as="geometry" />
+        <mxCell id="workflow-area" value="ORDER WORKFLOW" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#6c8ebf;fontStyle=1;fontSize=15;align=center;verticalAlign=middle;opacity=65;" vertex="1" parent="1">
+          <mxGeometry x="540" y="235" width="1010" height="38" as="geometry" />
         </mxCell>
 
-        <mxCell id="orders" value="orders" style="swimlane;html=1;startSize=30;rounded=0;fontStyle=1;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="database-frame">
-          <mxGeometry x="560" y="120" width="330" height="280" as="geometry" />
+        <mxCell id="users" value="users" style="swimlane;html=1;startSize=34;rounded=0;fontStyle=1;fontSize=14;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="95" y="305" width="350" height="410" as="geometry" />
         </mxCell>
-        <mxCell id="orders-fields" value="PK  id: serial int&lt;br&gt;&lt;br&gt;order_number: text unique&lt;br&gt;project_name: text&lt;br&gt;production_notes: text&lt;br&gt;deadline: timestamp&lt;br&gt;status: order_status&lt;br&gt;created_at: timestamp&lt;br&gt;updated_at: timestamp&lt;br&gt;&lt;br&gt;Next: created_by_user_id" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacing=10;fontSize=12;fontColor=#111827;" vertex="1" parent="orders">
-          <mxGeometry y="30" width="330" height="250" as="geometry" />
-        </mxCell>
-
-        <mxCell id="order-items" value="order_items" style="swimlane;html=1;startSize=30;rounded=0;fontStyle=1;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="database-frame">
-          <mxGeometry x="560" y="500" width="330" height="250" as="geometry" />
-        </mxCell>
-        <mxCell id="order-items-fields" value="PK  id: serial int&lt;br&gt;FK  order_id: int&lt;br&gt;&lt;br&gt;name: text&lt;br&gt;quantity: int&lt;br&gt;unit: unit_type&lt;br&gt;material_type: material_type&lt;br&gt;thickness_mm: int" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacing=10;fontSize=12;fontColor=#111827;" vertex="1" parent="order-items">
-          <mxGeometry y="30" width="330" height="220" as="geometry" />
+        <mxCell id="users-fields" value="PK  id: serial int&lt;br&gt;&lt;br&gt;role: user_role&lt;br&gt;name: text&lt;br&gt;email: text unique&lt;br&gt;title: text&lt;br&gt;avatar_url: text nullable&lt;br&gt;password_hash: text&lt;br&gt;is_active: boolean&lt;br&gt;must_change_password: boolean&lt;br&gt;birth_date: date nullable&lt;br&gt;created_at: timestamp&lt;br&gt;updated_at: timestamp" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacing=12;fontSize=13;fontColor=#111827;" vertex="1" parent="users">
+          <mxGeometry y="34" width="350" height="376" as="geometry" />
         </mxCell>
 
-        <mxCell id="status-history" value="order_status_history" style="swimlane;html=1;startSize=30;rounded=0;fontStyle=1;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="database-frame">
-          <mxGeometry x="990" y="250" width="330" height="240" as="geometry" />
-        </mxCell>
-        <mxCell id="status-history-fields" value="PK  id: serial int&lt;br&gt;FK  order_id: int&lt;br&gt;&lt;br&gt;from_status: order_status&lt;br&gt;to_status: order_status&lt;br&gt;changed_at: timestamp&lt;br&gt;&lt;br&gt;Next: changed_by_user_id" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacing=10;fontSize=12;fontColor=#111827;" vertex="1" parent="status-history">
-          <mxGeometry y="30" width="330" height="210" as="geometry" />
+        <mxCell id="roles-note" value="CURRENT ROLES&lt;br&gt;&lt;br&gt;ADMIN&lt;br&gt;ADMINISTRATION&lt;br&gt;PRODUCTION_MANAGER&lt;br&gt;WORKER&lt;br&gt;&lt;br&gt;Role controls permissions. Job title remains a separate users.title value." style="rounded=0;whiteSpace=wrap;html=1;fontSize=13;align=left;verticalAlign=top;fillColor=#faf5ff;strokeColor=#9673a6;fontColor=#111827;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="95" y="765" width="350" height="235" as="geometry" />
         </mxCell>
 
-        <mxCell id="order-number-counters" value="order_number_counters" style="swimlane;html=1;startSize=30;rounded=0;fontStyle=1;fontSize=13;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="database-frame">
-          <mxGeometry x="1470" y="130" width="320" height="150" as="geometry" />
-        </mxCell>
-        <mxCell id="order-number-counters-fields" value="PK  year: int&lt;br&gt;next_number: int&lt;br&gt;&lt;br&gt;Used inside a transaction to reserve RF-YYYY-### order numbers." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacing=10;fontSize=12;fontColor=#111827;" vertex="1" parent="order-number-counters">
-          <mxGeometry y="30" width="320" height="120" as="geometry" />
+        <mxCell id="enum-note" value="POSTGRESQL ENUMS&lt;br&gt;&lt;br&gt;user_role&lt;br&gt;order_status&lt;br&gt;material_type&lt;br&gt;unit_type" style="rounded=0;whiteSpace=wrap;html=1;fontSize=13;align=left;verticalAlign=top;fillColor=#fff7d6;strokeColor=#d6b656;fontColor=#111827;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="95" y="1040" width="350" height="145" as="geometry" />
         </mxCell>
 
-        <mxCell id="enum-note" value="Enums and shared constants&lt;br&gt;&lt;br&gt;user_role&lt;br&gt;order_status&lt;br&gt;material_type&lt;br&gt;unit_type&lt;br&gt;&lt;br&gt;Defined once in TypeScript constants and reused by Drizzle." style="rounded=0;whiteSpace=wrap;html=1;fontSize=13;align=left;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#111827;spacing=12;" vertex="1" parent="database-frame">
-          <mxGeometry x="1470" y="330" width="320" height="220" as="geometry" />
+        <mxCell id="orders" value="orders" style="swimlane;html=1;startSize=34;rounded=0;fontStyle=1;fontSize=14;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="600" y="305" width="390" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="orders-fields" value="PK  id: serial int&lt;br&gt;FK  created_by_user_id: int -&gt; users.id&lt;br&gt;&lt;br&gt;order_number: text unique&lt;br&gt;project_name: text&lt;br&gt;production_notes: text&lt;br&gt;deadline: timestamp&lt;br&gt;status: order_status&lt;br&gt;created_at: timestamp&lt;br&gt;updated_at: timestamp" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacing=12;fontSize=13;fontColor=#111827;" vertex="1" parent="orders">
+          <mxGeometry y="34" width="390" height="306" as="geometry" />
         </mxCell>
 
-        <mxCell id="future-note" value="Next database growth&lt;br&gt;&lt;br&gt;1. created_by_user_id on orders&lt;br&gt;2. changed_by_user_id on status history&lt;br&gt;3. item editing history or audit fields&lt;br&gt;4. attachment metadata, not PostgreSQL blobs&lt;br&gt;5. warehouse stock movements later" style="rounded=0;whiteSpace=wrap;html=1;fontSize=13;align=left;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#111827;spacing=12;" vertex="1" parent="database-frame">
-          <mxGeometry x="1470" y="600" width="400" height="200" as="geometry" />
+        <mxCell id="order-items" value="order_items" style="swimlane;html=1;startSize=34;rounded=0;fontStyle=1;fontSize=14;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="600" y="780" width="390" height="275" as="geometry" />
+        </mxCell>
+        <mxCell id="order-items-fields" value="PK  id: serial int&lt;br&gt;FK  order_id: int -&gt; orders.id&lt;br&gt;&lt;br&gt;name: text&lt;br&gt;quantity: int&lt;br&gt;unit: unit_type&lt;br&gt;material_type: material_type&lt;br&gt;thickness_mm: int" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacing=12;fontSize=13;fontColor=#111827;" vertex="1" parent="order-items">
+          <mxGeometry y="34" width="390" height="241" as="geometry" />
         </mxCell>
 
-        <mxCell id="orders-items-edge" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#334155;" edge="1" parent="database-frame" source="orders" target="order-items">
+        <mxCell id="status-history" value="order_status_history" style="swimlane;html=1;startSize=34;rounded=0;fontStyle=1;fontSize=14;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1135" y="305" width="385" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="status-history-fields" value="PK  id: serial int&lt;br&gt;FK  order_id: int -&gt; orders.id&lt;br&gt;&lt;br&gt;from_status: order_status&lt;br&gt;to_status: order_status&lt;br&gt;changed_at: timestamp" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacing=12;fontSize=13;fontColor=#111827;" vertex="1" parent="status-history">
+          <mxGeometry y="34" width="385" height="206" as="geometry" />
+        </mxCell>
+
+        <mxCell id="order-number-counters" value="order_number_counters" style="swimlane;html=1;startSize=34;rounded=0;fontStyle=1;fontSize=14;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1135" y="700" width="385" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="order-number-counters-fields" value="PK  year: int&lt;br&gt;next_number: int&lt;br&gt;&lt;br&gt;Transaction-safe yearly sequence for RF-YYYY-### order numbers." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacing=12;fontSize=13;fontColor=#111827;" vertex="1" parent="order-number-counters">
+          <mxGeometry y="34" width="385" height="146" as="geometry" />
+        </mxCell>
+
+        <mxCell id="implementation-note" value="IMPLEMENTED BEHAVIOR&lt;br&gt;&lt;br&gt;- Database-backed current user and role checks&lt;br&gt;- Order creator tracking&lt;br&gt;- Order item add, edit, and remove flows&lt;br&gt;- Status updates with history&lt;br&gt;- Transaction-safe yearly numbering&lt;br&gt;&lt;br&gt;Application rules may be stricter than FK cardinality: creating an order requires at least one item." style="rounded=0;whiteSpace=wrap;html=1;fontSize=13;align=left;verticalAlign=top;fillColor=#f0fdf4;strokeColor=#82b366;fontColor=#111827;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1135" y="930" width="385" height="245" as="geometry" />
+        </mxCell>
+
+        <mxCell id="users-orders-edge" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#475569;strokeWidth=2;exitX=1;exitY=0.35;entryX=0;entryY=0.35;" edge="1" parent="1" source="users" target="orders">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="orders-history-edge" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#334155;" edge="1" parent="database-frame" source="orders" target="status-history">
+        <mxCell id="orders-history-edge" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#475569;strokeWidth=2;exitX=1;exitY=0.35;entryX=0;entryY=0.35;" edge="1" parent="1" source="orders" target="status-history">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="future-users-orders-edge" value="next" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#9673a6;dashed=1;fontSize=12;fontColor=#6b21a8;" edge="1" parent="database-frame" source="users" target="orders">
+        <mxCell id="orders-items-edge" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#475569;strokeWidth=2;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="orders" target="order-items">
           <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="future-users-history-edge" value="next" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#9673a6;dashed=1;fontSize=12;fontColor=#6b21a8;" edge="1" parent="database-frame" source="users" target="status-history">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="420" y="730" />
-              <mxPoint x="1160" y="730" />
-            </Array>
-          </mxGeometry>
         </mxCell>
 
-        <mxCell id="card-orders-items-1" value="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=12;fontColor=#111827;" vertex="1" parent="database-frame">
-          <mxGeometry x="720" y="410" width="30" height="20" as="geometry" />
+        <mxCell id="card-users-orders-one" value="1" style="text;html=1;strokeColor=none;fillColor=#f8fafc;align=center;fontStyle=1;fontSize=13;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="470" y="410" width="28" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="card-orders-items-many" value="1..*" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=12;fontColor=#111827;" vertex="1" parent="database-frame">
-          <mxGeometry x="720" y="470" width="40" height="20" as="geometry" />
+        <mxCell id="card-users-orders-many" value="0..*" style="text;html=1;strokeColor=none;fillColor=#f8fafc;align=center;fontStyle=1;fontSize=13;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="550" y="410" width="42" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="card-orders-history-1" value="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=12;fontColor=#111827;" vertex="1" parent="database-frame">
-          <mxGeometry x="905" y="295" width="30" height="20" as="geometry" />
+        <mxCell id="card-orders-history-one" value="1" style="text;html=1;strokeColor=none;fillColor=#f8fafc;align=center;fontStyle=1;fontSize=13;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="410" width="28" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="card-orders-history-many" value="0..*" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=12;fontColor=#111827;" vertex="1" parent="database-frame">
-          <mxGeometry x="945" y="295" width="45" height="20" as="geometry" />
+        <mxCell id="card-orders-history-many" value="0..*" style="text;html=1;strokeColor=none;fillColor=#f8fafc;align=center;fontStyle=1;fontSize=13;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="410" width="42" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="card-orders-items-one" value="1" style="text;html=1;strokeColor=none;fillColor=#f8fafc;align=center;fontStyle=1;fontSize=13;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="800" y="665" width="28" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="card-orders-items-many" value="0..*" style="text;html=1;strokeColor=none;fillColor=#f8fafc;align=center;fontStyle=1;fontSize=13;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="795" y="745" width="42" height="22" as="geometry" />
+        </mxCell>
+
+        <mxCell id="future-frame" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fffbeb;strokeColor=#d6b656;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="160" width="770" height="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="future-header" value="PLANNED GROWTH - NOT CURRENT TABLES" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#854d0e;strokeColor=#854d0e;fontColor=#ffffff;fontStyle=1;fontSize=20;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="160" width="770" height="52" as="geometry" />
+        </mxCell>
+
+        <mxCell id="schema-growth-note" value="NEXT SCHEMA INCREMENTS&lt;br&gt;&lt;br&gt;1. changed_by_user_id on order_status_history&lt;br&gt;2. audit events with actor, time, entity, and before/after values&lt;br&gt;3. order_attachments metadata with protected external storage references&lt;br&gt;4. material stock movements rather than one mutable balance&lt;br&gt;&lt;br&gt;Each increment requires a concrete workflow and migration before it becomes part of the implemented ERD." style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=left;verticalAlign=top;fillColor=#fff7d6;strokeColor=#d6b656;fontColor=#111827;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="1685" y="255" width="680" height="285" as="geometry" />
+        </mxCell>
+
+        <mxCell id="spreadsheet-note" value="SPREADSHEET-ASSISTED ORDER DRAFT&lt;br&gt;&lt;br&gt;- Read supported .xlsx rows into the existing client-side item draft&lt;br&gt;- Detect headers, normalize values, and show row-level preview errors&lt;br&gt;- Ignore prices, formulas, and formatted blank rows&lt;br&gt;- Validate all confirmed items again in the existing Server Action&lt;br&gt;- Do not retain the source workbook or add an import table in the first version&lt;br&gt;&lt;br&gt;This is a workflow extension, not a current database entity." style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=left;verticalAlign=top;fillColor=#eff6ff;strokeColor=#6c8ebf;fontColor=#111827;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="1685" y="580" width="680" height="285" as="geometry" />
+        </mxCell>
+
+        <mxCell id="diagram-roadmap-note" value="LIVING DIAGRAM SET&lt;br&gt;&lt;br&gt;- ERD: tables, fields, keys, and cardinalities&lt;br&gt;- Use Case: role capabilities and system boundaries&lt;br&gt;- Activity: manual and spreadsheet-assisted order creation&lt;br&gt;- Domain/Class: stable business concepts and responsibilities&lt;br&gt;- Deployment: approved infrastructure when a real pilot exists&lt;br&gt;&lt;br&gt;Keep each diagram focused. src/db/schema.ts remains the source of truth for implemented database structure." style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=left;verticalAlign=top;fillColor=#faf5ff;strokeColor=#9673a6;fontColor=#111827;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="1685" y="905" width="680" height="285" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
