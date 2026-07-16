@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ss:Workbook xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:x="urn:schemas-microsoft-com:office:excel">
+ <o:DocumentProperties>
+  <o:Version>16.00</o:Version>
+ </o:DocumentProperties>
+ <o:OfficeDocumentSettings>
+  <o:AllowPNG />
+ </o:OfficeDocumentSettings>
+ <x:ExcelWorkbook>
+  <x:WindowHeight>6510</x:WindowHeight>
+  <x:WindowWidth>19200</x:WindowWidth>
+  <x:WindowTopX>32767</x:WindowTopX>
+  <x:WindowTopY>32767</x:WindowTopY>
+  <x:ProtectStructure>False</x:ProtectStructure>
+  <x:ProtectWindows>False</x:ProtectWindows>
+ </x:ExcelWorkbook>
+ <ss:Styles>
+  <ss:Style ss:ID="Default" ss:Name="Normal">
+   <ss:Alignment ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Aptos Narrow" x:Family="Swiss" ss:Size="11" ss:Color="#000000" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s62">
+   <ss:Alignment ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s65">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s66">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s68">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Arial" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s69">
+   <ss:Alignment ss:Horizontal="Center" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Arial" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s70">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s71">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0.00" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s72">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s73">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Tahoma" ss:Bold="1" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s74">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior ss:Color="#FFFF00" ss:Pattern="Solid" />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s75">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior ss:Color="#FFFF00" ss:Pattern="Solid" />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s76">
+   <ss:Alignment ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior ss:Color="#FFFF00" ss:Pattern="Solid" />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+ </ss:Styles>
+ <ss:Worksheet ss:Name="Sheet">
+  <ss:Table ss:ExpandedColumnCount="11" ss:ExpandedRowCount="46" x:FullColumns="1" x:FullRows="1" ss:StyleID="s62" ss:DefaultRowHeight="14.25">
+   <ss:Column ss:StyleID="s62" ss:Width="48.5" />
+   <ss:Column ss:Index="3" ss:StyleID="s62" ss:AutoFitWidth="0" ss:Width="128" />
+   <ss:Column ss:StyleID="s62" ss:Width="59.5" />
+   <ss:Column ss:Index="7" ss:StyleID="s62" ss:Width="48.5" ss:Span="4" />
+   <ss:Row ss:AutoFitHeight="0" />
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s69"><ss:Data ss:Type="String">Eil. Nr.</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s69"><ss:Data ss:Type="String">Mato  vien.</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="9" ss:StyleID="s69" />
+    <ss:Cell ss:StyleID="s69" />
+    <ss:Cell ss:StyleID="s69" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="2" ss:StyleID="s68"><ss:Data ss:Type="String">Prekės (paslaugos) pavadinimas</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="5" ss:StyleID="s68"><ss:Data ss:Type="String">Kodas</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="7" ss:StyleID="s68"><ss:Data ss:Type="String">Kiekis</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s68" />
+   </ss:Row>
+   <ss:Row ss:Index="6" ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="8" ss:StyleID="s68" />
+    <ss:Cell ss:Index="10" ss:StyleID="s68" />
+    <ss:Cell ss:StyleID="s68" />
+   </ss:Row>
+   <ss:Row ss:Index="8" ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s74"><ss:Data ss:Type="Number">1</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s75"><ss:Data ss:Type="String">Bandomoji alkūnė PE DN500x90</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s76" />
+    <ss:Cell ss:StyleID="s75"><ss:Data ss:Type="String">DEMO-PE-001</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s76" />
+    <ss:Cell ss:StyleID="s75"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s74"><ss:Data ss:Type="Number">4</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s71" />
+    <ss:Cell ss:Index="10" ss:StyleID="s71" />
+    <ss:Cell ss:StyleID="s71" />
+   </ss:Row>
+   <ss:Row ss:Index="10" ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">2</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis ortakis PE DN500</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s72"><ss:Data ss:Type="String">90000002</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">m.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">18</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s71" />
+    <ss:Cell ss:Index="10" ss:StyleID="s71" />
+    <ss:Cell ss:StyleID="s71" />
+   </ss:Row>
+   <ss:Row ss:Index="12" ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s74"><ss:Data ss:Type="Number">3</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s75"><ss:Data ss:Type="String">Bandomoji alkūnė PE DN500x45</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s76" />
+    <ss:Cell ss:StyleID="s75"><ss:Data ss:Type="String">DEMO-PE-003</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s76" />
+    <ss:Cell ss:StyleID="s75"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s74"><ss:Data ss:Type="Number">3</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s71" />
+    <ss:Cell ss:Index="10" ss:StyleID="s71" />
+    <ss:Cell ss:StyleID="s71" />
+   </ss:Row>
+   <ss:Row ss:Index="14" ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">4</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomoji dviguba mova PP DN500</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s72"><ss:Data ss:Type="String">90000004</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">8</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s71" />
+    <ss:Cell ss:Index="10" ss:StyleID="s71" />
+    <ss:Cell ss:StyleID="s71" />
+   </ss:Row>
+   <ss:Row ss:Index="16" ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">5</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis vamzdis PE d200x6.0x4000</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s72"><ss:Data ss:Type="String">DEMO-PE-005</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">m.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">12</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s71" />
+    <ss:Cell ss:Index="10" ss:StyleID="s71" />
+    <ss:Cell ss:StyleID="s71" />
+   </ss:Row>
+   <ss:Row ss:Index="18" ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">6</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomoji alkūnė PE d200x90 su movomis</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s72"><ss:Data ss:Type="String">90000006</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">2</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s71" />
+    <ss:Cell ss:Index="10" ss:StyleID="s71" />
+    <ss:Cell ss:StyleID="s71" />
+   </ss:Row>
+   <ss:Row ss:Index="20" ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">7</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomoji alkūnė PE d200x45 su movomis</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s72"><ss:Data ss:Type="String">DEMO-PE-007</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">5</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s71" />
+    <ss:Cell ss:Index="10" ss:StyleID="s71" />
+    <ss:Cell ss:StyleID="s71" />
+   </ss:Row>
+   <ss:Row ss:Index="22" ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="6" ss:StyleID="s66" />
+    <ss:Cell ss:StyleID="s70" />
+    <ss:Cell ss:Index="9" ss:StyleID="s71" />
+    <ss:Cell ss:Index="11" ss:StyleID="s66" />
+   </ss:Row>
+   <ss:Row ss:Index="24" ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="6" ss:StyleID="s65" />
+    <ss:Cell ss:Index="9" ss:StyleID="s71" />
+    <ss:Cell ss:Index="11" ss:StyleID="s66" />
+   </ss:Row>
+   <ss:Row ss:Index="26" ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="6" ss:StyleID="s65" />
+    <ss:Cell ss:Index="9" ss:StyleID="s71" />
+    <ss:Cell ss:Index="11" ss:StyleID="s66" />
+   </ss:Row>
+   <ss:Row ss:Index="28" ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s68" />
+    <ss:Cell ss:Index="3" ss:StyleID="s68" />
+   </ss:Row>
+   <ss:Row ss:Index="32" ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s68" />
+    <ss:Cell ss:Index="3" ss:StyleID="s68" />
+   </ss:Row>
+   <ss:Row ss:Index="34" ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s73" />
+   </ss:Row>
+   <ss:Row ss:Index="46" ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s73" />
+   </ss:Row>
+  </ss:Table>
+  <x:WorksheetOptions>
+   <x:Unsynced />
+   <x:Selected />
+   <x:Panes>
+    <x:Pane>
+     <x:Number>3</x:Number>
+     <x:ActiveRow>6</x:ActiveRow>
+     <x:ActiveCol>10</x:ActiveCol>
+    </x:Pane>
+   </x:Panes>
+   <x:ProtectObjects>False</x:ProtectObjects>
+   <x:ProtectScenarios>False</x:ProtectScenarios>
+  </x:WorksheetOptions>
+ </ss:Worksheet>
+</ss:Workbook>

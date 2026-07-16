@@ -1,0 +1,796 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ss:Workbook xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:x="urn:schemas-microsoft-com:office:excel">
+ <o:DocumentProperties>
+  <o:Version>16.00</o:Version>
+ </o:DocumentProperties>
+ <o:OfficeDocumentSettings>
+  <o:AllowPNG />
+ </o:OfficeDocumentSettings>
+ <x:ExcelWorkbook>
+  <x:WindowHeight>3570</x:WindowHeight>
+  <x:WindowWidth>14180</x:WindowWidth>
+  <x:WindowTopX>32767</x:WindowTopX>
+  <x:WindowTopY>32767</x:WindowTopY>
+  <x:ProtectStructure>False</x:ProtectStructure>
+  <x:ProtectWindows>False</x:ProtectWindows>
+ </x:ExcelWorkbook>
+ <ss:Styles>
+  <ss:Style ss:ID="Default" ss:Name="Normal">
+   <ss:Alignment ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Aptos Narrow" x:Family="Swiss" ss:Size="11" ss:Color="#000000" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="m1585940146160">
+   <ss:Alignment ss:Horizontal="Center" ss:Vertical="Bottom" ss:Rotate="90" ss:WrapText="1" />
+   <ss:Borders>
+    <ss:Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" />
+    <ss:Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" />
+    <ss:Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" x:CharSet="186" x:Family="Roman" ss:Bold="1" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0.00" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s62">
+   <ss:Alignment ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s65">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s66">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s68">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Arial" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s69">
+   <ss:Alignment ss:Horizontal="Center" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Arial" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s70">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s71">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s72">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0.00" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s73">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Tahoma" ss:Bold="1" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s75">
+   <ss:Alignment ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" x:CharSet="186" x:Family="Roman" ss:Size="20" ss:Bold="1" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s89">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders>
+    <ss:Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" />
+    <ss:Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s90">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders>
+    <ss:Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s91">
+   <ss:Alignment ss:Vertical="Bottom" />
+   <ss:Borders>
+    <ss:Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s92">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders>
+    <ss:Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s93">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders>
+    <ss:Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s95">
+   <ss:Alignment ss:Vertical="Bottom" />
+   <ss:Borders>
+    <ss:Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s97">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders>
+    <ss:Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s98">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders>
+    <ss:Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" />
+    <ss:Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s99">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders>
+    <ss:Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s100">
+   <ss:Alignment ss:Vertical="Bottom" />
+   <ss:Borders>
+    <ss:Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s101">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders>
+    <ss:Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s102">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders>
+    <ss:Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" />
+   </ss:Borders>
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s104">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior ss:Color="#FFFFFF" ss:Pattern="Solid" />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s105">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior ss:Color="#FFFFFF" ss:Pattern="Solid" />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s106">
+   <ss:Alignment ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior ss:Color="#FFFFFF" ss:Pattern="Solid" />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s107">
+   <ss:Alignment ss:Horizontal="Left" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior ss:Color="#FFFFFF" ss:Pattern="Solid" />
+   <ss:NumberFormat ss:Format="########0" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s108">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" />
+   <ss:Interior ss:Color="#FFFFFF" ss:Pattern="Solid" />
+   <ss:NumberFormat ss:Format="########0.00" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s110">
+   <ss:Alignment ss:Horizontal="Right" ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" x:CharSet="186" x:Family="Roman" ss:Bold="1" />
+   <ss:Interior />
+   <ss:NumberFormat ss:Format="########0.00" />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s111">
+   <ss:Alignment ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" x:CharSet="186" x:Family="Roman" />
+   <ss:Interior />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+  <ss:Style ss:ID="s112">
+   <ss:Alignment ss:Vertical="Bottom" />
+   <ss:Borders />
+   <ss:Font ss:FontName="Times New Roman" x:CharSet="186" x:Family="Roman" />
+   <ss:Interior ss:Color="#FFFFFF" ss:Pattern="Solid" />
+   <ss:NumberFormat />
+   <ss:Protection />
+  </ss:Style>
+ </ss:Styles>
+ <ss:Worksheet ss:Name="Sheet">
+  <ss:Table ss:ExpandedColumnCount="11" ss:ExpandedRowCount="97" x:FullColumns="1" x:FullRows="1" ss:StyleID="s62" ss:DefaultRowHeight="14.25">
+   <ss:Column ss:StyleID="s62" ss:Width="48.5" />
+   <ss:Column ss:Index="3" ss:StyleID="s62" ss:AutoFitWidth="0" ss:Width="97" />
+   <ss:Column ss:StyleID="s62" ss:Width="59.5" />
+   <ss:Column ss:Index="7" ss:StyleID="s62" ss:Width="48.5" />
+   <ss:Column ss:StyleID="s62" ss:AutoFitWidth="0" ss:Width="125" />
+   <ss:Column ss:StyleID="s62" ss:Width="48.5" ss:Span="2" />
+   <ss:Row ss:AutoFitHeight="0" ss:Height="36.5">
+    <ss:Cell ss:Index="3" ss:StyleID="s75"><ss:Data ss:Type="String">Gaminti</ss:Data></ss:Cell>
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s69"><ss:Data ss:Type="String">Eil. Nr.</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s69"><ss:Data ss:Type="String">Mato  vien.</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="9" ss:StyleID="s69" />
+    <ss:Cell ss:StyleID="s69" />
+    <ss:Cell ss:StyleID="s69" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="2" ss:StyleID="s68"><ss:Data ss:Type="String">Prekės (paslaugos) pavadinimas</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="5" ss:StyleID="s68"><ss:Data ss:Type="String">Kodas</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="7" ss:StyleID="s68"><ss:Data ss:Type="String">Kiekis</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s68" />
+   </ss:Row>
+   <ss:Row ss:Index="5" ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">14</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomoji alkūnė PPS d560x90</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">DEMO-PPS-014</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">5</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0" ss:StyleID="s106">
+    <ss:Cell ss:StyleID="s104"><ss:Data ss:Type="Number">20</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s105"><ss:Data ss:Type="String">Bandomasis perėjimas PPS d180/355</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s105"><ss:Data ss:Type="String">92000020</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s105"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s104"><ss:Data ss:Type="Number">2</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s108" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0" ss:StyleID="s106">
+    <ss:Cell ss:StyleID="s104"><ss:Data ss:Type="Number">22</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s105"><ss:Data ss:Type="String">Bandomasis perėjimas PPS d355/450</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s107"><ss:Data ss:Type="String">DEMO-PPS-022</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s105"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s104"><ss:Data ss:Type="Number">3</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s108" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">23</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis perėjimas PPS d450/560</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">92000023</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">4</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s89"><ss:Data ss:Type="Number">25</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s90"><ss:Data ss:Type="String">Bandomasis balnas PPS d100x90</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s91" />
+    <ss:Cell ss:StyleID="s92"><ss:Data ss:Type="String">DEMO-PPS-025</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s91" />
+    <ss:Cell ss:StyleID="s90"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s93"><ss:Data ss:Type="Number">16</ss:Data></ss:Cell>
+    <ss:Cell ss:MergeDown="10" ss:StyleID="m1585940146160"><ss:Data ss:Type="String">Sintetinė bendra gamybos pastaba kelioms pozicijoms</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s111"><ss:Data ss:Type="String">ant d180 - 5 vnt., d140 - 8 vnt., d280 - 3 vnt.</ss:Data></ss:Cell>
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s95" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s97"><ss:Data ss:Type="Number">27</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis balnas PPS d120x90</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">92000027</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">7</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="9" ss:StyleID="s111"><ss:Data ss:Type="String">ant d280 - 3 vnt., d180 - 2 vnt., d450 - 2 vnt.</ss:Data></ss:Cell>
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s95" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s97"><ss:Data ss:Type="Number">28</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis balnas PPS d150x90</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">DEMO-PPS-028</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">11</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="9" ss:StyleID="s111"><ss:Data ss:Type="String">ant d560 - 2 vnt., d450 - 3 vnt., d280 - 6 vnt.</ss:Data></ss:Cell>
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s95" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s97"><ss:Data ss:Type="Number">29</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis balnas PPS d180x90</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">92000029</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">9</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="9" ss:StyleID="s111"><ss:Data ss:Type="String">ant d355 - 3 vnt., d450 - 4 vnt., d280 - 2 vnt.</ss:Data></ss:Cell>
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s95" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s97"><ss:Data ss:Type="Number">30</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis balnas PPS d225x90</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">DEMO-PPS-030</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">14</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="9" ss:StyleID="s111"><ss:Data ss:Type="String">ant d355 - 6 vnt., d280 - 5 vnt., d450 - 3 vnt.</ss:Data></ss:Cell>
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s95" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s98"><ss:Data ss:Type="Number">31</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s99"><ss:Data ss:Type="String">Bandomasis balnas PP d280x90</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s100" />
+    <ss:Cell ss:StyleID="s101"><ss:Data ss:Type="String">92000031</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s100" />
+    <ss:Cell ss:StyleID="s99"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s102"><ss:Data ss:Type="Number">8</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="9" ss:StyleID="s111"><ss:Data ss:Type="String">ant d355 - 3 vnt., d450 - 5 vnt.</ss:Data></ss:Cell>
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">32</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis balnas PPS d450x90</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">DEMO-PPS-032</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">3</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s111"><ss:Data ss:Type="String">ant d560 - 3 vnt.</ss:Data></ss:Cell>
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">34</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis ortakis PPS d355</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">92000034</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">m</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">19</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">35</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis ortakis PPS d450</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">DEMO-PPS-035</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">m</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">24</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">36</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis ortakis PPS d560</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">92000036</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">m</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">6</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70" />
+    <ss:Cell ss:StyleID="s66" />
+    <ss:Cell ss:Index="4" ss:StyleID="s71" />
+    <ss:Cell ss:Index="6" ss:StyleID="s66" />
+    <ss:Cell ss:StyleID="s70" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">41</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomoji alkūnė PPS d450x45</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">DEMO-PPS-041</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">2</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s108" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70" />
+    <ss:Cell ss:StyleID="s66" />
+    <ss:Cell ss:Index="4" ss:StyleID="s71" />
+    <ss:Cell ss:Index="6" ss:StyleID="s66" />
+    <ss:Cell ss:StyleID="s70" />
+    <ss:Cell ss:StyleID="s72" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">46</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis perėjimas PPS d280/450</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">92000046</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">3</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">47</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis perėjimas PPS d140/450</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s66"><ss:Data ss:Type="String">DEMO-PPS-047</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">2</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s72" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">48</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis perėjimas PPS d225/355</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">92000048</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">4</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s110"><ss:Data ss:Type="String">Sintetinė vienos pozicijos gamybos pastaba</ss:Data></ss:Cell>
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">50</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s66"><ss:Data ss:Type="String">Bandomasis balnas PPS d355x90</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="4" ss:StyleID="s71"><ss:Data ss:Type="String">DEMO-PPS-050</ss:Data></ss:Cell>
+    <ss:Cell ss:Index="6" ss:StyleID="s66"><ss:Data ss:Type="String">vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s70"><ss:Data ss:Type="Number">2</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s112"><ss:Data ss:Type="String">ant d450 - 2 vnt.</ss:Data></ss:Cell>
+    <ss:Cell ss:StyleID="s108" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70" />
+    <ss:Cell ss:StyleID="s66" />
+    <ss:Cell ss:Index="4" ss:StyleID="s71" />
+    <ss:Cell ss:Index="6" ss:StyleID="s66" />
+    <ss:Cell ss:StyleID="s70" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0" ss:StyleID="s106">
+    <ss:Cell ss:StyleID="s70" />
+    <ss:Cell ss:StyleID="s66" />
+    <ss:Cell ss:StyleID="s62" />
+    <ss:Cell ss:StyleID="s71" />
+    <ss:Cell ss:StyleID="s62" />
+    <ss:Cell ss:StyleID="s66" />
+    <ss:Cell ss:StyleID="s70" />
+    <ss:Cell ss:StyleID="s72" />
+    <ss:Cell ss:Index="10" ss:StyleID="s108" />
+    <ss:Cell ss:StyleID="s108" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s70" />
+    <ss:Cell ss:StyleID="s66" />
+    <ss:Cell ss:Index="4" ss:StyleID="s71" />
+    <ss:Cell ss:Index="6" ss:StyleID="s66" />
+    <ss:Cell ss:StyleID="s70" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="6" ss:StyleID="s66" />
+    <ss:Cell ss:Index="8" ss:StyleID="s72" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="7" ss:StyleID="s70" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="6" ss:StyleID="s65" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="6" ss:StyleID="s65" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s68" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="3" ss:StyleID="s68" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s68" />
+    <ss:Cell ss:Index="3" ss:StyleID="s68" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s73" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:StyleID="s73" />
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:Index="54" ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:Index="56" ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:Index="58" ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="9" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="9" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="9" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:Index="62" ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:Index="64" ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="10" ss:StyleID="s72" />
+    <ss:Cell ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s72" />
+   </ss:Row>
+   <ss:Row ss:Index="95" ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s66" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s66" />
+   </ss:Row>
+   <ss:Row ss:AutoFitHeight="0">
+    <ss:Cell ss:Index="11" ss:StyleID="s66" />
+   </ss:Row>
+  </ss:Table>
+  <x:WorksheetOptions>
+   <x:Unsynced />
+   <x:Selected />
+   <x:TopRowVisible>4</x:TopRowVisible>
+   <x:Panes>
+    <x:Pane>
+     <x:Number>3</x:Number>
+     <x:ActiveRow>40</x:ActiveRow>
+     <x:ActiveCol>8</x:ActiveCol>
+    </x:Pane>
+   </x:Panes>
+   <x:ProtectObjects>False</x:ProtectObjects>
+   <x:ProtectScenarios>False</x:ProtectScenarios>
+  </x:WorksheetOptions>
+ </ss:Worksheet>
+</ss:Workbook>
