@@ -8,6 +8,11 @@ import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
+export type SetUserActiveState = {
+  success: boolean;
+  error: string | null;
+};
+
 export type UpdateUserState = {
   success: boolean;
   error: string | null;
@@ -166,6 +171,75 @@ export async function updateUser(
   revalidatePath(`/admin/users/${userId}`);
   revalidatePath("/");
   revalidatePath("/account");
+
+  return {
+    success: true,
+    error: null,
+  };
+}
+
+export async function setUserActiveState(
+  _previousState: SetUserActiveState,
+  formData: FormData,
+): Promise<SetUserActiveState> {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    throw new Error("You must be signed in to update users.");
+  }
+
+  if (!canManageUsers(currentUser.role)) {
+    throw new Error("You are not allowed to manage users.");
+  }
+
+  const userId = Number(String(formData.get("userId") ?? ""));
+
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return {
+      success: false,
+      error: "User ID is invalid.",
+    };
+  }
+
+  const isActiveValue = String(formData.get("isActive") ?? "");
+
+  if (isActiveValue !== "true" && isActiveValue !== "false") {
+    return {
+      success: false,
+      error: "Account status is invalid.",
+    };
+  }
+
+  const isActive = isActiveValue === "true";
+
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.id, userId),
+  });
+
+  if (!existingUser) {
+    return {
+      success: false,
+      error: "User was not found.",
+    };
+  }
+
+  if (userId === currentUser.id && !isActive) {
+    return {
+      success: false,
+      error: "You cannot deactivate your own account.",
+    };
+  }
+
+  await db
+    .update(users)
+    .set({
+      isActive,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, userId));
+
+  revalidatePath("/admin/users");
+  revalidatePath(`/admin/users/${userId}`);
 
   return {
     success: true,

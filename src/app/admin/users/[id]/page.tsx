@@ -7,7 +7,8 @@ import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { calculateAge } from "@/lib/date-utils";
 import { AdminUserEditButton } from "@/components/admin-user-edit-button";
-import { updateUser } from "@/app/admin/users/[id]/actions";
+import { AdminUserStatusButton } from "@/components/admin-user-status-button";
+import { updateUser, setUserActiveState } from "@/app/admin/users/[id]/actions";
 
 type AdminUserPageProps = {
   params: Promise<{ id: string }>;
@@ -67,6 +68,17 @@ export default async function AdminUserPage({ params }: AdminUserPageProps) {
           }}
           updateAction={updateUser}
         />
+
+        {selectedUser.id !== currentUser.id && (
+          <AdminUserStatusButton
+            user={{
+              id: selectedUser.id,
+              name: selectedUser.name,
+              isActive: selectedUser.isActive,
+            }}
+            updateAction={setUserActiveState}
+          />
+        )}
       </div>
 
       <p className="mt-2 text-sm text-slate-400">
