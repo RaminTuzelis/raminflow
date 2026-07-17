@@ -15,7 +15,9 @@ export async function changePassword(
   _previousState: ChangePasswordState,
   formData: FormData,
 ): Promise<ChangePasswordState> {
-  const currentUser = await getCurrentUser();
+  const currentUser = await getCurrentUser({
+    allowMustChangePassword: true,
+  });
 
   if (!currentUser) {
     throw new Error("You must be signed in to change your password.");

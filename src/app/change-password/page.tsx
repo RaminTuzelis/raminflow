@@ -4,7 +4,9 @@ import { ChangePasswordForm } from "@/components/change-password-form";
 import Link from "next/link";
 
 export default async function ChangePasswordPage() {
-  const currentUser = await getCurrentUser();
+  const currentUser = await getCurrentUser({
+    allowMustChangePassword: true,
+  });
 
   if (!currentUser) {
     redirect("/login");

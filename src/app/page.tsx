@@ -13,10 +13,6 @@ export default async function Home() {
     redirect("/login");
   }
 
-  if (user.mustChangePassword) {
-    redirect("/change-password");
-  }
-
   const canCreate = canCreateOrder(user.role);
 
   const orders = await getOrders();
