@@ -8,7 +8,12 @@ import Link from "next/link";
 import { calculateAge } from "@/lib/date-utils";
 import { AdminUserEditButton } from "@/components/admin-user-edit-button";
 import { AdminUserStatusButton } from "@/components/admin-user-status-button";
-import { updateUser, setUserActiveState } from "@/app/admin/users/[id]/actions";
+import {
+  updateUser,
+  setUserActiveState,
+  resetUserPassword,
+} from "@/app/admin/users/[id]/actions";
+import { AdminUserPasswordResetButton } from "@/components/admin-user-password-reset-button";
 
 type AdminUserPageProps = {
   params: Promise<{ id: string }>;
@@ -70,14 +75,21 @@ export default async function AdminUserPage({ params }: AdminUserPageProps) {
         />
 
         {selectedUser.id !== currentUser.id && (
-          <AdminUserStatusButton
-            user={{
-              id: selectedUser.id,
-              name: selectedUser.name,
-              isActive: selectedUser.isActive,
-            }}
-            updateAction={setUserActiveState}
-          />
+          <>
+            <AdminUserPasswordResetButton
+              user={{ id: selectedUser.id, name: selectedUser.name }}
+              resetAction={resetUserPassword}
+            />
+
+            <AdminUserStatusButton
+              user={{
+                id: selectedUser.id,
+                name: selectedUser.name,
+                isActive: selectedUser.isActive,
+              }}
+              updateAction={setUserActiveState}
+            />
+          </>
         )}
       </div>
 
