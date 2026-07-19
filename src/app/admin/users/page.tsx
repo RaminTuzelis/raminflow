@@ -5,19 +5,22 @@ import { db } from "@/db/client";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
-import { AdminUserSearch } from "@/components/admin-user-search";
+import { AdminUserFilters } from "@/components/admin-user-filters";
+import { isUserRole, userRoleLabels } from "@/lib/user-options";
 
 type AdminUsersPageProps = {
   searchParams: Promise<{
     q?: string;
+    role?: string;
   }>;
 };
 
 export default async function AdminUsersPage({
   searchParams,
 }: AdminUsersPageProps) {
-  const { q } = await searchParams;
+  const { q, role } = await searchParams;
   const searchQuery = q?.trim() ?? "";
+  const selectedRole = role && isUserRole(role) ? role : undefined;
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
@@ -29,13 +32,16 @@ export default async function AdminUsersPage({
   }
 
   const userRows = await db.query.users.findMany({
-    where: searchQuery
-      ? (users, { ilike, or }) =>
-          or(
-            ilike(users.name, `%${searchQuery}%`),
-            ilike(users.email, `%${searchQuery}%`),
-          )
-      : undefined,
+    where: (users, { and, eq, ilike, or }) =>
+      and(
+        searchQuery
+          ? or(
+              ilike(users.name, `%${searchQuery}%`),
+              ilike(users.email, `%${searchQuery}%`),
+            )
+          : undefined,
+        selectedRole ? eq(users.role, selectedRole) : undefined,
+      ),
     orderBy: (users, { asc }) => [asc(users.name)],
   });
 
@@ -63,16 +69,16 @@ export default async function AdminUsersPage({
         </Link>
       </div>
 
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <AdminUserSearch initialQuery={searchQuery} />
+      <div className="mt-6">
+        <AdminUserFilters initialQuery={searchQuery} />
 
-        <p className="whitespace-nowrap text-sm text-slate-500">
+        <p className="mt-3 text-right text-sm text-slate-500">
           {userRows.length} {userRows.length === 1 ? "user" : "users"} found.
         </p>
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-lg border border-slate-800">
-        <table className="w-full text-left text-sm">
+      <div className="mt-4 overflow-x-auto rounded-lg border border-slate-800">
+        <table className="min-w-225 w-full text-left text-sm">
           <thead className="bg-slate-900/70 text-xs uppercase tracking-wider text-slate-500">
             <tr>
               <th className="px-4 py-3 font-medium">Name</th>
@@ -93,7 +99,9 @@ export default async function AdminUsersPage({
                 >
                   {searchQuery
                     ? `No users found for "${searchQuery}".`
-                    : "No users found."}
+                    : selectedRole
+                      ? "No users found for the selected role."
+                      : "No users found."}
                 </td>
               </tr>
             ) : (
@@ -108,7 +116,9 @@ export default async function AdminUsersPage({
                     </Link>
                   </td>
                   <td className="px-4 py-3 text-slate-400">{user.email}</td>
-                  <td className="px-4 py-3 text-slate-400">{user.role}</td>
+                  <td className="px-4 py-3 text-slate-400">
+                    {userRoleLabels[user.role]}
+                  </td>
                   <td className="px-4 py-3 text-slate-400">
                     {user.title || "Not set"}
                   </td>
