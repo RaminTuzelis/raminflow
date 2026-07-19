@@ -69,10 +69,10 @@ export default async function AdminUsersPage({
         </Link>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <AdminUserFilters initialQuery={searchQuery} />
 
-        <p className="mt-3 text-right text-sm text-slate-500">
+        <p className="shrink-0 text-right text-sm text-slate-500">
           {userRows.length} {userRows.length === 1 ? "user" : "users"} found.
         </p>
       </div>
