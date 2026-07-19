@@ -3,8 +3,21 @@ import { canManageUsers } from "@/lib/permissions";
 import { redirect } from "next/navigation";
 import { db } from "@/db/client";
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { PlusIcon } from "lucide-react";
+import { AdminUserSearch } from "@/components/admin-user-search";
 
-export default async function AdminUsersPage() {
+type AdminUsersPageProps = {
+  searchParams: Promise<{
+    q?: string;
+  }>;
+};
+
+export default async function AdminUsersPage({
+  searchParams,
+}: AdminUsersPageProps) {
+  const { q } = await searchParams;
+  const searchQuery = q?.trim() ?? "";
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
@@ -16,6 +29,13 @@ export default async function AdminUsersPage() {
   }
 
   const userRows = await db.query.users.findMany({
+    where: searchQuery
+      ? (users, { ilike, or }) =>
+          or(
+            ilike(users.name, `%${searchQuery}%`),
+            ilike(users.email, `%${searchQuery}%`),
+          )
+      : undefined,
     orderBy: (users, { asc }) => [asc(users.name)],
   });
 
@@ -36,13 +56,16 @@ export default async function AdminUsersPage() {
 
         <Link
           href="/admin/users/new"
-          className="inline-flex items-center justify-center rounded-md border border-sky-500/40 bg-sky-500/10 px-3 py-1.5 text-xs font-semibold text-sky-300 transition hover:bg-sky-500/20"
+          className={buttonVariants({ variant: "default" })}
         >
+          <PlusIcon data-icon="inline-start" />
           Create user
         </Link>
       </div>
 
-      <div className="mt-2 flex justify-end">
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <AdminUserSearch initialQuery={searchQuery} />
+
         <p className="whitespace-nowrap text-sm text-slate-500">
           {userRows.length} {userRows.length === 1 ? "user" : "users"} found.
         </p>
@@ -62,29 +85,42 @@ export default async function AdminUsersPage() {
           </thead>
 
           <tbody className="divide-y divide-slate-800">
-            {userRows.map((user) => (
-              <tr key={user.id} className="text-slate-200">
-                <td className="px-4 py-3 font-medium">
-                  <Link
-                    href={`/admin/users/${user.id}`}
-                    className="text-sky-400 transition hover:text-sky-300"
-                  >
-                    {user.name}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 text-slate-400">{user.email}</td>
-                <td className="px-4 py-3 text-slate-400">{user.role}</td>
-                <td className="px-4 py-3 text-slate-400">
-                  {user.title || "Not set"}
-                </td>
-                <td className="px-4 py-3 text-slate-400">
-                  {user.isActive ? "Active" : "Inactive"}
-                </td>
-                <td className="px-4 py-3 text-slate-400">
-                  {user.mustChangePassword ? "Required" : "Changed"}
+            {userRows.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="px-4 py-10 text-center text-sm text-slate-500"
+                >
+                  {searchQuery
+                    ? `No users found for "${searchQuery}".`
+                    : "No users found."}
                 </td>
               </tr>
-            ))}
+            ) : (
+              userRows.map((user) => (
+                <tr key={user.id} className="text-slate-200">
+                  <td className="px-4 py-3 font-medium">
+                    <Link
+                      href={`/admin/users/${user.id}`}
+                      className="text-sky-400 transition hover:text-sky-300"
+                    >
+                      {user.name}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-3 text-slate-400">{user.email}</td>
+                  <td className="px-4 py-3 text-slate-400">{user.role}</td>
+                  <td className="px-4 py-3 text-slate-400">
+                    {user.title || "Not set"}
+                  </td>
+                  <td className="px-4 py-3 text-slate-400">
+                    {user.isActive ? "Active" : "Inactive"}
+                  </td>
+                  <td className="px-4 py-3 text-slate-400">
+                    {user.mustChangePassword ? "Required" : "Changed"}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
