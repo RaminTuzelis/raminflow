@@ -112,7 +112,7 @@ export function AdminUserFilters({ initialQuery }: AdminUserFiltersProps) {
         onValueChange={handleRoleChange}
       >
         <SelectTrigger
-          className="w-full sm:w-60 sm:shrink-0"
+          className="w-full sm:w-50 sm:shrink-0"
           aria-label="Filter users by role"
         >
           <SelectValue placeholder="All roles" />
