@@ -199,7 +199,7 @@ function AdminUserEditForm({
 
       {showError && <FieldError id="save-error">{state.error}</FieldError>}
 
-      <DialogFooter>
+      <DialogFooter className="bg-muted/80">
         <Button type="button" variant="outline" size="lg" onClick={onClose}>
           Cancel
         </Button>
@@ -220,7 +220,7 @@ export function AdminUserEditButton({
 
   return (
     <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-      <DialogTrigger render={<Button variant="outline" size="lg" />}>
+      <DialogTrigger render={<Button variant="secondary" size="lg" />}>
         <PencilIcon data-icon="inline-start" />
         Edit user
       </DialogTrigger>
@@ -228,10 +228,12 @@ export function AdminUserEditButton({
       {isEditOpen && (
         <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit user</DialogTitle>
+            <DialogTitle>
+              Edit <span className="whitespace-nowrap">{user.name}</span>
+            </DialogTitle>
+
             <DialogDescription>
-              Update profile information and account role for{" "}
-              <span className="whitespace-nowrap">{user.name}</span>
+              Update profile information and account role.
             </DialogDescription>
           </DialogHeader>
           <AdminUserEditForm
