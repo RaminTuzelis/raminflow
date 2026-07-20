@@ -1,16 +1,33 @@
 "use client";
 
 import { startTransition, useActionState, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { UserPlusIcon } from "lucide-react";
 import type { SubmitEvent } from "react";
 import {
   createUser,
   type CreateUserState,
 } from "@/app/admin/users/new/actions";
-import { userRoles } from "@/lib/user-constants";
+import { roleOptions, userRoleLabels } from "@/lib/user-options";
 
 const initialState: CreateUserState = {
   error: null,
 };
+
+const roleItems = roleOptions.map((role) => ({
+  value: role,
+  label: userRoleLabels[role],
+}));
 
 export function CreateUserForm() {
   const [state, formAction, isPending] = useActionState(
@@ -38,101 +55,64 @@ export function CreateUserForm() {
       onSubmit={handleSubmit}
       className="mt-8 space-y-5 rounded-lg border border-slate-800 bg-slate-900/40 p-6"
     >
-      <div className="grid gap-2">
-        <label htmlFor="name" className="text-sm font-medium text-slate-200">
-          Name
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-        />
-      </div>
-      <div className="grid gap-2">
-        <label htmlFor="email" className="text-sm font-medium text-slate-200">
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-        />
-      </div>
-      <div className="grid gap-2">
-        <label htmlFor="role" className="text-sm font-medium text-slate-200">
-          Role
-        </label>
+      <Field>
+        <FieldLabel htmlFor="name">Name</FieldLabel>
+        <Input type="text" id="name" name="name" required />
+      </Field>
 
-        <select
-          id="role"
-          name="role"
-          required
-          defaultValue=""
-          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-        >
-          <option value="" disabled>
-            Select a role
-          </option>
-          {userRoles.map((role) => (
-            <option key={role} value={role}>
-              {role.replaceAll("_", " ")}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Field>
+        <FieldLabel htmlFor="email">Email</FieldLabel>
+        <Input type="email" id="email" name="email" required />
+      </Field>
 
-      <div className="grid gap-2">
-        <label htmlFor="title" className="text-sm font-medium text-slate-200">
-          Title
-        </label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          required
-          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-        />
-      </div>
+      <Field>
+        <FieldLabel htmlFor="role">Role</FieldLabel>
+        <Select items={roleItems} name="role" required>
+          <SelectTrigger id="role" className="w-full">
+            <SelectValue placeholder="Select a role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {roleItems.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </Field>
 
-      <div className="grid gap-2">
-        <label
-          htmlFor="birthDate"
-          className="text-sm font-medium text-slate-200"
-        >
-          Birth date
-        </label>
-        <input
+      <Field>
+        <FieldLabel htmlFor="title">Title</FieldLabel>
+        <Input type="text" id="title" name="title" required />
+      </Field>
+
+      <Field>
+        <FieldLabel htmlFor="birthDate">Birth date</FieldLabel>
+        <Input
           type="date"
           id="birthDate"
           name="birthDate"
-          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 [&::-webkit-calendar-picker-indicator]:invert"
+          className="[&::-webkit-calendar-picker-indicator]:invert"
         />
-      </div>
+      </Field>
 
-      <div className="grid gap-2">
-        <label
-          htmlFor="temporaryPassword"
-          className="text-sm font-medium text-slate-200"
-        >
-          Temporary password
-        </label>
-        <input
+      <Field>
+        <FieldLabel htmlFor="temporaryPassword">Temporary password</FieldLabel>
+        <Input
           type="password"
           id="temporaryPassword"
           name="temporaryPassword"
           autoComplete="new-password"
           minLength={8}
           required
-          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
         />
-        <p className="text-xs leading-5 text-slate-500">
+        <FieldDescription>
           The user will be required to change this password after signing in.
-        </p>
-      </div>
+        </FieldDescription>
+      </Field>
+
       {showError && (
         <p
           id="create-user-error"
@@ -143,13 +123,15 @@ export function CreateUserForm() {
         </p>
       )}
       <div className="flex justify-end border-t border-slate-800 pt-5">
-        <button
+        <Button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center w-full justify-center sm:w-auto rounded-lg border border-sky-500/40 bg-sky-500/10 px-4 py-2 text-sm font-semibold text-sky-300 transition hover:bg-sky-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+          size="lg"
+          className="w-full sm:w-auto"
         >
+          <UserPlusIcon data-icon="inline-start" />
           {isPending ? "Creating..." : "Create user"}
-        </button>
+        </Button>
       </div>
     </form>
   );
