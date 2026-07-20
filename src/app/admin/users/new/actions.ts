@@ -10,8 +10,17 @@ import argon2 from "argon2";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+export type CreateUserErrorField =
+  | "name"
+  | "email"
+  | "role"
+  | "title"
+  | "birthDate"
+  | "temporaryPassword";
+
 export type CreateUserState = {
   error: string | null;
+  errorField?: CreateUserErrorField;
 };
 
 export async function createUser(
@@ -38,12 +47,14 @@ export async function createUser(
   if (!name.trim()) {
     return {
       error: "Name is required.",
+      errorField: "name",
     };
   }
 
   if (!email.trim()) {
     return {
       error: "Email is required.",
+      errorField: "email",
     };
   }
 
@@ -53,24 +64,28 @@ export async function createUser(
   if (!emailPattern.test(normalizedEmail)) {
     return {
       error: "Email address is invalid.",
+      errorField: "email",
     };
   }
 
   if (!isUserRole(role)) {
     return {
       error: "Role is invalid.",
+      errorField: "role",
     };
   }
 
   if (!title.trim()) {
     return {
       error: "Title is required.",
+      errorField: "title",
     };
   }
 
   if (temporaryPassword.length < 8) {
     return {
       error: "Temporary password must be at least 8 characters long.",
+      errorField: "temporaryPassword",
     };
   }
 
@@ -79,6 +94,7 @@ export async function createUser(
   if (birthDate !== "" && !birthDatePattern.test(birthDate)) {
     return {
       error: "Birth date is invalid.",
+      errorField: "birthDate",
     };
   }
 
@@ -92,6 +108,7 @@ export async function createUser(
     if (!isRealDate) {
       return {
         error: "Birth date is invalid.",
+        errorField: "birthDate",
       };
     }
 
@@ -105,6 +122,7 @@ export async function createUser(
     if (birthDate > todayInVilnius) {
       return {
         error: "Birth date cannot be in the future.",
+        errorField: "birthDate",
       };
     }
   }
@@ -116,6 +134,7 @@ export async function createUser(
   if (existingUser) {
     return {
       error: "A user with this email already exists.",
+      errorField: "email",
     };
   }
 
