@@ -1,9 +1,38 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import {
+  useActionState,
+  useState,
+  startTransition,
+  type SubmitEvent,
+} from "react";
 import type { UserRole } from "@/types/user";
-import { userRoles } from "@/lib/user-constants";
-import type { UpdateUserState } from "@/app/admin/users/[id]/actions";
+import { roleOptions, userRoleLabels } from "@/lib/user-options";
+import type {
+  UpdateUserState,
+  UpdateUserErrorField,
+} from "@/app/admin/users/[id]/actions";
+import { Input } from "@/components/ui/input";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { PencilIcon, SaveIcon } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const initialState: UpdateUserState = {
   success: false,
@@ -35,6 +64,11 @@ type AdminUserEditButtonProps = {
   updateAction: UpdateUserAction;
 };
 
+const roleItems = roleOptions.map((role) => ({
+  value: role,
+  label: userRoleLabels[role],
+}));
+
 function AdminUserEditForm({
   user,
   updateAction,
@@ -53,139 +87,128 @@ function AdminUserEditForm({
     return result;
   }
 
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    setHasEditedAfterSubmit(false);
+
+    const formData = new FormData(event.currentTarget);
+
+    startTransition(() => {
+      formAction(formData);
+    });
+  }
+
   const [state, formAction, isPending] = useActionState(
     handleUpdate,
     initialState,
   );
+  const [hasEditedAfterSubmit, setHasEditedAfterSubmit] = useState(false);
+  const showError = Boolean(state.error) && !hasEditedAfterSubmit && !isPending;
+  function fieldHasError(field: UpdateUserErrorField) {
+    return showError && state.errorField === field;
+  }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4 py-4">
-      <div className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl border border-slate-800 bg-slate-900 p-6 text-left shadow-xl">
-        <h2 className="text-lg font-semibold text-white">Edit {user.name}</h2>
-        <form action={formAction} className="mt-5 space-y-4">
-          <input type="hidden" name="userId" value={user.id} />
-          <div className="grid gap-2">
-            <label
-              htmlFor="edit-user-name"
-              className="text-sm font-medium text-slate-200"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              id="edit-user-name"
-              name="name"
-              required
-              defaultValue={user.name}
-              autoComplete="name"
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-            />
-          </div>
+    <form
+      onSubmit={handleSubmit}
+      onChange={() => setHasEditedAfterSubmit(true)}
+      className="space-y-4"
+    >
+      <input type="hidden" name="userId" value={user.id} />
 
-          <div className="grid gap-2">
-            <label
-              htmlFor="edit-user-email"
-              className="text-sm font-medium text-slate-200"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="edit-user-email"
-              name="email"
-              required
-              defaultValue={user.email}
-              autoComplete="email"
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-            />
-          </div>
+      <Field data-invalid={fieldHasError("name")}>
+        <FieldLabel htmlFor="edit-user-name">Name</FieldLabel>
+        <Input
+          type="text"
+          id="edit-user-name"
+          name="name"
+          required
+          defaultValue={user.name}
+          autoComplete="name"
+          aria-invalid={fieldHasError("name")}
+          aria-describedby={fieldHasError("name") ? "save-error" : undefined}
+        />
+      </Field>
 
-          <div className="grid gap-2">
-            <label
-              htmlFor="edit-user-role"
-              className="text-sm font-medium text-slate-200"
-            >
-              Role
-            </label>
+      <Field data-invalid={fieldHasError("email")}>
+        <FieldLabel htmlFor="edit-user-email">Email</FieldLabel>
+        <Input
+          type="email"
+          id="edit-user-email"
+          name="email"
+          required
+          defaultValue={user.email}
+          autoComplete="email"
+          aria-invalid={fieldHasError("email")}
+          aria-describedby={fieldHasError("email") ? "save-error" : undefined}
+        />
+      </Field>
 
-            <select
-              id="edit-user-role"
-              name="role"
-              required
-              defaultValue={user.role}
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-            >
-              {userRoles.map((role) => (
-                <option key={role} value={role}>
-                  {role.replaceAll("_", " ")}
-                </option>
+      <Field data-invalid={fieldHasError("role")}>
+        <FieldLabel htmlFor="edit-user-role">Role</FieldLabel>
+        <Select items={roleItems} name="role" required defaultValue={user.role}>
+          <SelectTrigger
+            id="edit-user-role"
+            className="w-full"
+            aria-invalid={fieldHasError("role")}
+            aria-describedby={fieldHasError("role") ? "save-error" : undefined}
+          >
+            <SelectValue placeholder="Select a role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {roleItems.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
               ))}
-            </select>
-          </div>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </Field>
 
-          <div className="grid gap-2">
-            <label
-              htmlFor="edit-user-title"
-              className="text-sm font-medium text-slate-200"
-            >
-              Title
-            </label>
-            <input
-              type="text"
-              id="edit-user-title"
-              name="title"
-              autoComplete="organization-title"
-              required
-              defaultValue={user.title}
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-            />
-          </div>
+      <Field data-invalid={fieldHasError("title")}>
+        <FieldLabel htmlFor="edit-user-title">Title</FieldLabel>
+        <Input
+          type="text"
+          id="edit-user-title"
+          name="title"
+          autoComplete="organization-title"
+          required
+          defaultValue={user.title}
+          aria-invalid={fieldHasError("title")}
+          aria-describedby={fieldHasError("title") ? "save-error" : undefined}
+        />
+      </Field>
 
-          <div className="grid gap-2">
-            <label
-              htmlFor="edit-user-birth-date"
-              className="text-sm font-medium text-slate-200"
-            >
-              Birth date
-            </label>
-            <input
-              type="date"
-              id="edit-user-birth-date"
-              name="birthDate"
-              defaultValue={user.birthDate ?? ""}
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 [&::-webkit-calendar-picker-indicator]:invert"
-            />
-          </div>
+      <Field data-invalid={fieldHasError("birthDate")}>
+        <FieldLabel htmlFor="edit-user-birth-date">Birth date</FieldLabel>
+        <Input
+          type="date"
+          id="edit-user-birth-date"
+          name="birthDate"
+          defaultValue={user.birthDate ?? ""}
+          className="[&::-webkit-calendar-picker-indicator]:invert"
+          aria-invalid={fieldHasError("birthDate")}
+          aria-describedby={
+            fieldHasError("birthDate") ? "save-error" : undefined
+          }
+        />
+      </Field>
 
-          {state.error && (
-            <p
-              id="save-error"
-              role="alert"
-              className="text-sm font-medium text-red-400"
-            >
-              {state.error}
-            </p>
-          )}
+      {showError && <FieldError id="save-error">{state.error}</FieldError>}
 
-          <div className="mt-5 flex justify-end gap-3 border-t border-slate-800 pt-5">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:border-slate-500 hover:text-slate-100"
-            >
-              Cancel
-            </button>
-            <button
-              disabled={isPending}
-              type="submit"
-              className="rounded-lg border border-sky-500/40 bg-sky-500/10 px-4 py-2 text-sm font-semibold text-sky-300 transition hover:bg-sky-500/20"
-            >
-              {isPending ? "Saving..." : "Save changes"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      <DialogFooter>
+        <Button type="button" variant="outline" size="lg" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button disabled={isPending} type="submit" size="lg">
+          <SaveIcon data-icon="inline-start" />
+          {isPending ? "Saving..." : "Save changes"}
+        </Button>
+      </DialogFooter>
+    </form>
   );
 }
 
@@ -196,22 +219,28 @@ export function AdminUserEditButton({
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => setIsEditOpen(true)}
-        className="inline-flex items-center justify-center rounded-md border border-sky-500/40 bg-sky-500/10 px-3 py-1.5 text-sm font-semibold text-sky-300 transition hover:bg-sky-500/20"
-      >
+    <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+      <DialogTrigger render={<Button variant="outline" size="lg" />}>
+        <PencilIcon data-icon="inline-start" />
         Edit user
-      </button>
+      </DialogTrigger>
 
       {isEditOpen && (
-        <AdminUserEditForm
-          user={user}
-          updateAction={updateAction}
-          onClose={() => setIsEditOpen(false)}
-        />
+        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit user</DialogTitle>
+            <DialogDescription>
+              Update profile information and account role for{" "}
+              <span className="whitespace-nowrap">{user.name}</span>
+            </DialogDescription>
+          </DialogHeader>
+          <AdminUserEditForm
+            user={user}
+            updateAction={updateAction}
+            onClose={() => setIsEditOpen(false)}
+          />
+        </DialogContent>
       )}
-    </>
+    </Dialog>
   );
 }

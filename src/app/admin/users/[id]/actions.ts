@@ -14,9 +14,17 @@ export type SetUserActiveState = {
   error: string | null;
 };
 
+export type UpdateUserErrorField =
+  | "name"
+  | "email"
+  | "role"
+  | "title"
+  | "birthDate";
+
 export type UpdateUserState = {
   success: boolean;
   error: string | null;
+  errorField?: UpdateUserErrorField;
 };
 
 export type ResetUserPasswordState = {
@@ -59,6 +67,7 @@ export async function updateUser(
     return {
       success: false,
       error: "Name is required.",
+      errorField: "name",
     };
   }
 
@@ -66,6 +75,7 @@ export async function updateUser(
     return {
       success: false,
       error: "Email is required.",
+      errorField: "email",
     };
   }
 
@@ -75,6 +85,7 @@ export async function updateUser(
     return {
       success: false,
       error: "Email address is invalid.",
+      errorField: "email",
     };
   }
 
@@ -82,6 +93,7 @@ export async function updateUser(
     return {
       success: false,
       error: "Role is invalid.",
+      errorField: "role",
     };
   }
 
@@ -89,6 +101,7 @@ export async function updateUser(
     return {
       success: false,
       error: "Title is required.",
+      errorField: "title",
     };
   }
 
@@ -98,6 +111,7 @@ export async function updateUser(
     return {
       success: false,
       error: "Birth date is invalid.",
+      errorField: "birthDate",
     };
   }
 
@@ -112,6 +126,7 @@ export async function updateUser(
       return {
         success: false,
         error: "Birth date is invalid.",
+        errorField: "birthDate",
       };
     }
 
@@ -126,6 +141,7 @@ export async function updateUser(
       return {
         success: false,
         error: "Birth date cannot be in the future.",
+        errorField: "birthDate",
       };
     }
   }
@@ -149,6 +165,7 @@ export async function updateUser(
     return {
       success: false,
       error: "A user with this email already exists.",
+      errorField: "email",
     };
   }
 
@@ -158,6 +175,7 @@ export async function updateUser(
     return {
       success: false,
       error: "You cannot change your own role.",
+      errorField: "role",
     };
   }
 
