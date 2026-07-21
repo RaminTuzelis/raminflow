@@ -33,6 +33,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 const initialState: UpdateUserState = {
   success: false,
@@ -57,6 +58,7 @@ type AdminUserEditFormProps = {
   user: EditableUser;
   updateAction: UpdateUserAction;
   onClose: () => void;
+  onSuccess: () => void;
 };
 
 type AdminUserEditButtonProps = {
@@ -73,6 +75,7 @@ function AdminUserEditForm({
   user,
   updateAction,
   onClose,
+  onSuccess,
 }: AdminUserEditFormProps) {
   async function handleUpdate(
     previousState: UpdateUserState,
@@ -81,7 +84,7 @@ function AdminUserEditForm({
     const result = await updateAction(previousState, formData);
 
     if (result.success) {
-      onClose();
+      onSuccess();
     }
 
     return result;
@@ -105,6 +108,7 @@ function AdminUserEditForm({
   );
   const [hasEditedAfterSubmit, setHasEditedAfterSubmit] = useState(false);
   const showError = Boolean(state.error) && !hasEditedAfterSubmit && !isPending;
+
   function fieldHasError(field: UpdateUserErrorField) {
     return showError && state.errorField === field;
   }
@@ -218,6 +222,13 @@ export function AdminUserEditButton({
 }: AdminUserEditButtonProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
 
+  function handleSuccess() {
+    setIsEditOpen(false);
+    toast.success("User updated successfully", {
+      description: user.name,
+    });
+  }
+
   return (
     <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
       <DialogTrigger render={<Button variant="secondary" size="lg" />}>
@@ -240,6 +251,7 @@ export function AdminUserEditButton({
             user={user}
             updateAction={updateAction}
             onClose={() => setIsEditOpen(false)}
+            onSuccess={handleSuccess}
           />
         </DialogContent>
       )}

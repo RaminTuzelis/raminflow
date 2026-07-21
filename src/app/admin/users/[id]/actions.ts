@@ -27,9 +27,14 @@ export type UpdateUserState = {
   errorField?: UpdateUserErrorField;
 };
 
+export type ResetUserPasswordErrorField =
+  | "temporaryPassword"
+  | "confirmPassword";
+
 export type ResetUserPasswordState = {
   success: boolean;
   error: string | null;
+  errorField?: ResetUserPasswordErrorField;
 };
 
 export async function updateUser(
@@ -304,10 +309,19 @@ export async function resetUserPassword(
   const temporaryPassword = String(formData.get("temporaryPassword") ?? "");
   const confirmPassword = String(formData.get("confirmPassword") ?? "");
 
-  if (temporaryPassword === "" || confirmPassword === "") {
+  if (temporaryPassword === "") {
     return {
       success: false,
-      error: "Both password fields are required.",
+      error: "Temporary password is required.",
+      errorField: "temporaryPassword",
+    };
+  }
+
+  if (confirmPassword === "") {
+    return {
+      success: false,
+      error: "Password confirmation is required.",
+      errorField: "confirmPassword",
     };
   }
 
@@ -315,6 +329,7 @@ export async function resetUserPassword(
     return {
       success: false,
       error: "Temporary password and confirmation do not match.",
+      errorField: "confirmPassword",
     };
   }
 
@@ -322,6 +337,7 @@ export async function resetUserPassword(
     return {
       success: false,
       error: "Temporary password must be at least 8 characters long.",
+      errorField: "temporaryPassword",
     };
   }
 

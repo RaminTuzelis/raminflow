@@ -1,6 +1,17 @@
 "use client";
 import type { SetUserActiveState } from "@/app/admin/users/[id]/actions";
 import { useState, useActionState } from "react";
+import { FieldError } from "@/components/ui/field";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogFooter,
+  DialogTrigger,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const initialState: SetUserActiveState = {
   success: false,
@@ -55,53 +66,33 @@ function AdminUserStatusForm({
   const pendingLabel = user.isActive ? "Deactivating..." : "Activating...";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4 py-4">
-      <form
-        action={formAction}
-        className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl border border-slate-800 bg-slate-900 p-6 text-left shadow-xl"
-      >
-        <input type="hidden" name="userId" value={user.id} />
-        <input type="hidden" name="isActive" value={String(!user.isActive)} />
-        <h2 className="text-lg font-semibold text-white">{actionLabel}</h2>
-        <p className="mt-2 text-sm leading-6 text-slate-400">
-          Are you sure you want to {user.isActive ? "deactivate" : "activate"}{" "}
-          this account?
-          <span className="mt-1 block font-medium text-slate-200">
-            {user.name}
-          </span>
-        </p>
-        {state.error && (
-          <p
-            role="alert"
-            id="user-status-error"
-            className="mt-4 text-sm font-medium text-red-400"
-          >
-            {state.error}
-          </p>
-        )}
-        <div className="mt-5 flex justify-end gap-3 border-t border-slate-800 pt-5">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isPending}
-            className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:border-slate-500 hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isPending}
-            className={`rounded-lg border px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-              user.isActive
-                ? "border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/20"
-                : "border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
-            }`}
-          >
-            {isPending ? pendingLabel : actionLabel}
-          </button>
-        </div>
-      </form>
-    </div>
+    <form action={formAction} className="space-y-4">
+      <input type="hidden" name="userId" value={user.id} />
+      <input type="hidden" name="isActive" value={String(!user.isActive)} />
+
+      {state.error && (
+        <FieldError id="user-status-error">{state.error}</FieldError>
+      )}
+      <DialogFooter>
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          onClick={onClose}
+          disabled={isPending}
+        >
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          size="lg"
+          variant={user.isActive ? "destructive" : "success"}
+          disabled={isPending}
+        >
+          {isPending ? pendingLabel : actionLabel}
+        </Button>
+      </DialogFooter>
+    </form>
   );
 }
 
@@ -112,26 +103,40 @@ export function AdminUserStatusButton({
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => setIsConfirmOpen(true)}
-        className={`inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-sm font-semibold transition ${
-          user.isActive
-            ? "border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/20"
-            : "border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
-        }`}
+    <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+      <DialogTrigger
+        render={
+          <Button
+            size="lg"
+            variant={user.isActive ? "destructive" : "success"}
+          />
+        }
       >
         {user.isActive ? "Deactivate account" : "Activate account"}
-      </button>
+      </DialogTrigger>
 
       {isConfirmOpen && (
-        <AdminUserStatusForm
-          user={user}
-          updateAction={updateAction}
-          onClose={() => setIsConfirmOpen(false)}
-        />
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {user.isActive ? "Deactivate account" : "Activate account"}
+            </DialogTitle>
+
+            <DialogDescription>
+              Are you sure you want to{" "}
+              {user.isActive ? "deactivate" : "activate"} this account?
+              <span className="mt-1 block font-medium text-foreground">
+                {user.name}
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <AdminUserStatusForm
+            user={user}
+            updateAction={updateAction}
+            onClose={() => setIsConfirmOpen(false)}
+          />
+        </DialogContent>
       )}
-    </>
+    </Dialog>
   );
 }
