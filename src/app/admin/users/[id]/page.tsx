@@ -52,7 +52,7 @@ export default async function AdminUserPage({ params }: AdminUserPageProps) {
     <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <Link
         href="/admin/users"
-        className="inline-flex items-center gap-2 text-sm font-medium text-primary transition hover:text-primary/80"
+        className="inline-flex items-center gap-2 text-sm font-medium text-primary/80 transition hover:text-primary"
       >
         <ArrowLeftIcon aria-hidden="true" className="size-4" />
         Back to users
