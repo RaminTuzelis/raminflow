@@ -153,7 +153,7 @@ function AdminUserPasswordResetForm({
         >
           Cancel
         </Button>
-        <Button type="submit" size="lg" disabled={isPending}>
+        <Button type="submit" size="lg" variant="warning" disabled={isPending}>
           <KeyRoundIcon data-icon="inline-start" />
           {isPending ? "Resetting..." : "Reset password"}
         </Button>
@@ -177,7 +177,7 @@ export function AdminUserPasswordResetButton({
 
   return (
     <Dialog open={isResetOpen} onOpenChange={setIsResetOpen}>
-      <DialogTrigger render={<Button variant="outline" size="lg" />}>
+      <DialogTrigger render={<Button variant="warning" size="lg" />}>
         <KeyRoundIcon data-icon="inline-start" />
         Reset password
       </DialogTrigger>

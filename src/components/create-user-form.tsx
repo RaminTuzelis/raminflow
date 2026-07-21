@@ -63,7 +63,7 @@ export function CreateUserForm() {
     <form
       onChange={() => setHasEditedAfterSubmit(true)}
       onSubmit={handleSubmit}
-      className="mt-8 space-y-5 rounded-lg border border-slate-800 bg-slate-900/40 p-6"
+      className="mt-8 space-y-5 rounded-lg border border-border bg-card p-6"
     >
       <Field data-invalid={fieldHasError("name")}>
         <FieldLabel htmlFor="name">Name</FieldLabel>
@@ -168,7 +168,7 @@ export function CreateUserForm() {
       {showError && (
         <FieldError id="create-user-error">{state.error}</FieldError>
       )}
-      <div className="flex justify-end border-t border-slate-800 pt-5">
+      <div className="flex justify-end border-t border-border pt-5">
         <Button
           type="submit"
           disabled={isPending}

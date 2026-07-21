@@ -11,7 +11,7 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground hover:bg-[color-mix(in_oklch,var(--primary),var(--foreground)_12%)]",
         outline:
-          "border-border bg-background hover:border-foreground/30 hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/80",
+          "border-border bg-background hover:border-foreground/30 hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/80 dark:hover:border-foreground/30",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_10%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost:
@@ -20,6 +20,8 @@ const buttonVariants = cva(
           "border-destructive/50 bg-destructive/15 text-destructive hover:border-destructive/70 hover:bg-destructive/25 focus-visible:border-destructive/70 focus-visible:ring-destructive/25",
         success:
           "border-success/40 bg-success/10 text-success hover:border-success/60 hover:bg-success/20 focus-visible:border-success/60 focus-visible:ring-success/20",
+        warning:
+          "border-warning/40 bg-warning/10 text-warning hover:border-warning/60 hover:bg-warning/20 focus-visible:border-warning/60 focus-visible:ring-warning/20",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

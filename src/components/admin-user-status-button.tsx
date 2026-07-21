@@ -12,6 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { UserRoundCheckIcon, UserRoundXIcon } from "lucide-react";
+import { toast } from "sonner";
 
 const initialState: SetUserActiveState = {
   success: false,
@@ -33,6 +35,7 @@ type AdminUserStatusFormProps = {
   user: StatusUser;
   updateAction: SetUserActiveAction;
   onClose: () => void;
+  onSuccess: () => void;
 };
 
 type AdminUserStatusButtonProps = {
@@ -44,6 +47,7 @@ function AdminUserStatusForm({
   user,
   updateAction,
   onClose,
+  onSuccess,
 }: AdminUserStatusFormProps) {
   async function handleStatusUpdate(
     previousState: SetUserActiveState,
@@ -52,7 +56,7 @@ function AdminUserStatusForm({
     const result = await updateAction(previousState, formData);
 
     if (result.success) {
-      onClose();
+      onSuccess();
     }
     return result;
   }
@@ -62,6 +66,7 @@ function AdminUserStatusForm({
     initialState,
   );
 
+  const ActionIcon = user.isActive ? UserRoundXIcon : UserRoundCheckIcon;
   const actionLabel = user.isActive ? "Deactivate account" : "Activate account";
   const pendingLabel = user.isActive ? "Deactivating..." : "Activating...";
 
@@ -89,6 +94,7 @@ function AdminUserStatusForm({
           variant={user.isActive ? "destructive" : "success"}
           disabled={isPending}
         >
+          <ActionIcon data-icon="inline-start" />
           {isPending ? pendingLabel : actionLabel}
         </Button>
       </DialogFooter>
@@ -101,6 +107,19 @@ export function AdminUserStatusButton({
   updateAction,
 }: AdminUserStatusButtonProps) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const ActionIcon = user.isActive ? UserRoundXIcon : UserRoundCheckIcon;
+
+  function handleSuccess() {
+    setIsConfirmOpen(false);
+    toast.success(
+      user.isActive
+        ? "Account deactivated successfully."
+        : "Account activated successfully.",
+      {
+        description: user.name,
+      },
+    );
+  }
 
   return (
     <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
@@ -112,6 +131,7 @@ export function AdminUserStatusButton({
           />
         }
       >
+        <ActionIcon data-icon="inline-start" />
         {user.isActive ? "Deactivate account" : "Activate account"}
       </DialogTrigger>
 
@@ -134,6 +154,7 @@ export function AdminUserStatusButton({
             user={user}
             updateAction={updateAction}
             onClose={() => setIsConfirmOpen(false)}
+            onSuccess={handleSuccess}
           />
         </DialogContent>
       )}
