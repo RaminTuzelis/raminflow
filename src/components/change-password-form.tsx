@@ -5,6 +5,14 @@ import {
   changePassword,
   type ChangePasswordState,
 } from "@/app/change-password/actions";
+import { Button } from "@/components/ui/button";
+import {
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 const initialState: ChangePasswordState = {
   error: null,
@@ -25,86 +33,58 @@ export function ChangePasswordForm() {
       onChange={() => setHasEditedAfterSubmit(true)}
       onSubmit={() => setHasEditedAfterSubmit(false)}
       action={formAction}
-      className="mt-8 space-y-5 rounded-lg border border-slate-800 bg-slate-900/40 p-6 shadow-sm"
+      className="mt-8 space-y-5 rounded-lg border bg-card p-6 text-card-foreground shadow-sm"
     >
-      <div className="grid gap-2">
-        <label
-          className="text-sm font-medium text-slate-200"
-          htmlFor="currentPassword"
-        >
-          Current password
-        </label>
-        <input
-          aria-describedby={showError ? "change-password-error" : undefined}
-          aria-invalid={showError}
+      <Field data-invalid={showError}>
+        <FieldLabel htmlFor="currentPassword">Current password</FieldLabel>
+        <Input
           id="currentPassword"
           name="currentPassword"
           type="password"
           autoComplete="current-password"
           required
-          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 aria-invalid:border-red-500 aria-invalid:focus:border-red-500 aria-invalid:focus:ring-red-500/20"
-        />
-      </div>
-
-      <div className="grid gap-2">
-        <label
-          className="text-sm font-medium text-slate-200"
-          htmlFor="newPassword"
-        >
-          New password
-        </label>
-        <input
           aria-describedby={showError ? "change-password-error" : undefined}
           aria-invalid={showError}
+        />
+      </Field>
+
+      <Field data-invalid={showError}>
+        <FieldLabel htmlFor="newPassword">New password</FieldLabel>
+        <Input
           id="newPassword"
           name="newPassword"
           type="password"
           autoComplete="new-password"
           required
-          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 aria-invalid:border-red-500 aria-invalid:focus:border-red-500 aria-invalid:focus:ring-red-500/20"
-        />
-      </div>
-
-      <div className="grid gap-2">
-        <label
-          className="text-sm font-medium text-slate-200"
-          htmlFor="confirmPassword"
-        >
-          Confirm new password
-        </label>
-        <input
           aria-describedby={showError ? "change-password-error" : undefined}
           aria-invalid={showError}
+        />
+      </Field>
+
+      <Field data-invalid={showError}>
+        <FieldLabel htmlFor="confirmPassword">Confirm new password</FieldLabel>
+        <Input
           id="confirmPassword"
           name="confirmPassword"
           type="password"
           autoComplete="new-password"
           required
-          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 aria-invalid:border-red-500 aria-invalid:focus:border-red-500 aria-invalid:focus:ring-red-500/20"
+          aria-describedby={showError ? "change-password-error" : undefined}
+          aria-invalid={showError}
         />
-      </div>
+      </Field>
 
-      <p className="text-xs leading-5 text-slate-500">
+      <FieldDescription>
         After changing your password, you will be asked to sign in again.
-      </p>
+      </FieldDescription>
 
       {showError && (
-        <p
-          id="change-password-error"
-          role="alert"
-          className="text-sm font-medium text-red-400"
-        >
-          {state.error}
-        </p>
+        <FieldError id="change-password-error">{state.error}</FieldError>
       )}
 
-      <button
-        disabled={isPending}
-        type="submit"
-        className="w-full rounded-lg bg-sky-500 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-60"
-      >
+      <Button disabled={isPending} type="submit" size="lg" className="w-full">
         {isPending ? "Changing..." : "Change password"}
-      </button>
+      </Button>
     </form>
   );
 }

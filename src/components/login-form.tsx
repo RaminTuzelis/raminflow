@@ -2,6 +2,9 @@
 
 import { useActionState, useState } from "react";
 import { loginUser, type LoginState } from "@/app/login/actions";
+import { Button } from "@/components/ui/button";
+import { Field, FieldLabel, FieldError } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 const initialState: LoginState = {
   error: null,
@@ -9,68 +12,54 @@ const initialState: LoginState = {
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
+  const [hasEditedAfterSubmit, setHasEditedAfterSubmit] = useState(false);
   const [state, formAction, isPending] = useActionState(
     loginUser,
     initialState,
   );
 
+  const showError = Boolean(state.error) && !hasEditedAfterSubmit && !isPending;
+
   return (
     <form
       action={formAction}
-      className="mt-8 space-y-5 rounded-lg border border-slate-800 bg-slate-900/40 p-6 shadow-sm"
+      onChange={() => setHasEditedAfterSubmit(true)}
+      onSubmit={() => setHasEditedAfterSubmit(false)}
+      className="space-y-5"
     >
-      <div className="grid gap-2">
-        <label className="text-sm font-medium text-slate-200" htmlFor="email">
-          Email
-        </label>
-        <input
+      <Field data-invalid={showError}>
+        <FieldLabel htmlFor="email">Email</FieldLabel>
+        <Input
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          aria-invalid={Boolean(state.error)}
-          aria-describedby={state.error ? "login-error" : undefined}
           id="email"
           name="email"
           type="email"
           autoComplete="email"
           required
-          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 aria-invalid:border-red-500 aria-invalid:focus:border-red-500 aria-invalid:focus:ring-red-500/20"
+          aria-invalid={showError}
+          aria-describedby={showError ? "login-error" : undefined}
         />
-      </div>
-      <div className="grid gap-2">
-        <label
-          className="text-sm font-medium text-slate-200"
-          htmlFor="password"
-        >
-          Password
-        </label>
-        <input
-          aria-invalid={Boolean(state.error)}
-          aria-describedby={state.error ? "login-error" : undefined}
+      </Field>
+
+      <Field data-invalid={showError}>
+        <FieldLabel htmlFor="password">Password</FieldLabel>
+        <Input
           id="password"
           name="password"
           type="password"
           autoComplete="current-password"
           required
-          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 aria-invalid:border-red-500 aria-invalid:focus:border-red-500 aria-invalid:focus:ring-red-500/20"
+          aria-invalid={showError}
+          aria-describedby={showError ? "login-error" : undefined}
         />
-      </div>
-      {state.error && (
-        <p
-          id="login-error"
-          role="alert"
-          className="text-sm font-medium text-red-400"
-        >
-          {state.error}
-        </p>
-      )}
+      </Field>
 
-      <button
-        disabled={isPending}
-        type="submit"
-        className="disabled:cursor-not-allowed disabled:opacity-60 w-full rounded-lg bg-sky-500 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-sky-400"
-      >
+      {showError && <FieldError id="login-error">{state.error}</FieldError>}
+
+      <Button disabled={isPending} type="submit" size="lg" className="w-full">
         {isPending ? "Signing in..." : "Login"}
-      </button>
+      </Button>
     </form>
   );
 }
