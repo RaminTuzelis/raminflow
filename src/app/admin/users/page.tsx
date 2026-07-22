@@ -4,9 +4,19 @@ import { redirect } from "next/navigation";
 import { db } from "@/db/client";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
 import { AdminUserFilters } from "@/components/admin-user-filters";
 import { isUserRole, userRoleLabels } from "@/lib/user-options";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableCaption,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeftIcon, PlusIcon } from "lucide-react";
 
 type AdminUsersPageProps = {
   searchParams: Promise<{
@@ -49,16 +59,16 @@ export default async function AdminUsersPage({
     <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <Link
         href="/account"
-        className="inline-flex items-center gap-2 text-sm font-medium text-sky-400 transition hover:text-sky-300"
+        className="inline-flex items-center gap-2 text-sm font-medium text-primary transition hover:text-[color-mix(in_oklch,var(--primary),var(--foreground)_25%)]"
       >
-        <span aria-hidden="true">←</span>
+        <ArrowLeftIcon aria-hidden="true" className="size-4" />
         Back to account
       </Link>
-      <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+      <p className="mt-5 border-l-2 border-primary pl-2 text-sm font-semibold uppercase text-muted-foreground">
         Administration
       </p>
       <div className="mt-4 flex flex-wrap items-center gap-4">
-        <h1 className="text-3xl font-bold tracking-tight text-white">Users</h1>
+        <h1 className="text-3xl font-bold text-foreground">Users</h1>
 
         <Link
           href="/admin/users/new"
@@ -72,67 +82,84 @@ export default async function AdminUsersPage({
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <AdminUserFilters initialQuery={searchQuery} />
 
-        <p className="shrink-0 text-right text-sm text-slate-500">
+        <p className="shrink-0 text-right text-sm text-muted-foreground">
           {userRows.length} {userRows.length === 1 ? "user" : "users"} found.
         </p>
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-lg border border-slate-800">
-        <table className="min-w-225 w-full text-left text-sm">
-          <thead className="bg-slate-900/70 text-xs uppercase tracking-wider text-slate-500">
-            <tr>
-              <th className="px-4 py-3 font-medium">Name</th>
-              <th className="px-4 py-3 font-medium">Email</th>
-              <th className="px-4 py-3 font-medium">Role</th>
-              <th className="px-4 py-3 font-medium">Title</th>
-              <th className="px-4 py-3 font-medium">Active</th>
-              <th className="px-4 py-3 font-medium">Password</th>
-            </tr>
-          </thead>
+      <div className="mt-4 overflow-hidden rounded-lg border">
+        <Table className="min-w-225">
+          <TableCaption className="sr-only">User accounts</TableCaption>
+          <TableHeader className="bg-muted text-xs uppercase">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="px-4 text-muted-foreground">Name</TableHead>
+              <TableHead className="px-4 text-muted-foreground">
+                Email
+              </TableHead>
+              <TableHead className="px-4 text-muted-foreground">Role</TableHead>
+              <TableHead className="px-4 text-muted-foreground">
+                Title
+              </TableHead>
+              <TableHead className="px-4 text-muted-foreground">
+                Active
+              </TableHead>
+              <TableHead className="px-4 text-muted-foreground">
+                Password
+              </TableHead>
+            </TableRow>
+          </TableHeader>
 
-          <tbody className="divide-y divide-slate-800">
+          <TableBody>
             {userRows.length === 0 ? (
-              <tr>
-                <td
+              <TableRow className="hover:bg-transparent">
+                <TableCell
                   colSpan={6}
-                  className="px-4 py-10 text-center text-sm text-slate-500"
+                  className="h-28 px-4 text-center text-muted-foreground"
                 >
                   {searchQuery
                     ? `No users found for "${searchQuery}".`
                     : selectedRole
                       ? "No users found for the selected role."
                       : "No users found."}
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ) : (
               userRows.map((user) => (
-                <tr key={user.id} className="text-slate-200">
-                  <td className="px-4 py-3 font-medium">
+                <TableRow key={user.id}>
+                  <TableCell className="px-4 py-3 font-medium">
                     <Link
                       href={`/admin/users/${user.id}`}
-                      className="text-sky-400 transition hover:text-sky-300"
+                      className="text-primary transition hover:text-foreground"
                     >
                       {user.name}
                     </Link>
-                  </td>
-                  <td className="px-4 py-3 text-slate-400">{user.email}</td>
-                  <td className="px-4 py-3 text-slate-400">
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-muted-foreground">
+                    {user.email}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-muted-foreground">
                     {userRoleLabels[user.role]}
-                  </td>
-                  <td className="px-4 py-3 text-slate-400">
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-muted-foreground">
                     {user.title || "Not set"}
-                  </td>
-                  <td className="px-4 py-3 text-slate-400">
-                    {user.isActive ? "Active" : "Inactive"}
-                  </td>
-                  <td className="px-4 py-3 text-slate-400">
-                    {user.mustChangePassword ? "Required" : "Changed"}
-                  </td>
-                </tr>
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
+                    <Badge variant={user.isActive ? "success" : "destructive"}>
+                      {user.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
+                    <Badge
+                      variant={user.mustChangePassword ? "warning" : "success"}
+                    >
+                      {user.mustChangePassword ? "Required" : "Changed"}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </main>
   );
