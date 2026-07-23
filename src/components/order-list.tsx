@@ -10,10 +10,33 @@ import { statusOptions } from "@/lib/order-options";
 import { OrderStatusBadge } from "@/components/order-status-badge";
 import Link from "next/link";
 import { useState } from "react";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SearchIcon, FilterXIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type OrderListProps = {
   orders: Order[];
 };
+
+const statusFilterOptions = [
+  { value: "ALL", label: "All statuses" },
+  ...statusOptions.map((status) => ({
+    value: status,
+    label: statusLabels[status],
+  })),
+];
 
 export function OrderList({ orders }: OrderListProps) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,56 +63,73 @@ export function OrderList({ orders }: OrderListProps) {
 
   return (
     <>
-      <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex w-full flex-col gap-3 sm:flex-row">
-          <div className="w-full sm:max-w-md">
-            <label htmlFor="orderSearch" className="sr-only">
-              Search orders
-            </label>
-            <input
+          <label htmlFor="orderSearch" className="sr-only">
+            Search orders
+          </label>
+          <InputGroup className="w-full sm:max-w-md">
+            <InputGroupInput
               id="orderSearch"
               type="search"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.currentTarget.value)}
               placeholder="Search by order number or project"
-              className="w-full rounded-lg border border-slate-700 bg-slate-950/70 px-4 py-2.5 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+              autoComplete="off"
             />
-          </div>
-          <div className="w-full sm:max-w-56">
-            <label htmlFor="statusFilter" className="sr-only">
-              Filter by status
-            </label>
-            <select
+            <InputGroupAddon align="inline-start">
+              <SearchIcon aria-hidden="true" />
+            </InputGroupAddon>
+          </InputGroup>
+
+          <label htmlFor="statusFilter" className="sr-only">
+            Filter by status
+          </label>
+
+          <Select
+            items={statusFilterOptions}
+            value={selectedStatus}
+            onValueChange={(nextStatus) =>
+              setSelectedStatus(nextStatus ?? "ALL")
+            }
+          >
+            <SelectTrigger
+              className="w-full sm:w-50 sm:shrink-0"
               id="statusFilter"
-              value={selectedStatus}
-              onChange={(event) => setSelectedStatus(event.currentTarget.value)}
-              className="w-full rounded-lg border border-slate-700 bg-slate-950/70 px-4 py-2.5 text-sm text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
             >
-              <option value="ALL">All statuses</option>
-              {statusOptions.map((status) => (
-                <option key={status} value={status}>
-                  {statusLabels[status]}
-                </option>
-              ))}
-            </select>
-          </div>
+              <SelectValue placeholder="All statuses" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {statusFilterOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex items-center gap-3">
           {hasActiveFilters && (
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={() => {
                 setSearchQuery("");
                 setSelectedStatus("ALL");
               }}
-              className="whitespace-nowrap rounded-lg border border-slate-700 px-3 py-2 text-sm font-medium text-slate-300 transition hover:border-sky-500 hover:text-sky-300"
             >
+              <FilterXIcon data-icon="inline-start" />
               Clear filters
-            </button>
+            </Button>
           )}
 
-          <p className="whitespace-nowrap text-sm text-slate-500">
+          <p
+            aria-live="polite"
+            className="ml-auto shrink-0 whitespace-nowrap text-sm text-muted-foreground"
+          >
             {hasActiveFilters
               ? `Showing ${filteredOrders.length} of ${orders.length} orders`
               : `Showing all ${orders.length} orders`}
