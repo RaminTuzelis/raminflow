@@ -25,6 +25,15 @@ import {
 } from "@/components/ui/select";
 import { SearchIcon, FilterXIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableCaption,
+} from "@/components/ui/table";
 
 type OrderListProps = {
   orders: Order[];
@@ -136,73 +145,73 @@ export function OrderList({ orders }: OrderListProps) {
           </p>
         </div>
       </div>
-      <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-900/30 shadow-sm">
-        <table className="w-full min-w-190 border-collapse text-left text-sm">
-          <thead className="bg-slate-950/90 text-xs uppercase tracking-wider text-slate-500">
-            <tr>
-              <th scope="col" className="px-4 py-3 font-medium">
+      <div className="overflow-hidden rounded-lg border">
+        <Table className="min-w-190">
+          <TableCaption className="sr-only">Production orders</TableCaption>
+          <TableHeader className="bg-muted text-xs uppercase">
+            <TableRow className="hover:bg-transparent">
+              <TableHead scope="col" className="px-4 text-muted-foreground">
                 Order
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
+              </TableHead>
+              <TableHead scope="col" className="px-4 text-muted-foreground">
                 Project
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
+              </TableHead>
+              <TableHead scope="col" className="px-4 text-muted-foreground">
                 Deadline
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
+              </TableHead>
+              <TableHead scope="col" className="px-4 text-muted-foreground">
                 Positions
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
+              </TableHead>
+              <TableHead scope="col" className="px-4 text-muted-foreground">
                 Status
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
+              </TableHead>
+              <TableHead scope="col" className="px-4 text-muted-foreground">
                 Updated
-              </th>
-            </tr>
-          </thead>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
 
-          <tbody className="divide-y divide-slate-800">
+          <TableBody>
             {hasNoResults ? (
-              <tr>
-                <td
+              <TableRow className="hover:bg-transparent">
+                <TableCell
                   colSpan={6}
-                  className="px-4 py-10 text-center text-sm text-slate-500"
+                  className="h-28 px-4 text-center text-muted-foreground"
                 >
                   {emptyStateMessage}
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ) : (
               filteredOrders.map((order) => (
-                <tr
-                  key={order.id}
-                  className="transition-colors hover:bg-sky-950/25"
-                >
-                  <td className="px-4 py-5">
+                <TableRow key={order.id}>
+                  <TableCell className="px-4 py-3">
                     <Link
                       href={`/orders/${order.id}`}
-                      className="font-medium text-sky-400 hover:text-sky-300"
+                      className="font-medium text-primary transition hover:text-foreground"
                     >
                       {order.orderNumber}
                     </Link>
-                  </td>
-                  <td className="px-4 py-5 font-medium text-slate-100">
+                  </TableCell>
+                  <TableCell className="px-4 py-3 font-medium text-foreground">
                     {order.projectName}
-                  </td>
-                  <td className="px-4 py-5">
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-muted-foreground">
                     {dateFormatter.format(new Date(order.deadline))}
-                  </td>
-                  <td className="px-4 py-5">{order.items.length}</td>
-                  <td className="px-4 py-5">
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-muted-foreground">
+                    {order.items.length}
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
                     <OrderStatusBadge status={order.status} />
-                  </td>
-                  <td className="px-4 py-5">
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-muted-foreground">
                     {dateTimeFormatter.format(new Date(order.updatedAt))}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </>
   );
