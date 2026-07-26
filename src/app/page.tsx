@@ -43,7 +43,7 @@ export default async function Home() {
         <div className="flex flex-wrap items-center gap-3 sm:justify-end">
           <div className="text-left sm:text-right">
             <p className="text-sm font-medium text-foreground">{user.name}</p>
-            <p className="text-xs font-medium uppercase text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {user.title || "Title not set"}
             </p>
           </div>
