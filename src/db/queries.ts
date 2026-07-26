@@ -79,7 +79,7 @@ export async function getOrderById(id: string): Promise<Order | null> {
     .select()
     .from(orderStatusHistory)
     .where(eq(orderStatusHistory.orderId, order.id))
-    .orderBy(orderStatusHistory.changedAt);
+    .orderBy(desc(orderStatusHistory.changedAt), desc(orderStatusHistory.id));
 
   return {
     id: String(order.id),
