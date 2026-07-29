@@ -38,14 +38,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const labelClassName = "text-sm font-medium text-slate-200";
-
-const fieldClassName =
-  "w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20";
-
 const unitItems = unitOptions.map((unit) => ({
   value: unit,
   label: unitOptionLabels[unit],
+}));
+
+const materialItems = materialOptions.map((material) => ({
+  value: material,
+  label: material,
+}));
+
+const thicknessItems = thicknessOptions.map((thickness) => ({
+  value: String(thickness),
+  label: `${thickness} mm`,
 }));
 
 type EditOrderPageProps = {
@@ -222,49 +227,47 @@ export default async function EditOrderPage({ params }: EditOrderPageProps) {
                     </Select>
                   </Field>
 
-                  <div className="grid gap-2">
-                    <label className={labelClassName} htmlFor="materialType">
-                      Material
-                    </label>
-                    <select
-                      className={fieldClassName}
-                      id="materialType"
-                      name="materialType"
-                      defaultValue=""
-                      required
-                    >
-                      <option value="" disabled>
-                        Select material
-                      </option>
-                      {materialOptions.map((material) => (
-                        <option key={material} value={material}>
-                          {material}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Field>
+                    <FieldLabel htmlFor="materialType">Material</FieldLabel>
+                    <Select items={materialItems} name="materialType" required>
+                      <SelectTrigger id="materialType" className="w-full">
+                        <SelectValue placeholder="Select material" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {materialItems.map((material) => (
+                            <SelectItem
+                              key={material.value}
+                              value={material.value}
+                            >
+                              {material.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
 
-                  <div className="grid gap-2">
-                    <label className={labelClassName} htmlFor="thicknessMm">
-                      Thickness
-                    </label>
-                    <select
-                      className={fieldClassName}
-                      id="thicknessMm"
-                      name="thicknessMm"
-                      defaultValue=""
-                      required
-                    >
-                      <option value="" disabled>
-                        Select thickness
-                      </option>
-                      {thicknessOptions.map((thickness) => (
-                        <option key={thickness} value={thickness}>
-                          {thickness} mm
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Field>
+                    <FieldLabel htmlFor="thicknessMm">Thickness</FieldLabel>
+                    <Select items={thicknessItems} name="thicknessMm" required>
+                      <SelectTrigger id="thicknessMm" className="w-full">
+                        <SelectValue placeholder="Select thickness" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {thicknessItems.map((thickness) => (
+                            <SelectItem
+                              key={thickness.value}
+                              value={thickness.value}
+                            >
+                              {thickness.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
                 </div>
                 <OrderEditAddItemSubmitButton />
               </div>

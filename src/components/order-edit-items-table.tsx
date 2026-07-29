@@ -2,6 +2,15 @@ import type { OrderItem } from "@/types/order";
 import { unitLabels } from "@/lib/order-display";
 import { OrderEditRemoveItemButton } from "@/components/order-edit-remove-item-button";
 import { OrderEditItemEditButton } from "@/components/order-edit-item-edit-button";
+import {
+  Table,
+  TableCaption,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 
 type OrderEditItemsTableProps = {
   orderId: string;
@@ -17,58 +26,87 @@ export function OrderEditItemsTable({
   updateAction,
 }: OrderEditItemsTableProps) {
   return (
-    <div className="mt-6 overflow-hidden rounded-2xl border border-slate-800">
-      <table className="w-full text-left text-sm">
-        <thead className="bg-slate-950 text-xs uppercase tracking-wider text-slate-500">
-          <tr>
-            <th className="w-16 px-4 py-3 font-medium">#</th>
-            <th className="px-4 py-3 font-medium">Item</th>
-            <th className="px-4 py-3 font-medium">Quantity</th>
-            <th className="px-4 py-3 font-medium">Material</th>
-            <th className="px-4 py-3 font-medium">Thickness</th>
-            <th className="px-4 py-3 text-right font-medium">Actions</th>
-          </tr>
-        </thead>
+    <div className="mt-6 overflow-hidden rounded-lg border">
+      <Table className="min-w-180">
+        <TableCaption className="sr-only">Editable order items</TableCaption>
+        <TableHeader className="bg-muted text-xs uppercase">
+          <TableRow className="hover:bg-transparent">
+            <TableHead scope="col" className="w-16 px-4 text-muted-foreground">
+              #
+            </TableHead>
+            <TableHead scope="col" className="px-4 text-muted-foreground">
+              Item
+            </TableHead>
+            <TableHead scope="col" className="px-4 text-muted-foreground">
+              Quantity
+            </TableHead>
+            <TableHead scope="col" className="px-4 text-muted-foreground">
+              Material
+            </TableHead>
+            <TableHead scope="col" className="px-4 text-muted-foreground">
+              Thickness
+            </TableHead>
+            <TableHead
+              scope="col"
+              className="px-4 text-right text-muted-foreground"
+            >
+              Actions
+            </TableHead>
+          </TableRow>
+        </TableHeader>
 
-        <tbody className="divide-y divide-slate-800 bg-slate-900/40">
-          {items.map((item, index) => (
-            <tr key={item.id} className="transition hover:bg-slate-800/60">
-              <td className="px-4 py-3">
-                <span className="text-xs font-medium text-sky-300">
+        <TableBody>
+          {items.length === 0 ? (
+            <TableRow className="hover:bg-transparent">
+              <TableCell
+                colSpan={6}
+                className="h-28 px-4 text-center text-muted-foreground"
+              >
+                No order items have been added.
+              </TableCell>
+            </TableRow>
+          ) : (
+            items.map((item, index) => (
+              <TableRow key={item.id}>
+                <TableCell className="px-4 py-3 text-muted-foreground">
                   {index + 1}
-                </span>
-              </td>
+                </TableCell>
 
-              <td className="px-4 py-3 font-medium text-white">{item.name}</td>
+                <TableCell className="px-4 py-3 font-medium text-foreground">
+                  {item.name}
+                </TableCell>
 
-              <td className="px-4 py-3 text-slate-300">
-                {item.quantity} {unitLabels[item.unit]}
-              </td>
+                <TableCell className="px-4 py-3 text-muted-foreground">
+                  {item.quantity} {unitLabels[item.unit]}
+                </TableCell>
 
-              <td className="px-4 py-3 text-slate-300">{item.materialType}</td>
+                <TableCell className="px-4 py-3 text-muted-foreground">
+                  {item.materialType}
+                </TableCell>
 
-              <td className="px-4 py-3 text-slate-300">
-                {item.thicknessMm} mm
-              </td>
+                <TableCell className="px-4 py-3 text-muted-foreground">
+                  {item.thicknessMm} mm
+                </TableCell>
 
-              <td className="px-4 py-3">
-                <div className="flex justify-end gap-2">
-                  <OrderEditItemEditButton
-                    orderId={orderId}
-                    item={item}
-                    updateAction={updateAction}
-                  />
-                  <form action={removeAction}>
-                    <input type="hidden" name="orderId" value={orderId} />
-                    <input type="hidden" name="itemId" value={item.id} />
-                    <OrderEditRemoveItemButton />
-                  </form>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                <TableCell className="px-4 py-3">
+                  <div className="flex justify-end gap-2">
+                    <OrderEditItemEditButton
+                      orderId={orderId}
+                      item={item}
+                      updateAction={updateAction}
+                    />
+                    <form action={removeAction}>
+                      <input type="hidden" name="orderId" value={orderId} />
+                      <input type="hidden" name="itemId" value={item.id} />
+                      <OrderEditRemoveItemButton />
+                    </form>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 }
