@@ -1,4 +1,5 @@
 import type { OrderItem } from "@/types/order";
+import type { UpdateOrderItemAction } from "@/app/orders/[id]/edit/actions";
 import { unitLabels } from "@/lib/order-display";
 import { OrderEditRemoveItemButton } from "@/components/order-edit-remove-item-button";
 import { OrderEditItemEditButton } from "@/components/order-edit-item-edit-button";
@@ -16,7 +17,7 @@ type OrderEditItemsTableProps = {
   orderId: string;
   items: OrderItem[];
   removeAction: (formData: FormData) => Promise<void>;
-  updateAction: (formData: FormData) => Promise<void>;
+  updateAction: UpdateOrderItemAction;
 };
 
 export function OrderEditItemsTable({

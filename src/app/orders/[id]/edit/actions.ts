@@ -13,6 +13,24 @@ import {
   isUnitType,
 } from "@/lib/order-options";
 
+export type UpdateOrderItemErrorField =
+  | "itemName"
+  | "quantity"
+  | "unit"
+  | "materialType"
+  | "thicknessMm";
+
+export type UpdateOrderItemState = {
+  success: boolean;
+  error: string | null;
+  errorField?: UpdateOrderItemErrorField;
+};
+
+export type UpdateOrderItemAction = (
+  previousState: UpdateOrderItemState,
+  formData: FormData,
+) => Promise<UpdateOrderItemState>;
+
 export async function updateOrderHeader(formData: FormData) {
   const currentUser = await getCurrentUser();
 
@@ -149,7 +167,10 @@ export async function removeOrderItem(formData: FormData) {
   revalidatePath("/");
 }
 
-export async function updateOrderItem(formData: FormData) {
+export async function updateOrderItem(
+  _previousState: UpdateOrderItemState,
+  formData: FormData,
+): Promise<UpdateOrderItemState> {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
@@ -177,23 +198,43 @@ export async function updateOrderItem(formData: FormData) {
   }
 
   if (itemName.trim() === "") {
-    throw new Error("Item name is required.");
+    return {
+      success: false,
+      error: "Item name is required.",
+      errorField: "itemName",
+    };
   }
 
   if (!Number.isInteger(quantity) || quantity < 1) {
-    throw new Error("Quantity must be at least 1.");
+    return {
+      success: false,
+      error: "Quantity must be at least 1.",
+      errorField: "quantity",
+    };
   }
 
   if (!isUnitType(unit)) {
-    throw new Error("Unit is invalid.");
+    return {
+      success: false,
+      error: "Unit is invalid.",
+      errorField: "unit",
+    };
   }
 
   if (!isMaterialType(materialType)) {
-    throw new Error("Material is invalid.");
+    return {
+      success: false,
+      error: "Material is invalid.",
+      errorField: "materialType",
+    };
   }
 
   if (!isThicknessOption(thicknessMm)) {
-    throw new Error("Thickness is invalid.");
+    return {
+      success: false,
+      error: "Thickness is invalid.",
+      errorField: "thicknessMm",
+    };
   }
 
   await db
@@ -210,4 +251,9 @@ export async function updateOrderItem(formData: FormData) {
   revalidatePath(`/orders/${orderId}/edit`);
   revalidatePath(`/orders/${orderId}`);
   revalidatePath("/");
+
+  return {
+    success: true,
+    error: null,
+  };
 }
