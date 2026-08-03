@@ -1,46 +1,138 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
+import type {
+  RemoveOrderItemAction,
+  RemoveOrderItemState,
+} from "@/app/orders/[id]/edit/actions";
+import type { OrderItem } from "@/types/order";
+import { LoaderCircleIcon, Trash2Icon, XIcon } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { FieldError } from "@/components/ui/field";
 
-export function OrderEditRemoveItemButton() {
+const initialState: RemoveOrderItemState = {
+  success: false,
+  error: null,
+};
+
+type OrderEditRemoveItemButtonProps = {
+  orderId: string;
+  item: OrderItem;
+  removeAction: RemoveOrderItemAction;
+};
+
+type OrderEditRemoveItemFormProps = OrderEditRemoveItemButtonProps & {
+  onClose: () => void;
+  onSuccess: () => void;
+};
+
+function OrderEditRemoveItemForm({
+  orderId,
+  item,
+  removeAction,
+  onClose,
+  onSuccess,
+}: OrderEditRemoveItemFormProps) {
+  async function handleRemove(
+    previousState: RemoveOrderItemState,
+    formData: FormData,
+  ) {
+    const result = await removeAction(previousState, formData);
+
+    if (result.success) {
+      onSuccess();
+    }
+
+    return result;
+  }
+
+  const [state, formAction, isPending] = useActionState(
+    handleRemove,
+    initialState,
+  );
+
+  return (
+    <form action={formAction} className="space-y-4" aria-busy={isPending}>
+      <input type="hidden" name="orderId" value={orderId} />
+      <input type="hidden" name="itemId" value={item.id} />
+
+      {state.error && <FieldError>{state.error}</FieldError>}
+
+      <DialogFooter>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onClose}
+          disabled={isPending}
+        >
+          <XIcon aria-hidden="true" data-icon="inline-start" />
+          Cancel
+        </Button>
+        <Button type="submit" variant="destructive" disabled={isPending}>
+          {isPending ? (
+            <LoaderCircleIcon
+              aria-hidden="true"
+              data-icon="inline-start"
+              className="animate-spin"
+            />
+          ) : (
+            <Trash2Icon aria-hidden="true" data-icon="inline-start" />
+          )}
+          {isPending ? "Removing..." : "Remove item"}
+        </Button>
+      </DialogFooter>
+    </form>
+  );
+}
+
+export function OrderEditRemoveItemButton({
+  orderId,
+  item,
+  removeAction,
+}: OrderEditRemoveItemButtonProps) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => setIsConfirmOpen(true)}
-        className="inline-flex items-center justify-center rounded-md border border-red-500/30 bg-red-500/5 px-2.5 py-1 text-sm font-semibold text-red-300 transition hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-200"
-      >
-        Remove
-      </button>
+    <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+      <DialogTrigger render={<Button variant="destructive" size="sm" />}>
+        <Trash2Icon aria-hidden="true" data-icon="inline-start" />
+        Remove item
+      </DialogTrigger>
 
       {isConfirmOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4">
-          <div className="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-900 p-6 text-left shadow-xl">
-            <h2 className="text-lg font-semibold text-white">Remove item?</h2>
-            <div className="mt-2 text-sm leading-6 text-slate-400">
-              <p>This item will be removed from the order.</p>
-              <p>This action cannot be undone.</p>
-            </div>
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setIsConfirmOpen(false)}
-                className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:border-slate-500 hover:text-slate-100"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
-              >
-                Remove item
-              </button>
-            </div>
-          </div>
-        </div>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Remove item?</DialogTitle>
+            <DialogDescription>
+              This item will be removed from the order. This action cannot be
+              undone.
+              <span className="mt-1 block font-medium text-foreground">
+                {item.name}
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <OrderEditRemoveItemForm
+            orderId={orderId}
+            item={item}
+            removeAction={removeAction}
+            onClose={() => setIsConfirmOpen(false)}
+            onSuccess={() => {
+              setIsConfirmOpen(false);
+              toast.success("Order item removed successfully.");
+            }}
+          />
+        </DialogContent>
       )}
-    </>
+    </Dialog>
   );
 }

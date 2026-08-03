@@ -31,6 +31,16 @@ export type UpdateOrderItemAction = (
   formData: FormData,
 ) => Promise<UpdateOrderItemState>;
 
+export type RemoveOrderItemState = {
+  success: boolean;
+  error: string | null;
+};
+
+export type RemoveOrderItemAction = (
+  previousState: RemoveOrderItemState,
+  formData: FormData,
+) => Promise<RemoveOrderItemState>;
+
 export async function updateOrderHeader(formData: FormData) {
   const currentUser = await getCurrentUser();
 
@@ -136,7 +146,10 @@ export async function addOrderItem(formData: FormData) {
   revalidatePath("/");
 }
 
-export async function removeOrderItem(formData: FormData) {
+export async function removeOrderItem(
+  _previousState: RemoveOrderItemState,
+  formData: FormData,
+): Promise<RemoveOrderItemState> {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
@@ -165,6 +178,11 @@ export async function removeOrderItem(formData: FormData) {
   revalidatePath(`/orders/${orderId}/edit`);
   revalidatePath(`/orders/${orderId}`);
   revalidatePath("/");
+
+  return {
+    success: true,
+    error: null,
+  };
 }
 
 export async function updateOrderItem(
