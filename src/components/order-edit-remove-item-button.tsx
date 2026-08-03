@@ -7,18 +7,18 @@ import type {
 } from "@/app/orders/[id]/edit/actions";
 import type { OrderItem } from "@/types/order";
 import { LoaderCircleIcon, Trash2Icon, XIcon } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogTrigger,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { FieldError } from "@/components/ui/field";
+import { toast } from "sonner";
 
 const initialState: RemoveOrderItemState = {
   success: false,
@@ -46,7 +46,7 @@ function OrderEditRemoveItemForm({
   async function handleRemove(
     previousState: RemoveOrderItemState,
     formData: FormData,
-  ) {
+  ): Promise<RemoveOrderItemState> {
     const result = await removeAction(previousState, formData);
 
     if (result.success) {
@@ -121,6 +121,7 @@ export function OrderEditRemoveItemButton({
               </span>
             </DialogDescription>
           </DialogHeader>
+
           <OrderEditRemoveItemForm
             orderId={orderId}
             item={item}

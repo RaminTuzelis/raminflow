@@ -15,6 +15,15 @@ import {
   unitOptions,
 } from "@/lib/order-options";
 import { unitLabels, unitOptionLabels } from "@/lib/order-display";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
 
 const labelClassName = "text-sm font-medium text-slate-200";
 
@@ -169,46 +178,40 @@ export function CreateOrderForm() {
         setSuccessMessage("");
         setCreatedOrderId("");
       }}
-      className="mt-6 space-y-6 rounded-lg border border-slate-800 bg-slate-900/40 p-6 shadow-sm"
+      className="mt-8 space-y-8 rounded-lg border border-border bg-card p-4 sm:p-6"
     >
-      <div className="grid gap-2">
-        <label className={labelClassName} htmlFor="projectName">
-          Project name
-        </label>
-        <input
-          className={fieldClassName}
-          id="projectName"
-          type="text"
-          name="projectName"
-          required
-        />
-      </div>
-      <div className="grid gap-2">
-        <label className={labelClassName} htmlFor="deadline">
-          Deadline
-        </label>
-        <input
-          className={`${fieldClassName} [&::-webkit-calendar-picker-indicator]:invert`}
-          id="deadline"
-          type="date"
-          name="deadline"
-          min={todayDateInputValue}
-          required
-        />
-      </div>
+      <FieldSet>
+        <FieldLegend>Order details</FieldLegend>
 
-      <div className="grid gap-2">
-        <label className={labelClassName} htmlFor="productionNotes">
-          Production notes
-        </label>
-        <textarea
-          className={fieldClassName}
-          id="productionNotes"
-          name="productionNotes"
-          rows={4}
-          placeholder="General production information for the whole order"
-        />
-      </div>
+        <FieldGroup className="grid gap-5 md:grid-cols-2">
+          <Field>
+            <FieldLabel htmlFor="projectName">Project name</FieldLabel>
+            <Input id="projectName" name="projectName" type="text" required />
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="deadline">Deadline</FieldLabel>
+            <Input
+              id="deadline"
+              name="deadline"
+              type="date"
+              min={todayDateInputValue}
+              className="[&::-webkit-calendar-picker-indicator]:invert"
+              required
+            />
+          </Field>
+
+          <Field className="md:col-span-2">
+            <FieldLabel htmlFor="productionNotes">Production notes</FieldLabel>
+            <Textarea
+              id="productionNotes"
+              name="productionNotes"
+              rows={4}
+              placeholder="General production information for the whole order"
+            />
+          </Field>
+        </FieldGroup>
+      </FieldSet>
 
       <fieldset className="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-5">
         <legend className="px-2 text-sm font-semibold uppercase tracking-wider text-slate-500">
