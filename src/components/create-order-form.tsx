@@ -1,5 +1,5 @@
 "use client";
-import type { MouseEvent, SubmitEvent } from "react";
+import type { SubmitEvent } from "react";
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { createOrderDraft } from "@/app/orders/new/actions";
@@ -24,15 +24,42 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
-
-const labelClassName = "text-sm font-medium text-slate-200";
-
-const fieldClassName =
-  "w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type DraftListItem = OrderItemDraft & {
   clientId: string;
 };
+
+const unitItems = unitOptions.map((unit) => ({
+  value: unit,
+  label: unitOptionLabels[unit],
+}));
+
+const materialItems = materialOptions.map((material) => ({
+  value: material,
+  label: material,
+}));
+
+const thicknessItems = thicknessOptions.map((thickness) => ({
+  value: String(thickness),
+  label: `${thickness} mm`,
+}));
 
 type AddedOrderItemProps = {
   item: DraftListItem;
@@ -42,29 +69,33 @@ type AddedOrderItemProps = {
 
 function AddedOrderItem({ item, index, onRemove }: AddedOrderItemProps) {
   return (
-    <article className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-slate-800 bg-slate-950/40 px-4 py-3">
-      <span className="text-xs font-medium text-sky-300">#{index + 1}</span>
-
-      <h3 className="min-w-40 flex-1 truncate font-medium text-white">
-        {item.name}
-      </h3>
-
-      <span className="text-sm text-slate-300">
-        {item.quantity} {unitLabels[item.unit]}
+    <li className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1 px-4 py-3 md:grid-cols-[auto_minmax(0,1fr)_5rem_4rem_4rem_auto] md:gap-x-4">
+      <span className="text-sm tabular-nums text-muted-foreground">
+        {index + 1}.
       </span>
+      <h3 className="truncate font-medium text-foreground">{item.name}</h3>
 
-      <span className="text-sm text-slate-300">{item.materialType}</span>
+      <div className="col-start-2 flex flex-wrap gap-x-4 text-sm text-muted-foreground md:contents">
+        <span className="whitespace-nowrap">
+          {item.quantity} {unitLabels[item.unit]}
+        </span>
 
-      <span className="text-sm text-slate-300">{item.thicknessMm} mm</span>
+        <span className="whitespace-nowrap">{item.materialType}</span>
 
-      <button
+        <span className="whitespace-nowrap">{item.thicknessMm} mm</span>
+      </div>
+
+      <Button
         type="button"
+        variant="destructive"
+        size="sm"
         onClick={() => onRemove(item.clientId)}
-        className="inline-flex items-center justify-center rounded-md border border-red-500/30 bg-red-500/5 px-3 py-1.5 text-sm font-semibold text-red-300 transition hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-200"
+        className="col-span-2 mt-2 w-full md:col-span-1 md:mt-0 md:w-auto"
       >
+        <Trash2Icon aria-hidden="true" data-icon="inline-start" />
         Remove
-      </button>
-    </article>
+      </Button>
+    </li>
   );
 }
 
@@ -79,14 +110,12 @@ export function CreateOrderForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const todayDateInputValue = new Date().toISOString().slice(0, 10);
 
-  function handleAddItem(event: MouseEvent<HTMLButtonElement>) {
-    const form = event.currentTarget.form;
+  function handleAddItem(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-    if (!form || !form.reportValidity()) {
-      return;
-    }
-
+    const form = event.currentTarget;
     const formData = new FormData(form);
+
     const newItem: DraftListItem = {
       clientId: crypto.randomUUID(),
       name: String(formData.get("itemName") ?? ""),
@@ -171,191 +200,199 @@ export function CreateOrderForm() {
   }
 
   return (
-    <form
-      ref={formRef}
-      onSubmit={handleSubmit}
+    <div
       onChange={() => {
         setSuccessMessage("");
         setCreatedOrderId("");
       }}
       className="mt-8 space-y-8 rounded-lg border border-border bg-card p-4 sm:p-6"
     >
-      <FieldSet>
-        <FieldLegend>Order details</FieldLegend>
+      <form id="create-order-form" ref={formRef} onSubmit={handleSubmit}>
+        <FieldSet>
+          <FieldLegend className="mb-2 text-lg font-semibold text-foreground">
+            Order details
+          </FieldLegend>
 
-        <FieldGroup className="grid gap-5 md:grid-cols-2">
-          <Field>
-            <FieldLabel htmlFor="projectName">Project name</FieldLabel>
-            <Input id="projectName" name="projectName" type="text" required />
-          </Field>
+          <FieldGroup className="grid gap-5 md:grid-cols-2">
+            <Field>
+              <FieldLabel htmlFor="projectName">Project name</FieldLabel>
+              <Input id="projectName" name="projectName" type="text" required />
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="deadline">Deadline</FieldLabel>
+              <Input
+                id="deadline"
+                name="deadline"
+                type="date"
+                min={todayDateInputValue}
+                className="[&::-webkit-calendar-picker-indicator]:invert"
+                required
+              />
+            </Field>
+
+            <Field className="md:col-span-2">
+              <FieldLabel htmlFor="productionNotes">
+                Production notes
+              </FieldLabel>
+              <Textarea
+                id="productionNotes"
+                name="productionNotes"
+                rows={4}
+                placeholder="General production information for the whole order"
+              />
+            </Field>
+          </FieldGroup>
+        </FieldSet>
+      </form>
+
+      <form onSubmit={handleAddItem}>
+        <FieldSet className="rounded-lg border border-border bg-muted/20 p-4 sm:p-5">
+          <FieldLegend className="px-2">Add order item</FieldLegend>
 
           <Field>
-            <FieldLabel htmlFor="deadline">Deadline</FieldLabel>
+            <FieldLabel htmlFor="itemName">Item name</FieldLabel>
             <Input
-              id="deadline"
-              name="deadline"
-              type="date"
-              min={todayDateInputValue}
-              className="[&::-webkit-calendar-picker-indicator]:invert"
+              ref={itemNameInputRef}
+              id="itemName"
+              name="itemName"
+              type="text"
               required
             />
           </Field>
 
-          <Field className="md:col-span-2">
-            <FieldLabel htmlFor="productionNotes">Production notes</FieldLabel>
-            <Textarea
-              id="productionNotes"
-              name="productionNotes"
-              rows={4}
-              placeholder="General production information for the whole order"
-            />
-          </Field>
-        </FieldGroup>
-      </FieldSet>
+          <FieldGroup className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <Field>
+              <FieldLabel htmlFor="quantity">Quantity</FieldLabel>
 
-      <fieldset className="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-5">
-        <legend className="px-2 text-sm font-semibold uppercase tracking-wider text-slate-500">
-          Add order item
-        </legend>
-        <div className="grid gap-2">
-          <label className={labelClassName} htmlFor="itemName">
-            Item name
-          </label>
-          <input
-            ref={itemNameInputRef}
-            className={fieldClassName}
-            id="itemName"
-            name="itemName"
-            type="text"
-            required
-          />
-        </div>
+              <InputGroup>
+                <InputGroupAddon>
+                  <InputGroupButton
+                    type="button"
+                    aria-label="Decrease quantity"
+                    disabled={quantity === 1}
+                    onClick={() => {
+                      setQuantity((currentQuantity) =>
+                        Math.max(1, currentQuantity - 1),
+                      );
+                    }}
+                  >
+                    <MinusIcon aria-hidden="true" />
+                  </InputGroupButton>
+                </InputGroupAddon>
 
-        <div className="grid gap-2">
-          <label className={labelClassName} htmlFor="quantity">
-            Quantity
-          </label>
+                <InputGroupInput
+                  value={quantity}
+                  onChange={(event) => {
+                    const nextQuantity = event.currentTarget.valueAsNumber;
 
-          <div className="flex">
-            <button
-              type="button"
-              aria-label="Decrease quantity"
-              disabled={quantity === 1}
-              onClick={() => {
-                setQuantity((currentQuantity) =>
-                  Math.max(1, currentQuantity - 1),
-                );
-              }}
-              className="rounded-l-md border border-slate-700 bg-slate-900 px-4 text-slate-200 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              -
-            </button>
-            <input
-              value={quantity}
-              onChange={(event) => {
-                const nextQuantity = event.currentTarget.valueAsNumber;
+                    if (!Number.isNaN(nextQuantity)) {
+                      setQuantity(Math.max(1, nextQuantity));
+                    }
+                  }}
+                  className="text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  id="quantity"
+                  name="quantity"
+                  type="number"
+                  min={1}
+                  required
+                />
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton
+                    type="button"
+                    aria-label="Increase quantity"
+                    onClick={() => {
+                      setQuantity((currentQuantity) => currentQuantity + 1);
+                    }}
+                  >
+                    <PlusIcon aria-hidden="true" />
+                  </InputGroupButton>
+                </InputGroupAddon>
+              </InputGroup>
+            </Field>
 
-                if (!Number.isNaN(nextQuantity)) {
-                  setQuantity(Math.max(1, nextQuantity));
-                }
-              }}
-              className="min-w-0 flex-1 border-y border-slate-700 bg-slate-950 px-3 py-2 text-center text-slate-100 outline-none [appearance:textfield] focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              id="quantity"
-              name="quantity"
-              type="number"
-              min={1}
-              required
-            />
-            <button
-              type="button"
-              aria-label="Increase quantity"
-              onClick={() => {
-                setQuantity((currentQuantity) => currentQuantity + 1);
-              }}
-              className="rounded-r-md border border-slate-700 bg-slate-900 px-4 text-slate-200 transition hover:bg-slate-800"
-            >
-              +
-            </button>
+            <Field>
+              <FieldLabel htmlFor="unit">Unit</FieldLabel>
+
+              <Select items={unitItems} name="unit" defaultValue="PCS" required>
+                <SelectTrigger id="unit" className="w-full">
+                  <SelectValue placeholder="Select unit" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectGroup>
+                    {unitItems.map((unit) => (
+                      <SelectItem key={unit.value} value={unit.value}>
+                        {unit.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="materialType">Material</FieldLabel>
+              <Select items={materialItems} name="materialType" required>
+                <SelectTrigger id="materialType" className="w-full">
+                  <SelectValue placeholder="Select material" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectGroup>
+                    {materialItems.map((material) => (
+                      <SelectItem key={material.value} value={material.value}>
+                        {material.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="thicknessMm">Thickness</FieldLabel>
+              <Select items={thicknessItems} name="thicknessMm" required>
+                <SelectTrigger id="thicknessMm" className="w-full">
+                  <SelectValue placeholder="Select thickness" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectGroup>
+                    {thicknessItems.map((thickness) => (
+                      <SelectItem key={thickness.value} value={thickness.value}>
+                        {thickness.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+          </FieldGroup>
+          <div className="flex justify-end border-t border-border pt-4">
+            <Button type="submit" size="lg" className="w-full sm:w-auto">
+              <PlusIcon aria-hidden="true" data-icon="inline-start" />
+              Add item
+            </Button>
           </div>
-        </div>
-
-        <div className="grid gap-2">
-          <label className={labelClassName} htmlFor="unit">
-            Unit
-          </label>
-          <select
-            className={fieldClassName}
-            name="unit"
-            id="unit"
-            defaultValue="PCS"
-            required
-          >
-            {unitOptions.map((unit) => (
-              <option key={unit} value={unit}>
-                {unitOptionLabels[unit]}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="grid gap-2">
-          <label className={labelClassName} htmlFor="materialType">
-            Material
-          </label>
-          <select
-            className={fieldClassName}
-            name="materialType"
-            id="materialType"
-            defaultValue=""
-            required
-          >
-            <option value="" disabled>
-              Select material
-            </option>
-            {materialOptions.map((material) => (
-              <option key={material} value={material}>
-                {material}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="grid gap-2">
-          <label className={labelClassName} htmlFor="thicknessMm">
-            Thickness
-          </label>
-          <select
-            className={fieldClassName}
-            id="thicknessMm"
-            name="thicknessMm"
-            defaultValue=""
-            required
-          >
-            <option value="" disabled>
-              Select thickness
-            </option>
-            {thicknessOptions.map((thickness) => (
-              <option key={thickness} value={thickness}>
-                {thickness} mm
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleAddItem}
-          className="rounded-md border border-sky-500 px-4 py-2 font-medium text-sky-300 transition hover:bg-sky-500/10"
-        >
-          Add item
-        </button>
-      </fieldset>
-
+        </FieldSet>
+      </form>
       {items.length > 0 && (
-        <section className="space-y-3">
-          <h2 className="text-lg font-medium text-white">Added items</h2>
+        <section aria-labelledby="added-items-heading" className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <h2
+              id="added-items-heading"
+              className="text-lg font-semibold text-foreground"
+            >
+              Added items
+            </h2>
 
-          <div className="space-y-3">
+            <Badge variant="secondary">
+              {items.length} item{items.length === 1 ? "" : "s"}
+            </Badge>
+          </div>
+
+          <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border">
             {items.map((item, index) => (
               <AddedOrderItem
                 key={item.clientId}
@@ -364,7 +401,7 @@ export function CreateOrderForm() {
                 onRemove={handleRemoveItem}
               />
             ))}
-          </div>
+          </ul>
         </section>
       )}
       {formError && (
@@ -398,6 +435,7 @@ export function CreateOrderForm() {
           </p>
         </div>
         <button
+          form="create-order-form"
           className={`rounded-lg border px-4 py-2 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 ${
             successMessage
               ? "cursor-not-allowed border-emerald-500/40 bg-emerald-500/10 text-emerald-300 focus:ring-emerald-400"
@@ -413,6 +451,6 @@ export function CreateOrderForm() {
               : "Create order"}
         </button>
       </div>
-    </form>
+    </div>
   );
 }
