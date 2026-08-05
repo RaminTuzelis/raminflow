@@ -23,6 +23,7 @@ import {
   FieldLabel,
   FieldLegend,
   FieldSet,
+  FieldError,
 } from "@/components/ui/field";
 import {
   InputGroup,
@@ -30,7 +31,14 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import {
+  MinusIcon,
+  PlusIcon,
+  Trash2Icon,
+  ArrowRightIcon,
+  CircleCheckIcon,
+  LoaderCircleIcon,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -39,7 +47,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 type DraftListItem = OrderItemDraft & {
@@ -61,13 +69,13 @@ const thicknessItems = thicknessOptions.map((thickness) => ({
   label: `${thickness} mm`,
 }));
 
-type AddedOrderItemProps = {
+type AddedOrderItemRowProps = {
   item: DraftListItem;
   index: number;
   onRemove: (clientId: string) => void;
 };
 
-function AddedOrderItem({ item, index, onRemove }: AddedOrderItemProps) {
+function AddedOrderItemRow({ item, index, onRemove }: AddedOrderItemRowProps) {
   return (
     <li className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1 px-4 py-3 md:grid-cols-[auto_minmax(0,1fr)_5rem_4rem_4rem_auto] md:gap-x-4">
       <span className="text-sm tabular-nums text-muted-foreground">
@@ -99,6 +107,47 @@ function AddedOrderItem({ item, index, onRemove }: AddedOrderItemProps) {
   );
 }
 
+type AddedOrderItemsSectionProps = {
+  items: DraftListItem[];
+  onRemove: (clientId: string) => void;
+};
+
+function AddedOrderItemsSection({
+  items,
+  onRemove,
+}: AddedOrderItemsSectionProps) {
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <section aria-labelledby="added-items-heading" className="space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <h2
+          id="added-items-heading"
+          className="text-lg font-semibold text-foreground"
+        >
+          Added items
+        </h2>
+
+        <Badge variant="secondary">
+          {items.length} item{items.length === 1 ? "" : "s"}
+        </Badge>
+      </div>
+      <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border">
+        {items.map((item, index) => (
+          <AddedOrderItemRow
+            key={item.clientId}
+            item={item}
+            index={index}
+            onRemove={onRemove}
+          />
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export function CreateOrderForm() {
   const [quantity, setQuantity] = useState(1);
   const [items, setItems] = useState<DraftListItem[]>([]);
@@ -108,6 +157,7 @@ export function CreateOrderForm() {
   const [createdOrderId, setCreatedOrderId] = useState("");
   const itemNameInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const [itemFormResetKey, setItemFormResetKey] = useState(0);
   const todayDateInputValue = new Date().toISOString().slice(0, 10);
 
   function handleAddItem(event: SubmitEvent<HTMLFormElement>) {
@@ -183,6 +233,7 @@ export function CreateOrderForm() {
       setCreatedOrderId(createdOrder.order.id);
       setSuccessMessage(`Order ${createdOrder.order.orderNumber} created.`);
       formRef.current?.reset();
+      setItemFormResetKey((currentKey) => currentKey + 1);
       setItems([]);
       setQuantity(1);
     } catch (error) {
@@ -204,6 +255,7 @@ export function CreateOrderForm() {
       onChange={() => {
         setSuccessMessage("");
         setCreatedOrderId("");
+        setFormError("");
       }}
       className="mt-8 space-y-8 rounded-lg border border-border bg-card p-4 sm:p-6"
     >
@@ -246,7 +298,7 @@ export function CreateOrderForm() {
         </FieldSet>
       </form>
 
-      <form onSubmit={handleAddItem}>
+      <form key={itemFormResetKey} onSubmit={handleAddItem}>
         <FieldSet className="rounded-lg border border-border bg-muted/20 p-4 sm:p-5">
           <FieldLegend className="px-2">Add order item</FieldLegend>
 
@@ -377,79 +429,77 @@ export function CreateOrderForm() {
           </div>
         </FieldSet>
       </form>
-      {items.length > 0 && (
-        <section aria-labelledby="added-items-heading" className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <h2
-              id="added-items-heading"
-              className="text-lg font-semibold text-foreground"
-            >
-              Added items
-            </h2>
 
-            <Badge variant="secondary">
-              {items.length} item{items.length === 1 ? "" : "s"}
-            </Badge>
-          </div>
+      <AddedOrderItemsSection items={items} onRemove={handleRemoveItem} />
 
-          <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border">
-            {items.map((item, index) => (
-              <AddedOrderItem
-                key={item.clientId}
-                item={item}
-                index={index}
-                onRemove={handleRemoveItem}
-              />
-            ))}
-          </ul>
-        </section>
-      )}
       {formError && (
-        <p className="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
-          {formError}
-        </p>
+        <FieldError id="create-order-error">{formError}</FieldError>
       )}
 
       {successMessage && (
-        <div className="flex flex-col gap-3 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300 sm:flex-row sm:items-center sm:justify-between">
-          <p>{successMessage}</p>
+        <div
+          role="status"
+          className="flex flex-col gap-3 rounded-lg border border-success/40 bg-success/10 p-3 text-sm text-success sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <CircleCheckIcon aria-hidden="true" className="size-4 shrink-0" />
+            <p>{successMessage}</p>
+          </div>
 
           {createdOrderId && (
             <Link
               href={`/orders/${createdOrderId}`}
-              className="font-medium text-emerald-100 underline underline-offset-4 transition hover:text-white"
+              className={buttonVariants({
+                variant: "success",
+                size: "sm",
+              })}
             >
               View order
+              <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
             </Link>
           )}
         </div>
       )}
 
-      <div className="flex flex-col gap-3 border-t border-slate-800 pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm font-medium text-slate-200">
-            {items.length} order item{items.length === 1 ? "" : "s"} added
-          </p>
-          <p className="mt-1 text-sm text-slate-500">
-            Create the order after all required positions are added.
-          </p>
-        </div>
-        <button
+      <div className="flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-muted-foreground">
+          {successMessage
+            ? "The order was created successfully."
+            : items.length === 0
+              ? "Add at least one order item before creating the order."
+              : "Review the details before creating the order."}
+        </p>
+
+        <Button
           form="create-order-form"
-          className={`rounded-lg border px-4 py-2 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 ${
-            successMessage
-              ? "cursor-not-allowed border-emerald-500/40 bg-emerald-500/10 text-emerald-300 focus:ring-emerald-400"
-              : "border-sky-500/40 bg-sky-500/10 text-sky-300 hover:bg-sky-500/20 focus:ring-sky-400"
-          }`}
-          disabled={Boolean(successMessage) || isSubmitting}
           type="submit"
+          size="lg"
+          variant={successMessage ? "success" : "default"}
+          disabled={Boolean(successMessage) || isSubmitting}
+          aria-busy={isSubmitting}
+          className="w-full sm:w-auto"
         >
-          {isSubmitting
-            ? "Creating..."
-            : successMessage
-              ? "Order created"
-              : "Create order"}
-        </button>
+          {isSubmitting ? (
+            <>
+              <LoaderCircleIcon
+                aria-hidden="true"
+                data-icon="inline-start"
+                className="animate-spin"
+              />
+              Creating...
+            </>
+          ) : successMessage ? (
+            <>
+              <CircleCheckIcon aria-hidden="true" data-icon="inline-start" />
+              Order created
+            </>
+          ) : (
+            <>
+              <PlusIcon aria-hidden="true" data-icon="inline-start" />
+              Create order
+            </>
+          )}
+        </Button>
       </div>
     </div>
   );
