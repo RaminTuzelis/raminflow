@@ -3,18 +3,8 @@ import type { SubmitEvent } from "react";
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { createOrderDraft } from "@/app/orders/new/actions";
-import type {
-  MaterialType,
-  OrderDraft,
-  OrderItemDraft,
-  UnitType,
-} from "@/types/order";
-import {
-  materialOptions,
-  thicknessOptions,
-  unitOptions,
-} from "@/lib/order-options";
-import { unitLabels, unitOptionLabels } from "@/lib/order-display";
+import type { OrderDraft, OrderItemDraft } from "@/types/order";
+import { unitLabels } from "@/lib/order-display";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -26,48 +16,20 @@ import {
   FieldError,
 } from "@/components/ui/field";
 import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/ui/input-group";
-import {
-  MinusIcon,
   PlusIcon,
   Trash2Icon,
   ArrowRightIcon,
   CircleCheckIcon,
   LoaderCircleIcon,
 } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AddOrderItemForm } from "@/components/add-order-item-form";
 
 type DraftListItem = OrderItemDraft & {
   clientId: string;
 };
-
-const unitItems = unitOptions.map((unit) => ({
-  value: unit,
-  label: unitOptionLabels[unit],
-}));
-
-const materialItems = materialOptions.map((material) => ({
-  value: material,
-  label: material,
-}));
-
-const thicknessItems = thicknessOptions.map((thickness) => ({
-  value: String(thickness),
-  label: `${thickness} mm`,
-}));
 
 type AddedOrderItemRowProps = {
   item: DraftListItem;
@@ -149,39 +111,25 @@ function AddedOrderItemsSection({
 }
 
 export function CreateOrderForm() {
-  const [quantity, setQuantity] = useState(1);
   const [items, setItems] = useState<DraftListItem[]>([]);
   const [formError, setFormError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState("");
-  const itemNameInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [itemFormResetKey, setItemFormResetKey] = useState(0);
   const todayDateInputValue = new Date().toISOString().slice(0, 10);
 
-  function handleAddItem(event: SubmitEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-
+  function handleAddItem(item: OrderItemDraft) {
     const newItem: DraftListItem = {
+      ...item,
       clientId: crypto.randomUUID(),
-      name: String(formData.get("itemName") ?? ""),
-      quantity,
-      unit: String(formData.get("unit") ?? "") as UnitType,
-      materialType: String(formData.get("materialType") ?? "") as MaterialType,
-      thicknessMm: Number(formData.get("thicknessMm")),
     };
 
     setItems((currentItems) => [...currentItems, newItem]);
     setFormError("");
     setSuccessMessage("");
     setCreatedOrderId("");
-    itemNameInputRef.current?.focus();
-    itemNameInputRef.current?.select();
-    setQuantity(1);
   }
 
   function handleRemoveItem(clientId: string) {
@@ -235,7 +183,6 @@ export function CreateOrderForm() {
       formRef.current?.reset();
       setItemFormResetKey((currentKey) => currentKey + 1);
       setItems([]);
-      setQuantity(1);
     } catch (error) {
       setSuccessMessage("");
 
@@ -298,137 +245,7 @@ export function CreateOrderForm() {
         </FieldSet>
       </form>
 
-      <form key={itemFormResetKey} onSubmit={handleAddItem}>
-        <FieldSet className="rounded-lg border border-border bg-muted/20 p-4 sm:p-5">
-          <FieldLegend className="px-2">Add order item</FieldLegend>
-
-          <Field>
-            <FieldLabel htmlFor="itemName">Item name</FieldLabel>
-            <Input
-              ref={itemNameInputRef}
-              id="itemName"
-              name="itemName"
-              type="text"
-              required
-            />
-          </Field>
-
-          <FieldGroup className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            <Field>
-              <FieldLabel htmlFor="quantity">Quantity</FieldLabel>
-
-              <InputGroup>
-                <InputGroupAddon>
-                  <InputGroupButton
-                    type="button"
-                    aria-label="Decrease quantity"
-                    disabled={quantity === 1}
-                    onClick={() => {
-                      setQuantity((currentQuantity) =>
-                        Math.max(1, currentQuantity - 1),
-                      );
-                    }}
-                  >
-                    <MinusIcon aria-hidden="true" />
-                  </InputGroupButton>
-                </InputGroupAddon>
-
-                <InputGroupInput
-                  value={quantity}
-                  onChange={(event) => {
-                    const nextQuantity = event.currentTarget.valueAsNumber;
-
-                    if (!Number.isNaN(nextQuantity)) {
-                      setQuantity(Math.max(1, nextQuantity));
-                    }
-                  }}
-                  className="text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  id="quantity"
-                  name="quantity"
-                  type="number"
-                  min={1}
-                  required
-                />
-                <InputGroupAddon align="inline-end">
-                  <InputGroupButton
-                    type="button"
-                    aria-label="Increase quantity"
-                    onClick={() => {
-                      setQuantity((currentQuantity) => currentQuantity + 1);
-                    }}
-                  >
-                    <PlusIcon aria-hidden="true" />
-                  </InputGroupButton>
-                </InputGroupAddon>
-              </InputGroup>
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="unit">Unit</FieldLabel>
-
-              <Select items={unitItems} name="unit" defaultValue="PCS" required>
-                <SelectTrigger id="unit" className="w-full">
-                  <SelectValue placeholder="Select unit" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectGroup>
-                    {unitItems.map((unit) => (
-                      <SelectItem key={unit.value} value={unit.value}>
-                        {unit.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="materialType">Material</FieldLabel>
-              <Select items={materialItems} name="materialType" required>
-                <SelectTrigger id="materialType" className="w-full">
-                  <SelectValue placeholder="Select material" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectGroup>
-                    {materialItems.map((material) => (
-                      <SelectItem key={material.value} value={material.value}>
-                        {material.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="thicknessMm">Thickness</FieldLabel>
-              <Select items={thicknessItems} name="thicknessMm" required>
-                <SelectTrigger id="thicknessMm" className="w-full">
-                  <SelectValue placeholder="Select thickness" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectGroup>
-                    {thicknessItems.map((thickness) => (
-                      <SelectItem key={thickness.value} value={thickness.value}>
-                        {thickness.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-          </FieldGroup>
-          <div className="flex justify-end border-t border-border pt-4">
-            <Button type="submit" size="lg" className="w-full sm:w-auto">
-              <PlusIcon aria-hidden="true" data-icon="inline-start" />
-              Add item
-            </Button>
-          </div>
-        </FieldSet>
-      </form>
+      <AddOrderItemForm key={itemFormResetKey} onAdd={handleAddItem} />
 
       <AddedOrderItemsSection items={items} onRemove={handleRemoveItem} />
 
