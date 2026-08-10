@@ -1,12 +1,12 @@
 "use client";
 
-import type { Order } from "@/types/order";
+import type { Order, OrderStatus } from "@/types/order";
 import {
   dateFormatter,
   dateTimeFormatter,
   statusLabels,
 } from "@/lib/order-display";
-import { statusOptions } from "@/lib/order-options";
+import { isOrderStatus, statusOptions } from "@/lib/order-options";
 import { OrderStatusBadge } from "@/components/order-status-badge";
 import Link from "next/link";
 import { useState } from "react";
@@ -34,9 +34,13 @@ import {
   TableCell,
   TableCaption,
 } from "@/components/ui/table";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useDebouncedCallback } from "use-debounce";
 
 type OrderListProps = {
   orders: Order[];
+  initialQuery: string;
+  initialStatus: OrderStatus | "ALL";
 };
 
 const statusFilterOptions = [
@@ -47,32 +51,82 @@ const statusFilterOptions = [
   })),
 ];
 
-export function OrderList({ orders }: OrderListProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("ALL");
-  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+export function OrderList({
+  orders,
+  initialQuery,
+  initialStatus,
+}: OrderListProps) {
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [selectedStatus, setSelectedStatus] = useState<OrderStatus | "ALL">(
+    initialStatus,
+  );
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+
+  const handleSearch = useDebouncedCallback((term: string) => {
+    const params = new URLSearchParams(searchParams);
+    const normalizedTerm = term.trim();
+
+    if (normalizedTerm) {
+      params.set("q", normalizedTerm);
+    } else {
+      params.delete("q");
+    }
+
+    const queryString = params.toString();
+
+    replace(queryString ? `${pathname}?${queryString}` : pathname);
+  }, 300);
+
+  function handleStatusChange(nextStatus: string | null) {
+    const params = new URLSearchParams(searchParams);
+
+    const normalizedStatus =
+      nextStatus && isOrderStatus(nextStatus) ? nextStatus : "ALL";
+
+    setSelectedStatus(normalizedStatus);
+
+    if (normalizedStatus === "ALL") {
+      params.delete("status");
+    } else {
+      params.set("status", normalizedStatus);
+    }
+
+    const queryString = params.toString();
+
+    replace(queryString ? `${pathname}?${queryString}` : pathname);
+  }
+
+  function handleClearFilters() {
+    const params = new URLSearchParams(searchParams);
+
+    handleSearch.cancel();
+    setSearchQuery("");
+    setSelectedStatus("ALL");
+
+    params.delete("q");
+    params.delete("status");
+
+    const queryString = params.toString();
+
+    replace(queryString ? `${pathname}?${queryString}` : pathname);
+  }
+
+  const normalizedAppliedQuery = initialQuery.trim().toLowerCase();
+
   const hasActiveFilters =
-    normalizedSearchQuery.length > 0 || selectedStatus !== "ALL";
-  const emptyStateMessage = normalizedSearchQuery
-    ? `No orders found for "${searchQuery.trim()}".`
+    normalizedAppliedQuery.length > 0 || initialStatus !== "ALL";
+
+  const emptyStateMessage = normalizedAppliedQuery
+    ? `No orders found for "${initialQuery.trim()}".`
     : `No orders match the selected filters.`;
 
-  const filteredOrders = orders.filter((order) => {
-    const searchableText =
-      `${order.orderNumber} ${order.projectName}`.toLowerCase();
-
-    const matchesSearch = searchableText.includes(normalizedSearchQuery);
-    const matchesStatus =
-      selectedStatus === "ALL" || order.status === selectedStatus;
-
-    return matchesSearch && matchesStatus;
-  });
-
-  const hasNoResults = filteredOrders.length === 0;
+  const hasNoResults = orders.length === 0;
 
   return (
     <>
-      <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="mb-3 grid gap-2 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-4">
         <div className="flex w-full flex-col gap-3 sm:flex-row">
           <label htmlFor="orderSearch" className="sr-only">
             Search orders
@@ -82,7 +136,12 @@ export function OrderList({ orders }: OrderListProps) {
               id="orderSearch"
               type="search"
               value={searchQuery}
-              onChange={(event) => setSearchQuery(event.currentTarget.value)}
+              onChange={(event) => {
+                const nextQuery = event.currentTarget.value;
+
+                setSearchQuery(nextQuery);
+                handleSearch(nextQuery);
+              }}
               placeholder="Search by order number or project"
               autoComplete="off"
             />
@@ -98,9 +157,7 @@ export function OrderList({ orders }: OrderListProps) {
           <Select
             items={statusFilterOptions}
             value={selectedStatus}
-            onValueChange={(nextStatus) =>
-              setSelectedStatus(nextStatus ?? "ALL")
-            }
+            onValueChange={handleStatusChange}
           >
             <SelectTrigger
               className="w-full sm:w-50 sm:shrink-0"
@@ -124,11 +181,9 @@ export function OrderList({ orders }: OrderListProps) {
           {hasActiveFilters && (
             <Button
               type="button"
+              size="sm"
               variant="outline"
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedStatus("ALL");
-              }}
+              onClick={handleClearFilters}
             >
               <FilterXIcon data-icon="inline-start" />
               Clear filters
@@ -140,8 +195,8 @@ export function OrderList({ orders }: OrderListProps) {
             className="ml-auto shrink-0 whitespace-nowrap text-sm text-muted-foreground"
           >
             {hasActiveFilters
-              ? `Showing ${filteredOrders.length} of ${orders.length} orders`
-              : `Showing all ${orders.length} orders`}
+              ? `${orders.length} matching ${orders.length === 1 ? "order" : "orders"}`
+              : `${orders.length} ${orders.length === 1 ? "order" : "orders"}`}
           </p>
         </div>
       </div>
@@ -182,7 +237,7 @@ export function OrderList({ orders }: OrderListProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredOrders.map((order) => (
+              orders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="px-4 py-3">
                     <Link

@@ -1,9 +1,17 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, ilike, or } from "drizzle-orm";
 import { db } from "@/db/client";
 import { orderItems, orders, orderStatusHistory, users } from "@/db/schema";
-import type { Order } from "@/types/order";
+import type { Order, OrderStatus } from "@/types/order";
 
-export async function getOrders(): Promise<Order[]> {
+type GetOrdersFilters = {
+  searchQuery?: string;
+  status?: OrderStatus;
+};
+
+export async function getOrders({
+  searchQuery = "",
+  status,
+}: GetOrdersFilters = {}): Promise<Order[]> {
   const itemRows = await db.select().from(orderItems);
   const orderRows = await db
     .select({
@@ -15,6 +23,17 @@ export async function getOrders(): Promise<Order[]> {
     })
     .from(orders)
     .innerJoin(users, eq(orders.createdByUserId, users.id))
+    .where(
+      and(
+        searchQuery
+          ? or(
+              ilike(orders.orderNumber, `%${searchQuery}%`),
+              ilike(orders.projectName, `%${searchQuery}%`),
+            )
+          : undefined,
+        status ? eq(orders.status, status) : undefined,
+      ),
+    )
     .orderBy(desc(orders.id));
 
   return orderRows.map((row) => ({
