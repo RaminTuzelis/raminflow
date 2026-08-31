@@ -2,17 +2,31 @@ import { and, desc, eq, ilike, or } from "drizzle-orm";
 import { db } from "@/db/client";
 import { orderItems, orders, orderStatusHistory, users } from "@/db/schema";
 import type { Order, OrderStatus } from "@/types/order";
+import { ORDERS_PER_PAGE } from "@/lib/pagination";
 
 type GetOrdersFilters = {
   searchQuery?: string;
   status?: OrderStatus;
+  limit?: number;
+  offset?: number;
 };
 
 export async function getOrders({
   searchQuery = "",
   status,
+  limit = ORDERS_PER_PAGE,
+  offset = 0,
 }: GetOrdersFilters = {}): Promise<Order[]> {
   const itemRows = await db.select().from(orderItems);
+  const orderFilters = and(
+    searchQuery
+      ? or(
+          ilike(orders.orderNumber, `%${searchQuery}%`),
+          ilike(orders.projectName, `%${searchQuery}%`),
+        )
+      : undefined,
+    status ? eq(orders.status, status) : undefined,
+  );
   const orderRows = await db
     .select({
       order: orders,
@@ -23,18 +37,10 @@ export async function getOrders({
     })
     .from(orders)
     .innerJoin(users, eq(orders.createdByUserId, users.id))
-    .where(
-      and(
-        searchQuery
-          ? or(
-              ilike(orders.orderNumber, `%${searchQuery}%`),
-              ilike(orders.projectName, `%${searchQuery}%`),
-            )
-          : undefined,
-        status ? eq(orders.status, status) : undefined,
-      ),
-    )
-    .orderBy(desc(orders.id));
+    .where(orderFilters)
+    .orderBy(desc(orders.id))
+    .limit(limit)
+    .offset(offset);
 
   return orderRows.map((row) => ({
     id: String(row.order.id),

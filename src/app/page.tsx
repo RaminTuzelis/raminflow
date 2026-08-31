@@ -9,10 +9,12 @@ import { PlusIcon } from "lucide-react";
 import { isOrderStatus } from "@/lib/order-options";
 import { AccountMenu } from "@/components/account-menu";
 import { logoutUser } from "@/app/logout/actions";
+import { parsePage, calculateOffset } from "@/lib/pagination";
 
 type SearchParams = {
   q?: string;
   status?: string;
+  page?: string;
 };
 
 type HomePageProps = {
@@ -20,10 +22,12 @@ type HomePageProps = {
 };
 
 export default async function Home({ searchParams }: HomePageProps) {
-  const { q, status } = await searchParams;
+  const { q, status, page } = await searchParams;
   const searchQuery = q?.trim() ?? "";
   const selectedStatus = status && isOrderStatus(status) ? status : undefined;
   const user = await getCurrentUser();
+  const currentPage = parsePage(page);
+  const offset = calculateOffset(currentPage);
 
   if (!user) {
     redirect("/login");
@@ -33,6 +37,7 @@ export default async function Home({ searchParams }: HomePageProps) {
   const orders = await getOrders({
     searchQuery,
     status: selectedStatus,
+    offset,
   });
 
   return (
