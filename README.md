@@ -1,8 +1,6 @@
 # RaminFlow
 
-RaminFlow is a production-order management learning project built with Next.js, TypeScript, PostgreSQL, and Drizzle. The current version uses synthetic demonstration data.
-
-See [development status and next steps](docs/development-status.md) for the current checkpoint and unfinished work.
+RaminFlow is a production-order management learning project built with Next.js, TypeScript, PostgreSQL, and Drizzle. The current version uses synthetic demonstration data. Durable learning context, the current milestone, and planned functionality are maintained in the private `SMK-Science/learning-profile.md`; this repository and its Git history remain the authority for exact implementation details.
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
