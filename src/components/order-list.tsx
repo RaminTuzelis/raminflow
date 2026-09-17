@@ -41,6 +41,7 @@ type OrderListProps = {
   orders: Order[];
   initialQuery: string;
   initialStatus: OrderStatus | "ALL";
+  totalCount: number;
 };
 
 const statusFilterOptions = [
@@ -55,6 +56,7 @@ export function OrderList({
   orders,
   initialQuery,
   initialStatus,
+  totalCount,
 }: OrderListProps) {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus | "ALL">(
@@ -73,6 +75,8 @@ export function OrderList({
     } else {
       params.delete("q");
     }
+
+    params.delete("page");
 
     const queryString = params.toString();
 
@@ -93,6 +97,8 @@ export function OrderList({
       params.set("status", normalizedStatus);
     }
 
+    params.delete("page");
+
     const queryString = params.toString();
 
     replace(queryString ? `${pathname}?${queryString}` : pathname);
@@ -107,6 +113,7 @@ export function OrderList({
 
     params.delete("q");
     params.delete("status");
+    params.delete("page");
 
     const queryString = params.toString();
 
@@ -195,8 +202,8 @@ export function OrderList({
             className="ml-auto shrink-0 whitespace-nowrap text-sm text-muted-foreground"
           >
             {hasActiveFilters
-              ? `${orders.length} matching ${orders.length === 1 ? "order" : "orders"}`
-              : `${orders.length} ${orders.length === 1 ? "order" : "orders"}`}
+              ? `${totalCount} matching ${totalCount === 1 ? "order" : "orders"}`
+              : `${totalCount} ${totalCount === 1 ? "order" : "orders"}`}
           </p>
         </div>
       </div>

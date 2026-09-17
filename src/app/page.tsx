@@ -9,7 +9,11 @@ import { PlusIcon } from "lucide-react";
 import { isOrderStatus } from "@/lib/order-options";
 import { AccountMenu } from "@/components/account-menu";
 import { logoutUser } from "@/app/logout/actions";
-import { parsePage, calculateOffset } from "@/lib/pagination";
+import {
+  parsePage,
+  calculateOffset,
+  calculateTotalPages,
+} from "@/lib/pagination";
 
 type SearchParams = {
   q?: string;
@@ -34,11 +38,29 @@ export default async function Home({ searchParams }: HomePageProps) {
   }
 
   const canCreate = canCreateOrder(user.role);
-  const orders = await getOrders({
+  const { orders, totalCount } = await getOrders({
     searchQuery,
     status: selectedStatus,
     offset,
   });
+
+  const totalPages = calculateTotalPages(totalCount);
+
+  if (currentPage > totalPages) {
+    const params = new URLSearchParams();
+
+    if (searchQuery) {
+      params.set("q", searchQuery);
+    }
+
+    if (selectedStatus) {
+      params.set("status", selectedStatus);
+    }
+
+    params.set("page", String(totalPages));
+
+    redirect(`/?${params.toString()}`);
+  }
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -71,6 +93,7 @@ export default async function Home({ searchParams }: HomePageProps) {
         orders={orders}
         initialQuery={searchQuery}
         initialStatus={selectedStatus ?? "ALL"}
+        totalCount={totalCount}
       />
     </main>
   );

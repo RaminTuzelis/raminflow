@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, or } from "drizzle-orm";
+import { and, desc, eq, ilike, or, count } from "drizzle-orm";
 import { db } from "@/db/client";
 import { orderItems, orders, orderStatusHistory, users } from "@/db/schema";
 import type { Order, OrderStatus } from "@/types/order";
@@ -11,12 +11,17 @@ type GetOrdersFilters = {
   offset?: number;
 };
 
+type GetOrdersResult = {
+  orders: Order[];
+  totalCount: number;
+};
+
 export async function getOrders({
   searchQuery = "",
   status,
   limit = ORDERS_PER_PAGE,
   offset = 0,
-}: GetOrdersFilters = {}): Promise<Order[]> {
+}: GetOrdersFilters = {}): Promise<GetOrdersResult> {
   const itemRows = await db.select().from(orderItems);
   const orderFilters = and(
     searchQuery
@@ -42,7 +47,14 @@ export async function getOrders({
     .limit(limit)
     .offset(offset);
 
-  return orderRows.map((row) => ({
+  const [countRow] = await db
+    .select({
+      totalCount: count(),
+    })
+    .from(orders)
+    .where(orderFilters);
+
+  const mappedOrders = orderRows.map((row) => ({
     id: String(row.order.id),
     orderNumber: row.order.orderNumber,
     projectName: row.order.projectName,
@@ -66,6 +78,10 @@ export async function getOrders({
       })),
     statusHistory: [],
   }));
+  return {
+    orders: mappedOrders,
+    totalCount: countRow.totalCount,
+  };
 }
 
 export async function getOrderById(id: string): Promise<Order | null> {
