@@ -14,6 +14,7 @@ import {
   calculateOffset,
   calculateTotalPages,
 } from "@/lib/pagination";
+import { OrderPagination } from "@/components/order-pagination";
 
 type SearchParams = {
   q?: string;
@@ -94,6 +95,12 @@ export default async function Home({ searchParams }: HomePageProps) {
         initialQuery={searchQuery}
         initialStatus={selectedStatus ?? "ALL"}
         totalCount={totalCount}
+      />
+      <OrderPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        searchQuery={searchQuery}
+        status={selectedStatus}
       />
     </main>
   );
