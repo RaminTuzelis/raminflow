@@ -49,6 +49,7 @@ export async function updateOrderStatus(formData: FormData) {
   await db.transaction(async (tx) => {
     await tx.insert(orderStatusHistory).values({
       orderId,
+      changedByUserId: currentUser.id,
       fromStatus: currentOrder.status,
       toStatus: nextStatus,
     });
