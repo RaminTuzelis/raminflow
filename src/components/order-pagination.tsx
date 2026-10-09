@@ -5,6 +5,8 @@ import {
   PaginationItem,
   PaginationPrevious,
   PaginationNext,
+  PaginationLink,
+  PaginationEllipsis,
 } from "@/components/ui/pagination";
 
 type OrderPaginationProps = {
@@ -13,6 +15,40 @@ type OrderPaginationProps = {
   searchQuery: string;
   status?: OrderStatus;
 };
+
+function getPaginationItems(currentPage: number, totalPages: number) {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+  if (currentPage <= 2) {
+    return [1, 2, 3, "end-ellipsis", totalPages];
+  }
+  if (currentPage >= totalPages - 1) {
+    return [1, "start-ellipsis", totalPages - 2, totalPages - 1, totalPages];
+  }
+  if (currentPage === 3) {
+    return [1, 2, 3, 4, "end-ellipsis", totalPages];
+  }
+  if (currentPage === totalPages - 2) {
+    return [
+      1,
+      "start-ellipsis",
+      totalPages - 3,
+      currentPage,
+      totalPages - 1,
+      totalPages,
+    ];
+  }
+  return [
+    1,
+    "start-ellipsis",
+    currentPage - 1,
+    currentPage,
+    currentPage + 1,
+    "end-ellipsis",
+    totalPages,
+  ];
+}
 
 export function OrderPagination({
   currentPage,
@@ -41,6 +77,8 @@ export function OrderPagination({
   const previousPageHref = createPageHref(Math.max(1, currentPage - 1));
   const nextPageHref = createPageHref(Math.min(currentPage + 1, totalPages));
 
+  const pages = getPaginationItems(currentPage, totalPages);
+
   return (
     <Pagination>
       <PaginationContent>
@@ -55,11 +93,26 @@ export function OrderPagination({
           />
         </PaginationItem>
 
-        <PaginationItem>
-          <span className="px-3 text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages}
-          </span>
-        </PaginationItem>
+        {pages.map((page) => {
+          if (typeof page === "string") {
+            return (
+              <PaginationItem key={page}>
+                <PaginationEllipsis />
+              </PaginationItem>
+            );
+          }
+
+          return (
+            <PaginationItem key={page}>
+              <PaginationLink
+                href={createPageHref(page)}
+                isActive={page === currentPage}
+              >
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+          );
+        })}
 
         <PaginationItem>
           <PaginationNext
