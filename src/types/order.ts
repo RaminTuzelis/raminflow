@@ -24,6 +24,7 @@ export type OrderStatusHistory = {
   fromStatus: OrderStatus;
   toStatus: OrderStatus;
   changedAt: string;
+  changedByName: string;
 };
 
 export type OrderCreator = {

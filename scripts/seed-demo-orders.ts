@@ -540,6 +540,7 @@ async function seedDemoOrders() {
       if (demoOrder.status !== "DRAFT") {
         await tx.insert(orderStatusHistory).values({
           orderId: createdOrder.id,
+          changedByUserId: admin.id,
           fromStatus: "DRAFT",
           toStatus: demoOrder.status,
         });

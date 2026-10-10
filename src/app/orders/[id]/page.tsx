@@ -225,6 +225,10 @@ export default async function OrderDetailsPage({
                   <span className="font-medium text-foreground">
                     {statusLabels[entry.toStatus]}
                   </span>
+
+                  <span className="text-muted-foreground">
+                    by {entry.changedByName}
+                  </span>
                 </div>
               </li>
             ))}

@@ -117,8 +117,15 @@ export async function getOrderById(id: string): Promise<Order | null> {
     .orderBy(orderItems.id);
 
   const history = await db
-    .select()
+    .select({
+      id: orderStatusHistory.id,
+      fromStatus: orderStatusHistory.fromStatus,
+      toStatus: orderStatusHistory.toStatus,
+      changedAt: orderStatusHistory.changedAt,
+      changedByName: users.name,
+    })
     .from(orderStatusHistory)
+    .innerJoin(users, eq(orderStatusHistory.changedByUserId, users.id))
     .where(eq(orderStatusHistory.orderId, order.id))
     .orderBy(desc(orderStatusHistory.changedAt), desc(orderStatusHistory.id));
 
@@ -147,6 +154,7 @@ export async function getOrderById(id: string): Promise<Order | null> {
       fromStatus: entry.fromStatus,
       toStatus: entry.toStatus,
       changedAt: entry.changedAt.toISOString(),
+      changedByName: entry.changedByName,
     })),
   };
 }
