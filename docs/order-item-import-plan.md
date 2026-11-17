@@ -13,6 +13,10 @@ The Create Order screen should ultimately support two complementary item-entry m
 
 Imported items must remain editable before the order is submitted. Spreadsheet import should reduce repeated typing, not create a separate order-creation system.
 
+## Implementation Status
+
+This document describes planned behavior. The repository currently contains the four synthetic fixtures and the manual client-side draft flow, but no import types, parser dependency, header mapping or preview UI.
+
 ## Minimal User Workflow
 
 1. Export the usual Excel file from the existing workflow.
@@ -30,12 +34,12 @@ Users should not need to delete pricing columns, formulas, or blank formatted ro
 
 The tracked samples use deliberately generic filenames and synthetic row data so application code, tests, and current repository content do not depend on customer, project, supplier, employee, or company names. The importer must likewise ignore a workbook filename as authoritative order data.
 
-| Sample | Format | Observed purpose and shape |
-| --- | --- | --- |
+| Sample                    | Format                  | Observed purpose and shape                                                                                                         |
+| ------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `test-data-excel-01.xlsx` | Office Open XML `.xlsx` | Accounting-style export with a detectable header row, useful item fields, pricing calculations, formulas, and formatted blank rows |
-| `test-data-excel-02.xls` | Excel 2003 XML | Split two-row Lithuanian header followed by item name, code, unit, and quantity |
-| `test-data-excel-03.xls` | Excel 2003 XML | Similar split header plus an occasional extra supplier or internal classification value |
-| `test-data-excel-04.xls` | Excel 2003 XML | Split header, many blank separator rows, non-consecutive source sequence numbers, and occasional production notes in extra columns |
+| `test-data-excel-02.xls`  | Excel 2003 XML          | Split two-row Lithuanian header followed by item name, code, unit, and quantity                                                    |
+| `test-data-excel-03.xls`  | Excel 2003 XML          | Similar split header plus an occasional extra supplier or internal classification value                                            |
+| `test-data-excel-04.xls`  | Excel 2003 XML          | Split header, many blank separator rows, non-consecutive source sequence numbers, and occasional production notes in extra columns |
 
 The `.xls` extension on samples 02-04 is historically accurate but misleading: these files contain XML, not the older binary BIFF workbook format. A parser must detect and support the actual content format instead of trusting only the extension.
 
@@ -70,17 +74,23 @@ The parser must therefore detect headers by normalized labels and inspect releva
 
 ## Initial Field Mapping
 
-| Spreadsheet meaning | RaminFlow field | Rule |
-| --- | --- | --- |
-| Item/service name | `name` | Required non-empty text |
-| Unit | `unit` | Normalize known labels to `PCS`, `M`, `M2`, or `KG` |
-| Quantity | `quantity` | Required positive number |
-| Thickness | `thicknessMm` | Use an explicit column when available; otherwise require a user-selected default or explicit row correction |
-| Material | `materialType` | Use an explicit column when available; otherwise require a user-selected default |
-| Item code | Future metadata | Ignore in the first version unless a real need is confirmed |
-| Prices, totals, coefficients, formulas | Not imported | Accounting data is outside the first import boundary |
+| Spreadsheet meaning                    | RaminFlow field | Rule                                                                                                        |
+| -------------------------------------- | --------------- | ----------------------------------------------------------------------------------------------------------- |
+| Item/service name                      | `name`          | Required non-empty text                                                                                     |
+| Unit                                   | `unit`          | Normalize known labels to `PCS`, `M`, `M2`, or `KG`                                                         |
+| Quantity                               | `quantity`      | Required positive value compatible with the current persistence model; see quantity constraint below        |
+| Thickness                              | `thicknessMm`   | Use an explicit column when available; otherwise require a user-selected default or explicit row correction |
+| Material                               | `materialType`  | Use an explicit column when available; otherwise require a user-selected default                            |
+| Item code                              | Future metadata | Ignore in the first version unless a real need is confirmed                                                 |
+| Prices, totals, coefficients, formulas | Not imported    | Accounting data is outside the first import boundary                                                        |
 
 Header aliases should be explicit and testable. Known Lithuanian labels include `Prekes (paslaugos) pavadinimas`, `Mato vnt.`, `Mato vien.`, `Kiekis`, `Kodas`, and `Storis`, while Unicode text from the real workbooks must be normalized safely by the parser. Header detection may need to combine adjacent header rows before normalization.
+
+### Current Quantity Constraint
+
+`src/db/schema.ts` stores `orderItems.quantity` as a PostgreSQL integer. Existing item-edit actions require an integer of at least 1; the create action currently checks only the lower bound. A TypeScript `number` does not establish integer or decimal support at runtime.
+
+Normalizing a decimal comma is separate from accepting a fractional quantity. Before connecting imported rows to persistence, explicitly decide whether the first version rejects fractional values with a row error or extends the database, server validation and manual forms consistently. Do not silently round or truncate. Keep this decision separate from the initial row-error type exercise.
 
 ## Parsing Rules
 
@@ -120,6 +130,8 @@ When an order draft already contains items, the UI must ask whether imported row
 
 The recommended first implementation parses the spreadsheet into the same client-side `OrderDraft` item shape already used by `CreateOrderForm`. Import confirmation updates the draft state only. The existing `createOrderDraft` Server Action remains the final security and validation boundary before PostgreSQL is changed.
 
+Before integrating parser-produced data, review the action's existing hand-written checks for runtime shape, valid dates and finite supported quantities; the TypeScript draft type is not runtime validation.
+
 Client-side parsing can avoid uploading the raw accounting workbook when the file is needed only to produce draft items. Regardless of where parsing happens, the server must validate every resulting item again because client data is untrusted.
 
 Use a maintained spreadsheet parsing library rather than implementing the Office Open XML format manually. Select and review the dependency only when implementation begins.
@@ -136,7 +148,7 @@ The later attachment feature needs its own storage, metadata, access control, fi
 - supported columns move to different letters;
 - blank formatted rows remain in the workbook;
 - the first populated item has no sequence number;
-- quantities use integers or decimal commas;
+- quantities use integers or decimal commas, with fractional values handled according to the explicit quantity decision;
 - units use known aliases such as `m.`;
 - material is missing and a default is selected;
 - one row has an unsupported thickness;
@@ -154,7 +166,7 @@ The later attachment feature needs its own storage, metadata, access control, fi
 - Do repeated exports keep the same Lithuanian header labels?
 - Are there exports with multiple worksheets?
 - Can one file contain mixed PP, PE, or PVC items?
-- Are quantities always compatible with the exported unit?
+- Are quantities always compatible with the exported unit, and should the first version reject fractional quantities or extend the current integer model?
 - Which thickness values occur outside the current RaminFlow options?
 - Should the original workbook later be retained as an authorized order attachment?
 - Does the installed accounting-system version provide a supported integration interface worth considering later?

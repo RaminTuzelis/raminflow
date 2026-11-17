@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2026-07-15T00:00:00.000Z" agent="Codex" version="26.0.0">
+<mxfile host="app.diagrams.net" modified="2026-11-17T00:00:00.000Z" agent="Codex" version="26.0.0">
   <diagram id="raminflow-mvp-erd-v3" name="RaminFlow MVP v3 ERD">
     <mxGraphModel dx="2000" dy="1150" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2450" pageHeight="1350" math="0" shadow="0">
       <root>
@@ -58,7 +58,7 @@
         <mxCell id="status-history" value="order_status_history" style="swimlane;html=1;startSize=34;rounded=0;fontStyle=1;fontSize=14;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
           <mxGeometry x="1135" y="305" width="385" height="240" as="geometry" />
         </mxCell>
-        <mxCell id="status-history-fields" value="PK  id: serial int&lt;br&gt;FK  order_id: int -&gt; orders.id&lt;br&gt;&lt;br&gt;from_status: order_status&lt;br&gt;to_status: order_status&lt;br&gt;changed_at: timestamp" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacing=12;fontSize=13;fontColor=#111827;" vertex="1" parent="status-history">
+        <mxCell id="status-history-fields" value="PK  id: serial int&lt;br&gt;FK  order_id: int -&gt; orders.id&lt;br&gt;FK  changed_by_user_id: int -&gt; users.id&lt;br&gt;&lt;br&gt;from_status: order_status&lt;br&gt;to_status: order_status&lt;br&gt;changed_at: timestamp" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacing=12;fontSize=13;fontColor=#111827;" vertex="1" parent="status-history">
           <mxGeometry y="34" width="385" height="206" as="geometry" />
         </mxCell>
 
@@ -69,7 +69,7 @@
           <mxGeometry y="34" width="385" height="146" as="geometry" />
         </mxCell>
 
-        <mxCell id="implementation-note" value="IMPLEMENTED BEHAVIOR&lt;br&gt;&lt;br&gt;- Database-backed current user and role checks&lt;br&gt;- Order creator tracking&lt;br&gt;- Order item add, edit, and remove flows&lt;br&gt;- Status updates with history&lt;br&gt;- Transaction-safe yearly numbering&lt;br&gt;&lt;br&gt;Application rules may be stricter than FK cardinality: creating an order requires at least one item." style="rounded=0;whiteSpace=wrap;html=1;fontSize=13;align=left;verticalAlign=top;fillColor=#f0fdf4;strokeColor=#82b366;fontColor=#111827;spacing=14;" vertex="1" parent="1">
+        <mxCell id="implementation-note" value="IMPLEMENTED BEHAVIOR&lt;br&gt;&lt;br&gt;- Database-backed current user and role checks&lt;br&gt;- Order creator tracking&lt;br&gt;- Order item add, edit, and remove flows&lt;br&gt;- Status history with required acting user&lt;br&gt;- Transaction-safe yearly numbering&lt;br&gt;&lt;br&gt;Application rules may be stricter than FK cardinality: creating an order requires at least one item." style="rounded=0;whiteSpace=wrap;html=1;fontSize=13;align=left;verticalAlign=top;fillColor=#f0fdf4;strokeColor=#82b366;fontColor=#111827;spacing=14;" vertex="1" parent="1">
           <mxGeometry x="1135" y="930" width="385" height="245" as="geometry" />
         </mxCell>
 
@@ -109,7 +109,7 @@
           <mxGeometry x="1640" y="160" width="770" height="52" as="geometry" />
         </mxCell>
 
-        <mxCell id="schema-growth-note" value="NEXT SCHEMA INCREMENTS&lt;br&gt;&lt;br&gt;1. changed_by_user_id on order_status_history&lt;br&gt;2. audit events with actor, time, entity, and before/after values&lt;br&gt;3. order_attachments metadata with protected external storage references&lt;br&gt;4. material stock movements rather than one mutable balance&lt;br&gt;&lt;br&gt;Each increment requires a concrete workflow and migration before it becomes part of the implemented ERD." style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=left;verticalAlign=top;fillColor=#fff7d6;strokeColor=#d6b656;fontColor=#111827;spacing=16;" vertex="1" parent="1">
+        <mxCell id="schema-growth-note" value="NEXT SCHEMA INCREMENTS&lt;br&gt;&lt;br&gt;1. audit events with actor, time, entity, and before/after values&lt;br&gt;2. order_attachments metadata with protected external storage references&lt;br&gt;3. material stock movements rather than one mutable balance&lt;br&gt;&lt;br&gt;Each increment requires a concrete workflow and migration before it becomes part of the implemented ERD." style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=left;verticalAlign=top;fillColor=#fff7d6;strokeColor=#d6b656;fontColor=#111827;spacing=16;" vertex="1" parent="1">
           <mxGeometry x="1685" y="255" width="680" height="285" as="geometry" />
         </mxCell>
 

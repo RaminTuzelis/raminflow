@@ -1,40 +1,69 @@
 # RaminFlow
 
-RaminFlow is a production-order management learning project built with Next.js, TypeScript, PostgreSQL, and Drizzle. The current version uses synthetic demonstration data. Durable learning context, the current milestone, and planned functionality are maintained in the private `SMK-Science/learning-profile.md`; this repository and its Git history remain the authority for exact implementation details.
+RaminFlow is a production-order management learning prototype built with Next.js, TypeScript, PostgreSQL and Drizzle. It uses synthetic demonstration data. Personal learning context lives in the private `SMK-Science/learning-profile.md`; this repository and its Git history are the authority for implementation details.
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Current Scope
 
-## Getting Started
+The application includes credentials login, required temporary-password replacement, role-based order access, administrator-managed users, order/item creation and editing, yearly order numbers, search/status filters, pagination and status history with the acting user.
 
-First, run the development server:
+Spreadsheet import is planned, with four synthetic fixtures and an [import plan](docs/order-item-import-plan.md). There is no parser dependency, upload/preview interface or import implementation yet. Attachments, broader edit auditing, inventory and direct accounting integration remain future work.
+
+This is a local learning prototype. A company pilot requires separately approved private data, infrastructure and deployment arrangements.
+
+## Local Setup (Ubuntu / WSL2)
+
+Use Node.js/npm in WSL and Docker with WSL integration. Run commands from the repository root. Install the locked dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+On a fresh checkout, copy `.env.example` to `.env`; preserve an existing local environment file. Replace placeholder values, especially `AUTH_SECRET` and `SEED_ADMIN_PASSWORD`, and keep `DATABASE_URL` consistent with the PostgreSQL settings. Environment files are ignored by Git.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+For a **new, empty local database**, run:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+docker compose up -d postgres
+npx drizzle-kit migrate
+npm run db:seed:admin
+npm run db:seed:demo
+npm run dev
+```
 
-## Learn More
+Open [localhost:3000](http://localhost:3000) and sign in with the administrator credentials configured in `.env`. The new administrator must change the temporary password. The optional demo seed defines 50 orders and 101 items and skips insertion if any orders already exist; the administrator seed skips an existing matching email.
 
-To learn more about Next.js, take a look at the following resources:
+### Existing Databases On Another Computer
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Git synchronizes source, migrations and seeds, **not PostgreSQL Docker volumes or environment values**. Inspect the existing local state before applying migrations or seeds. Do not remove a volume to resolve migration errors.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Migrations `0006` and `0008` add required creator/actor foreign keys without a historical-data backfill. A database containing older orders or status history needs a deliberate data plan before those migrations can succeed. Do not invent historical actors. The status-actor migration was previously checked on a fresh synthetic database, not retained old history.
 
-## Deploy on Vercel
+## Source Map
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Location          | Responsibility                                                    |
+| ----------------- | ----------------------------------------------------------------- |
+| `src/app/`        | Pages, Auth.js route and Server Actions                           |
+| `src/components/` | Domain forms, lists, dialogs and owned UI primitives              |
+| `src/types/`      | Order, item, draft, user-role and session contracts               |
+| `src/db/`         | Drizzle client, schema, queries and mapping                       |
+| `src/lib/`        | Permissions, current user, domain options, pure helpers and tests |
+| `drizzle/`        | Committed SQL migrations and generated metadata                   |
+| `scripts/`        | Synthetic administrator and order seeds                           |
+| `docs/`           | Import plan, synthetic workbook fixtures and editable diagrams    |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Order creation collects manual items in `src/components/create-order-form.tsx` and calls `src/app/orders/new/actions.ts` for authorization, validation and transactional persistence. Planned import confirmation should update that client-side draft before the same final save.
+
+Status history stores `changedByUserId` and joins the user's current name for display. It does not snapshot past names. Supported status values are checked; a transition matrix is not enforced. Quantities currently use a PostgreSQL integer column; fractional import support is an unresolved model/validation decision documented in the import plan.
+
+## Checks And Development
+
+```bash
+npm test
+npm run lint
+npx tsc --noEmit
+npm run build
+```
+
+Vitest currently covers permissions, supported values, order-number formatting and pagination helpers. These checks do not replace browser or database workflow verification. A build needs the local environment configured, and the Google font setup in `src/app/layout.tsx` may need network access.
+
+Read [AGENTS.md](AGENTS.md) before changes. For Next.js implementation work, consult the relevant installed guides under `node_modules/next/dist/docs/` as instructed there. Keep real employer data and personal learning-profile contents out of this public repository.

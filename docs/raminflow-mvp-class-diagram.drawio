@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2026-07-15T00:00:00.000Z" agent="Codex" version="26.0.0">
+<mxfile host="app.diagrams.net" modified="2026-11-17T00:00:00.000Z" agent="Codex" version="26.0.0">
   <diagram id="raminflow-mvp-class-diagram-v1" name="RaminFlow Class Diagram v1">
     <mxGraphModel dx="2200" dy="1450" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1450" math="0" shadow="0">
       <root>
@@ -49,7 +49,7 @@
         <mxCell id="history-class" value="&amp;lt;&amp;lt;Drizzle entity&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;OrderStatusHistory&lt;/b&gt;" style="swimlane;html=1;startSize=54;rounded=0;fontSize=14;fillColor=#f3e8ff;strokeColor=#9333ea;fontColor=#0f172a;" vertex="1" parent="1">
           <mxGeometry x="970" y="590" width="320" height="175" as="geometry" />
         </mxCell>
-        <mxCell id="history-fields" value="+ id: number&lt;br&gt;+ orderId: number&lt;br&gt;+ fromStatus: OrderStatus&lt;br&gt;+ toStatus: OrderStatus&lt;br&gt;+ changedAt: Date" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=13;fontColor=#111827;spacing=10;" vertex="1" parent="1">
+        <mxCell id="history-fields" value="+ id: number&lt;br&gt;+ orderId: number&lt;br&gt;+ changedByUserId: number&lt;br&gt;+ fromStatus: OrderStatus&lt;br&gt;+ toStatus: OrderStatus&lt;br&gt;+ changedAt: Date" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=13;fontColor=#111827;spacing=10;" vertex="1" parent="1">
           <mxGeometry x="970" y="644" width="320" height="121" as="geometry" />
         </mxCell>
 
@@ -122,7 +122,7 @@
         <mxCell id="query-module" value="&amp;lt;&amp;lt;query module&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;OrderQueries&lt;/b&gt;" style="swimlane;html=1;startSize=54;rounded=0;fontSize=14;fillColor=#f3e8ff;strokeColor=#9333ea;fontColor=#0f172a;" vertex="1" parent="1">
           <mxGeometry x="1570" y="900" width="280" height="155" as="geometry" />
         </mxCell>
-        <mxCell id="query-operations" value="+ getOrders(): Promise&lt;br&gt;&amp;nbsp;&amp;nbsp;Order[]&lt;br&gt;+ getOrderById(id): Promise&lt;br&gt;&amp;nbsp;&amp;nbsp;Order | null" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;fontColor=#111827;spacing=10;" vertex="1" parent="1">
+        <mxCell id="query-operations" value="+ getOrders(filters): Promise&lt;br&gt;&amp;nbsp;&amp;nbsp;{ orders: Order[];&lt;br&gt;&amp;nbsp;&amp;nbsp;totalCount: number }&lt;br&gt;+ getOrderById(id): Promise&lt;br&gt;&amp;nbsp;&amp;nbsp;Order | null" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;fontColor=#111827;spacing=10;" vertex="1" parent="1">
           <mxGeometry x="1570" y="954" width="280" height="101" as="geometry" />
         </mxCell>
 
@@ -172,11 +172,11 @@
         <mxCell id="user-actions-current-user" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#7c3aed;fontSize=11;" edge="1" parent="1" source="user-actions-module" target="current-user-module"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1360" y="1215" /><mxPoint x="1360" y="1070" /><mxPoint x="1025" y="1070" /></Array></mxGeometry></mxCell>
         <mxCell id="user-actions-permission" value="checks" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#7c3aed;fontSize=11;" edge="1" parent="1" source="user-actions-module" target="permission-module"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="queries-db" value="reads" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#16a34a;fontSize=11;" edge="1" parent="1" source="query-module" target="db-module"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="order-actions-db" value="writes transactionally" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#16a34a;fontSize=11;" edge="1" parent="1" source="order-actions-module" target="db-module"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1360" y="1305" /><mxPoint x="2005" y="1305" /></Array></mxGeometry></mxCell>
+        <mxCell id="order-actions-db" value="writes (create/status transactions)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#16a34a;fontSize=11;" edge="1" parent="1" source="order-actions-module" target="db-module"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1360" y="1305" /><mxPoint x="2005" y="1305" /></Array></mxGeometry></mxCell>
         <mxCell id="user-actions-db" value="writes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#16a34a;fontSize=11;" edge="1" parent="1" source="user-actions-module" target="db-module"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="order-actions-counter" value="reserves number" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#ea580c;fontSize=11;" edge="1" parent="1" source="order-actions-module" target="counter-class"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="860" y="1218" /><mxPoint x="860" y="750" /><mxPoint x="1430" y="750" /></Array></mxGeometry></mxCell>
 
-        <mxCell id="source-note" value="SOURCES OF TRUTH&lt;br&gt;&lt;br&gt;Persistence: src/db/schema.ts&lt;br&gt;Runtime order contracts: src/types/order.ts&lt;br&gt;Permissions: src/lib/permissions.ts&lt;br&gt;Behavior: query and Server Action modules" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;align=left;verticalAlign=top;fillColor=#f8fafc;strokeColor=#64748b;fontColor=#111827;spacing=12;" vertex="1" parent="1">
+        <mxCell id="source-note" value="SOURCES OF TRUTH&lt;br&gt;&lt;br&gt;Persistence: src/db/schema.ts&lt;br&gt;TypeScript order contracts: src/types/order.ts&lt;br&gt;Permissions: src/lib/permissions.ts&lt;br&gt;Behavior: query and Server Action modules" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;align=left;verticalAlign=top;fillColor=#f8fafc;strokeColor=#64748b;fontColor=#111827;spacing=12;" vertex="1" parent="1">
           <mxGeometry x="700" y="1335" width="800" height="100" as="geometry" />
         </mxCell>
       </root>
