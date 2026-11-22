@@ -15,7 +15,9 @@ Imported items must remain editable before the order is submitted. Spreadsheet i
 
 ## Implementation Status
 
-This document describes planned behavior. The repository currently contains the four synthetic fixtures and the manual client-side draft flow, but no import types, parser dependency, header mapping or preview UI.
+`src/lib/read-order-workbook.ts` reads the first worksheet of an `.xlsx` file with `read-excel-file` and passes its rows to `src/lib/order-import.ts`. The parser finds a header row by name, skips rows with no values in recognized columns, and returns candidate items with source row numbers and row-level errors. The included `.xlsx` fixture produces six candidate items.
+
+File selection, file-level validation, editable preview and confirmation into the client-side draft are upcoming work. Missing material or thickness remains unset until the user supplies a value.
 
 ## Minimal User Workflow
 

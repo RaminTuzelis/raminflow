@@ -6,7 +6,7 @@ RaminFlow is a production-order management learning prototype built with Next.js
 
 The application includes credentials login, required temporary-password replacement, role-based order access, administrator-managed users, order/item creation and editing, yearly order numbers, search/status filters, pagination and status history with the acting user.
 
-Spreadsheet import is planned, with four synthetic fixtures and an [import plan](docs/order-item-import-plan.md). There is no parser dependency, upload/preview interface or import implementation yet. Attachments, broader edit auditing, inventory and direct accounting integration remain future work.
+The spreadsheet reader can parse the first worksheet of an `.xlsx` file into candidate order items with source row numbers and validation errors. File selection, editable preview and adding imported items to the order draft are planned in the [import plan](docs/order-item-import-plan.md). Attachments, broader edit auditing, inventory and direct accounting integration remain future work.
 
 This is a local learning prototype. A company pilot requires separately approved private data, infrastructure and deployment arrangements.
 
