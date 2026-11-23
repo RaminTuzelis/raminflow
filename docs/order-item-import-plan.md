@@ -15,16 +15,16 @@ Imported items must remain editable before the order is submitted. Spreadsheet i
 
 ## Implementation Status
 
-`src/lib/read-order-workbook.ts` reads the first worksheet of an `.xlsx` file with `read-excel-file` and passes its rows to `src/lib/order-import.ts`. The parser finds a header row by name, skips rows with no values in recognized columns, and returns candidate items with source row numbers and row-level errors. The included `.xlsx` fixture produces six candidate items.
+`src/lib/read-order-workbook.ts` reads the first worksheet of an `.xlsx` file with `read-excel-file` or an Excel 2003 XML `.xls` file with the browser's XML parser. Both readers pass rows to `src/lib/order-import.ts`, which recognizes headers across one or two adjacent rows, skips rows with no values in recognized columns, and returns candidate items with source row numbers and row-level errors.
 
-Create Order checks the selected file's extension and enforces a 5 MiB limit before reading. It shows file-level errors and a read-only preview with the row count, source row numbers, item values and row errors. The preview can store a default material selection in React state. The next step is to use that value where the preview has no material, while preserving valid materials read from the file. Default thickness, row editing and confirmation into the client-side draft are upcoming work.
+Create Order checks the selected file's extension and enforces a 5 MiB limit before reading. It shows file-level errors and numbers visible items from 1 while displaying their original Excel row numbers in error messages. A selected default material fills blank values in the preview. Per-row material and thickness edits update the preview and clear only the corresponding field error. Editing other fields and confirming imported items into the client-side draft are upcoming work.
 
 ## Minimal User Workflow
 
 1. Export the usual Excel file from the existing workflow.
 2. Delete item rows that should not be included in the RaminFlow order. Blank template rows may remain.
 3. Upload the file in the Create Order screen.
-4. Select a default material and, when needed, a default thickness for imported rows when the spreadsheet does not provide those explicit columns.
+4. Optionally select a default material for rows without one.
 5. Review imported items and row-level warnings.
 6. Edit or remove individual items if needed.
 7. Confirm the preview so the items are added to the existing order draft.
@@ -81,7 +81,7 @@ The parser must therefore detect headers by normalized labels and inspect releva
 | Item/service name                      | `name`          | Required non-empty text                                                                                     |
 | Unit                                   | `unit`          | Normalize known labels to `PCS`, `M`, `M2`, or `KG`                                                         |
 | Quantity                               | `quantity`      | Required positive value compatible with the current persistence model; see quantity constraint below        |
-| Thickness                              | `thicknessMm`   | Use an explicit column when available; otherwise require a user-selected default or explicit row correction |
+| Thickness                              | `thicknessMm`   | Use the workbook value when available. Otherwise ask the user to select the thickness for that product row. |
 | Material                               | `materialType`  | Use an explicit column when available; otherwise require a user-selected default                            |
 | Item code                              | Future metadata | Ignore in the first version unless a real need is confirmed                                                 |
 | Prices, totals, coefficients, formulas | Not imported    | Accounting data is outside the first import boundary                                                        |
@@ -96,7 +96,7 @@ Normalizing a decimal comma is separate from accepting a fractional quantity. Be
 
 ## Parsing Rules
 
-1. Accept only explicitly supported spreadsheet content formats. Start with `.xlsx`; treat Excel 2003 XML as a separate later profile even when its extension is `.xls`.
+1. Accept `.xlsx` and Excel 2003 XML workbooks with the `.xls` extension.
 2. Reject macro-enabled and unknown binary legacy workbooks in the first version.
 3. Enforce a small configurable file-size limit before parsing.
 4. Read cell values without executing macros or spreadsheet formulas.
@@ -106,7 +106,7 @@ Normalizing a decimal comma is separate from accepting a fractional quantity. Be
 8. Treat a partially populated relevant row as an item with validation errors, not as an empty row.
 9. Preserve the source row number for understandable error messages.
 10. Normalize whitespace, decimal commas/dots, and known unit spellings.
-11. Treat material or thickness parsed from a description as a preview suggestion, not unquestioned structured data; a missing required value must be resolved through a default or explicit row edit before submission.
+11. Treat material or thickness parsed from a description as a preview suggestion. Fill missing material with a selected default or a row edit, and fill missing thickness for each affected row before submission.
 12. Do not automatically merge duplicate-looking rows; separate rows may represent intentional items.
 13. Do not use the filename as trusted order data. It may only be offered as an editable project-name suggestion.
 
@@ -124,7 +124,7 @@ The preview should show:
 - edit and remove controls;
 - counts for valid rows, invalid rows, and ignored empty rows.
 
-Fatal file errors include an unsupported file type, unreadable workbook, missing required headers, or no item-like rows. Row errors include missing name, invalid quantity, unsupported unit, or unsupported thickness. Missing material or thickness columns require an explicit default selection or row-level correction before imported items can join the draft.
+Fatal file errors include an unsupported file type, unreadable workbook, missing required headers, or no item-like rows. Row errors include missing name, invalid quantity, unsupported unit, or unsupported thickness. Resolve missing material and thickness before imported items can join the draft.
 
 When an order draft already contains items, the UI must ask whether imported rows should be appended or replace the current draft items. It must not guess and accidentally duplicate work.
 
@@ -173,7 +173,7 @@ The later attachment feature needs its own storage, metadata, access control, fi
 - Should the original workbook later be retained as an authorized order attachment?
 - Does the installed accounting-system version provide a supported integration interface worth considering later?
 
-The four-sample set is large enough to define a narrow header-based parser prototype and fixtures, but not one universal importer. The first implementation should recognize required normalized headers, keep the workbook reader separate from the shared row-mapping logic, report unsupported shapes clearly, and avoid guessing positional columns. Start with the `.xlsx` profile because it contains the closest match to the current required RaminFlow fields; treat Excel 2003 XML as a separate follow-up profile. Confirm which shapes are direct accounting exports and which are manually prepared lists before treating either profile as a stable external contract.
+The four-sample set defines a narrow header-based parser. Separate workbook readers feed shared row mapping, which finds the required normalized headers and reports unsupported shapes. Confirm which shapes are direct accounting exports and which are manually prepared lists before treating either profile as a stable external contract.
 
 ## Related Design Work
 

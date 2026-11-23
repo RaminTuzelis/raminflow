@@ -4,10 +4,11 @@ import { isMaterialType, isThicknessOption } from "@/lib/order-options";
 export type OrderImportRowError = {
   rowNumber: number;
   message: string;
+  field: ImportField;
 };
 
 export function normalizeImportHeader(header: string): string {
-  const text = header.trim().toLowerCase();
+  const text = header.trim().toLowerCase().replace(/\s+/g, " ");
 
   return text;
 }
@@ -17,6 +18,7 @@ const importHeaderMap = {
   storis: "thicknessMm",
   "prekės (paslaugos) pavadinimas": "name",
   "mato vnt.": "unit",
+  "mato vien.": "unit",
   medžiaga: "materialType",
 } as const;
 
@@ -35,26 +37,42 @@ export function getImportField(header: string) {
 export function getImportColumnIndexes(headers: string[]) {
   const columnIndexes: Partial<Record<ImportField, number>> = {};
 
-  for (const [columnIndex, header] of headers.entries()) {
+  headers.forEach((header, columnIndex) => {
     const field = getImportField(header);
     if (field !== undefined) {
       columnIndexes[field] = columnIndex;
     }
-  }
+  });
 
   return columnIndexes;
 }
 
 export function findImportHeaderRow(rows: string[][]) {
-  for (const [rowIndex, row] of rows.entries()) {
-    const columnIndexes = getImportColumnIndexes(row);
-    const { name, unit, quantity } = columnIndexes;
+  let previousIndexes: ReturnType<typeof getImportColumnIndexes> = {};
 
-    if (name !== undefined && unit !== undefined && quantity !== undefined) {
-      return {
-        rowIndex,
-        columnIndexes: { ...columnIndexes, name, unit, quantity },
-      };
+  for (const [rowIndex, row] of rows.entries()) {
+    const currentIndexes = getImportColumnIndexes(row);
+    const candidates = [
+      currentIndexes,
+      { ...previousIndexes, ...currentIndexes },
+    ];
+    previousIndexes = currentIndexes;
+
+    for (const columnIndexes of candidates) {
+      const { name, unit, quantity } = columnIndexes;
+      const indexes = Object.values(columnIndexes);
+
+      if (
+        name !== undefined &&
+        unit !== undefined &&
+        quantity !== undefined &&
+        new Set(indexes).size === indexes.length
+      ) {
+        return {
+          rowIndex,
+          columnIndexes: { ...columnIndexes, name, unit, quantity },
+        };
+      }
     }
   }
   return undefined;
@@ -105,6 +123,7 @@ export function parseImportRows(rows: string[][]) {
       if (name === "") {
         errors.push({
           rowNumber,
+          field: "name",
           message: "Item name is required.",
         });
       }
@@ -112,6 +131,7 @@ export function parseImportRows(rows: string[][]) {
       if (quantity === undefined) {
         errors.push({
           rowNumber,
+          field: "quantity",
           message: "Quantity must be a positive whole number.",
         });
       }
@@ -119,6 +139,7 @@ export function parseImportRows(rows: string[][]) {
       if (unit === undefined) {
         errors.push({
           rowNumber,
+          field: "unit",
           message: "Unit is missing or unsupported.",
         });
       }
@@ -126,6 +147,7 @@ export function parseImportRows(rows: string[][]) {
       if (thicknessText?.trim() && thicknessMm === undefined) {
         errors.push({
           rowNumber,
+          field: "thicknessMm",
           message: "Thickness is not a supported option.",
         });
       }
@@ -133,6 +155,7 @@ export function parseImportRows(rows: string[][]) {
       if (normalizedMaterial !== "" && materialType === undefined) {
         errors.push({
           rowNumber,
+          field: "materialType",
           message: "Material is not a supported option.",
         });
       }

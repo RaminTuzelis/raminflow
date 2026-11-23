@@ -33,8 +33,16 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AddOrderItemForm } from "@/components/add-order-item-form";
-import { readOrderWorkbook } from "@/lib/read-order-workbook";
-import { materialOptions } from "@/lib/order-options";
+import {
+  isSupportedOrderWorkbook,
+  readOrderWorkbook,
+  UnsupportedOrderWorkbookError,
+} from "@/lib/read-order-workbook";
+import {
+  isThicknessOption,
+  materialOptions,
+  thicknessOptions,
+} from "@/lib/order-options";
 
 type DraftListItem = OrderItemDraft & {
   clientId: string;
@@ -124,6 +132,11 @@ const materialItems = materialOptions.map((material) => ({
   label: material,
 }));
 
+const thicknessItems = thicknessOptions.map((thickness) => ({
+  value: String(thickness),
+  label: `${thickness} mm`,
+}));
+
 const MAX_IMPORT_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
 export function CreateOrderForm() {
@@ -141,6 +154,53 @@ export function CreateOrderForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const [itemFormResetKey, setItemFormResetKey] = useState(0);
   const todayDateInputValue = new Date().toISOString().slice(0, 10);
+
+  function handleImportThicknessChange(
+    rowNumber: number,
+    value: string | null,
+  ) {
+    const thicknessMm = Number(value);
+
+    if (!isThicknessOption(thicknessMm)) {
+      return;
+    }
+
+    setImportRows((currentRows) =>
+      currentRows?.map((row) => {
+        if (row.rowNumber === rowNumber) {
+          const errors = row.errors.filter(
+            (error) => error.field !== "thicknessMm",
+          );
+
+          return { ...row, thicknessMm, errors };
+        }
+        return row;
+      }),
+    );
+  }
+
+  function handleImportMaterialChange(
+    rowNumber: number,
+    materialType: MaterialType | null,
+  ) {
+    if (materialType === null) {
+      return;
+    }
+
+    setImportRows((currentRows) =>
+      currentRows?.map((row) => {
+        if (row.rowNumber === rowNumber) {
+          const errors = row.errors.filter(
+            (error) => error.field !== "materialType",
+          );
+
+          return { ...row, materialType, errors };
+        }
+
+        return row;
+      }),
+    );
+  }
 
   function handleAddItem(item: OrderItemDraft) {
     const newItem: DraftListItem = {
@@ -275,8 +335,8 @@ export function CreateOrderForm() {
             setDefaultMaterial(null);
             const file = event.currentTarget.files?.[0];
             if (file) {
-              if (!file.name.toLowerCase().endsWith(".xlsx")) {
-                return setImportError("Choose an .xlsx file.");
+              if (!isSupportedOrderWorkbook(file.name)) {
+                return setImportError("Choose an .xlsx or .xls file.");
               }
               if (file.size > MAX_IMPORT_FILE_SIZE_BYTES) {
                 return setImportError("The file is too large.");
@@ -294,15 +354,19 @@ export function CreateOrderForm() {
                 }
 
                 setImportRows(rows);
-              } catch {
-                setImportError("Could not read the Excel file.");
+              } catch (error) {
+                setImportError(
+                  error instanceof UnsupportedOrderWorkbookError
+                    ? error.message
+                    : "Could not read the Excel file.",
+                );
               }
             }
           }}
           id="excelFile"
           name="excelFile"
           type="file"
-          accept=".xlsx"
+          accept=".xlsx,.xls"
         />
         {importError && <FieldError>{importError}</FieldError>}
         {importRows && (
@@ -331,14 +395,73 @@ export function CreateOrderForm() {
               </SelectContent>
             </Select>
             <ul>
-              {importRows.map((row) => (
+              {importRows.map((row, index) => (
                 <li key={row.rowNumber}>
-                  {row.rowNumber}. {row.name} - {row.quantity} {row.unit}{" "}
-                  {row.thicknessMm ?? "-"} {row.materialType ?? "-"}{" "}
+                  {index + 1}. {row.name} - {row.quantity} {row.unit}{" "}
+                  <Select
+                    items={thicknessItems}
+                    value={row.thicknessMm?.toString() ?? null}
+                    onValueChange={(value) =>
+                      handleImportThicknessChange(row.rowNumber, value)
+                    }
+                  >
+                    <SelectTrigger
+                      aria-label={`Thickness for Excel row ${row.rowNumber}`}
+                    >
+                      <SelectValue placeholder="Select thickness" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectGroup>
+                        {thicknessItems.map((thickness) => (
+                          <SelectItem
+                            key={thickness.value}
+                            value={thickness.value}
+                          >
+                            {thickness.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <Select
+                    items={materialItems}
+                    value={
+                      row.materialType ??
+                      (row.errors.some(
+                        (error) => error.field === "materialType",
+                      )
+                        ? null
+                        : defaultMaterial)
+                    }
+                    onValueChange={(value) =>
+                      handleImportMaterialChange(row.rowNumber, value)
+                    }
+                  >
+                    <SelectTrigger
+                      aria-label={`Material for Excel row ${row.rowNumber}`}
+                    >
+                      <SelectValue placeholder="Select material" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {materialItems.map((material) => (
+                          <SelectItem
+                            key={material.value}
+                            value={material.value}
+                          >
+                            {material.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                   {row.errors.length > 0 && (
                     <ul>
                       {row.errors.map((error) => (
-                        <li key={error.message}>{error.message}</li>
+                        <li key={error.message}>
+                          Excel row {error.rowNumber}: {error.message}
+                        </li>
                       ))}
                     </ul>
                   )}
