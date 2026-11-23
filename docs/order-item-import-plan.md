@@ -17,7 +17,7 @@ Imported items must remain editable before the order is submitted. Spreadsheet i
 
 `src/lib/read-order-workbook.ts` reads the first worksheet of an `.xlsx` file with `read-excel-file` and passes its rows to `src/lib/order-import.ts`. The parser finds a header row by name, skips rows with no values in recognized columns, and returns candidate items with source row numbers and row-level errors. The included `.xlsx` fixture produces six candidate items.
 
-File selection, file-level validation, editable preview and confirmation into the client-side draft are upcoming work. Missing material or thickness remains unset until the user supplies a value.
+Create Order checks the selected file's extension and enforces a 5 MiB limit before reading. It shows file-level errors and a read-only preview with the row count, source row numbers, item values and row errors. The preview can store a default material selection in React state. The next step is to use that value where the preview has no material, while preserving valid materials read from the file. Default thickness, row editing and confirmation into the client-side draft are upcoming work.
 
 ## Minimal User Workflow
 

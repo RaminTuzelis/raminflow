@@ -3,7 +3,7 @@ import type { SubmitEvent } from "react";
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { createOrderDraft } from "@/app/orders/new/actions";
-import type { OrderDraft, OrderItemDraft } from "@/types/order";
+import type { OrderDraft, OrderItemDraft, MaterialType } from "@/types/order";
 import { unitLabels } from "@/lib/order-display";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,10 +22,19 @@ import {
   CircleCheckIcon,
   LoaderCircleIcon,
 } from "lucide-react";
-
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+} from "@/components/ui/select";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AddOrderItemForm } from "@/components/add-order-item-form";
+import { readOrderWorkbook } from "@/lib/read-order-workbook";
+import { materialOptions } from "@/lib/order-options";
 
 type DraftListItem = OrderItemDraft & {
   clientId: string;
@@ -110,10 +119,23 @@ function AddedOrderItemsSection({
   );
 }
 
+const materialItems = materialOptions.map((material) => ({
+  value: material,
+  label: material,
+}));
+
+const MAX_IMPORT_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+
 export function CreateOrderForm() {
   const [items, setItems] = useState<DraftListItem[]>([]);
   const [formError, setFormError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [importError, setImportError] = useState("");
+  const [importRows, setImportRows] =
+    useState<Awaited<ReturnType<typeof readOrderWorkbook>>>(undefined);
+  const [defaultMaterial, setDefaultMaterial] = useState<MaterialType | null>(
+    null,
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
@@ -244,15 +266,94 @@ export function CreateOrderForm() {
           </FieldGroup>
         </FieldSet>
       </form>
+      <Field>
+        <FieldLabel htmlFor="excelFile">Excel file</FieldLabel>
+        <Input
+          onChange={async (event) => {
+            setImportError("");
+            setImportRows(undefined);
+            setDefaultMaterial(null);
+            const file = event.currentTarget.files?.[0];
+            if (file) {
+              if (!file.name.toLowerCase().endsWith(".xlsx")) {
+                return setImportError("Choose an .xlsx file.");
+              }
+              if (file.size > MAX_IMPORT_FILE_SIZE_BYTES) {
+                return setImportError("The file is too large.");
+              }
+              try {
+                const rows = await readOrderWorkbook(file);
+                if (rows === undefined) {
+                  setImportError("The Excel file is missing required columns.");
+                  return;
+                }
+
+                if (rows.length === 0) {
+                  setImportError("The Excel file has no item rows.");
+                  return;
+                }
+
+                setImportRows(rows);
+              } catch {
+                setImportError("Could not read the Excel file.");
+              }
+            }
+          }}
+          id="excelFile"
+          name="excelFile"
+          type="file"
+          accept=".xlsx"
+        />
+        {importError && <FieldError>{importError}</FieldError>}
+        {importRows && (
+          <div>
+            <p>Rows found: {importRows.length}</p>
+            <FieldLabel htmlFor="importDefaultMaterial">
+              Default material
+            </FieldLabel>
+            <Select
+              items={materialItems}
+              value={defaultMaterial}
+              onValueChange={setDefaultMaterial}
+            >
+              <SelectTrigger id="importDefaultMaterial">
+                <SelectValue placeholder="Select material" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectGroup>
+                  {materialItems.map((material) => (
+                    <SelectItem key={material.value} value={material.value}>
+                      {material.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <ul>
+              {importRows.map((row) => (
+                <li key={row.rowNumber}>
+                  {row.rowNumber}. {row.name} - {row.quantity} {row.unit}{" "}
+                  {row.thicknessMm ?? "-"} {row.materialType ?? "-"}{" "}
+                  {row.errors.length > 0 && (
+                    <ul>
+                      {row.errors.map((error) => (
+                        <li key={error.message}>{error.message}</li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </Field>
 
       <AddOrderItemForm key={itemFormResetKey} onAdd={handleAddItem} />
-
       <AddedOrderItemsSection items={items} onRemove={handleRemoveItem} />
-
       {formError && (
         <FieldError id="create-order-error">{formError}</FieldError>
       )}
-
       {successMessage && (
         <div
           role="status"
@@ -277,7 +378,6 @@ export function CreateOrderForm() {
           )}
         </div>
       )}
-
       <div className="flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted-foreground">
           {successMessage
