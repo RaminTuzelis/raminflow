@@ -17,14 +17,14 @@ Imported items must remain editable before the order is submitted. Spreadsheet i
 
 `src/lib/read-order-workbook.ts` reads the first worksheet of an `.xlsx` file with `read-excel-file` or an Excel 2003 XML `.xls` file with the browser's XML parser. Both readers pass rows to `src/lib/order-import.ts`, which recognizes headers across one or two adjacent rows, skips rows with no values in recognized columns, and returns candidate items with source row numbers and row-level errors.
 
-Create Order checks the selected file's extension and enforces a 5 MiB limit before reading. It shows file-level errors and numbers visible items from 1 while displaying their original Excel row numbers in error messages. A selected default material fills blank values in the preview. Per-row material and thickness edits update the preview and clear only the corresponding field error. Editing other fields and confirming imported items into the client-side draft are upcoming work.
+Create Order checks the selected file's extension and enforces a 5 MiB limit before reading. The responsive preview shows file errors, an item grid, defaults aligned with their columns on wider layouts, and a ready count beside the append action. Users can correct name, quantity, unit, material and thickness per row. Errors retain their original Excel row number. Optional material and thickness defaults fill blank values, and row-specific choices take precedence. Appending ready items removes their rows from the preview and clears the file selection when all rows have been added.
 
 ## Minimal User Workflow
 
 1. Export the usual Excel file from the existing workflow.
 2. Delete item rows that should not be included in the RaminFlow order. Blank template rows may remain.
 3. Upload the file in the Create Order screen.
-4. Optionally select a default material for rows without one.
+4. Optionally select default material and thickness values for blank cells.
 5. Review imported items and row-level warnings.
 6. Edit or remove individual items if needed.
 7. Confirm the preview so the items are added to the existing order draft.
@@ -81,7 +81,7 @@ The parser must therefore detect headers by normalized labels and inspect releva
 | Item/service name                      | `name`          | Required non-empty text                                                                                     |
 | Unit                                   | `unit`          | Normalize known labels to `PCS`, `M`, `M2`, or `KG`                                                         |
 | Quantity                               | `quantity`      | Required positive value compatible with the current persistence model; see quantity constraint below        |
-| Thickness                              | `thicknessMm`   | Use the workbook value when available. Otherwise ask the user to select the thickness for that product row. |
+| Thickness                              | `thicknessMm`   | Use a valid workbook value. Fill a blank with a selected default or row edit, and correct unsupported values per row. |
 | Material                               | `materialType`  | Use an explicit column when available; otherwise require a user-selected default                            |
 | Item code                              | Future metadata | Ignore in the first version unless a real need is confirmed                                                 |
 | Prices, totals, coefficients, formulas | Not imported    | Accounting data is outside the first import boundary                                                        |
@@ -106,7 +106,7 @@ Normalizing a decimal comma is separate from accepting a fractional quantity. Be
 8. Treat a partially populated relevant row as an item with validation errors, not as an empty row.
 9. Preserve the source row number for understandable error messages.
 10. Normalize whitespace, decimal commas/dots, and known unit spellings.
-11. Treat material or thickness parsed from a description as a preview suggestion. Fill missing material with a selected default or a row edit, and fill missing thickness for each affected row before submission.
+11. Treat material or thickness parsed from a description as a preview suggestion. Fill blanks with selected defaults or row edits. Correct unsupported values explicitly before adding affected rows.
 12. Do not automatically merge duplicate-looking rows; separate rows may represent intentional items.
 13. Do not use the filename as trusted order data. It may only be offered as an editable project-name suggestion.
 
@@ -126,7 +126,9 @@ The preview should show:
 
 Fatal file errors include an unsupported file type, unreadable workbook, missing required headers, or no item-like rows. Row errors include missing name, invalid quantity, unsupported unit, or unsupported thickness. Resolve missing material and thickness before imported items can join the draft.
 
-When an order draft already contains items, the UI must ask whether imported rows should be appended or replace the current draft items. It must not guess and accidentally duplicate work.
+Import confirmation appends ready items to the existing draft list and preserves manually added and previously imported items. Remaining preview rows can be corrected and appended in a later batch. Corrections to an already saved order belong in Edit Order.
+
+Next, show a success message with the appended item count. Improve the file selection area, show feedback while reading, and reuse the same file handler for selection and a future drop target. Clarify when preview rows remain before order submission. Add an Edit action to Added items so both manually entered and imported items can be updated in place by `clientId`. Use the existing Edit Order dialog as a UI reference and keep Create Order edits in client-side state until submission.
 
 ## Application Boundary
 
@@ -154,13 +156,14 @@ The later attachment feature needs its own storage, metadata, access control, fi
 - units use known aliases such as `m.`;
 - material is missing and a default is selected;
 - one row has an unsupported thickness;
+- a thickness default fills blank values, preserves workbook values and row edits, and leaves unsupported thickness errors visible;
 - one row is partially filled;
 - the workbook contains pricing formulas that must be ignored;
 - one logical header is split across two physical rows;
 - valid rows are separated by blank rows;
 - source sequence numbers are non-consecutive;
 - an extra notes or supplier column is present but not mapped silently;
-- existing draft items are appended or replaced only after an explicit choice;
+- appending preserves existing draft items and a later batch from the same preview excludes previously appended rows;
 - the server rejects manipulated imported data even after a valid preview.
 
 ## Open Questions Before Implementation

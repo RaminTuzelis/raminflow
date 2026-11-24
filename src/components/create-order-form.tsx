@@ -3,8 +3,14 @@ import type { SubmitEvent } from "react";
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { createOrderDraft } from "@/app/orders/new/actions";
-import type { OrderDraft, OrderItemDraft, MaterialType } from "@/types/order";
-import { unitLabels } from "@/lib/order-display";
+import type {
+  OrderDraft,
+  OrderItemDraft,
+  MaterialType,
+  UnitType,
+} from "@/types/order";
+import { unitLabels, unitOptionLabels } from "@/lib/order-display";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -34,6 +40,11 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AddOrderItemForm } from "@/components/add-order-item-form";
 import {
+  IMPORT_NAME_REQUIRED,
+  IMPORT_QUANTITY_INVALID,
+  parseImportQuantity,
+} from "@/lib/order-import";
+import {
   isSupportedOrderWorkbook,
   readOrderWorkbook,
   UnsupportedOrderWorkbookError,
@@ -42,6 +53,7 @@ import {
   isThicknessOption,
   materialOptions,
   thicknessOptions,
+  unitOptions,
 } from "@/lib/order-options";
 
 type DraftListItem = OrderItemDraft & {
@@ -127,17 +139,27 @@ function AddedOrderItemsSection({
   );
 }
 
+const unitItems = unitOptions.map((unit) => ({
+  value: unit,
+  label: unitOptionLabels[unit],
+}));
+
 const materialItems = materialOptions.map((material) => ({
   value: material,
   label: material,
 }));
 
 const thicknessItems = thicknessOptions.map((thickness) => ({
-  value: String(thickness),
+  value: thickness,
   label: `${thickness} mm`,
 }));
 
 const MAX_IMPORT_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+
+const importPreviewColumns =
+  "@2xl/import:grid-cols-[1.75rem_minmax(0,1fr)_4.5rem_6rem_6.5rem_6.5rem]";
+const importPreviewMobileLabel =
+  "block text-xs font-medium text-muted-foreground @2xl/import:hidden";
 
 export function CreateOrderForm() {
   const [items, setItems] = useState<DraftListItem[]>([]);
@@ -149,19 +171,21 @@ export function CreateOrderForm() {
   const [defaultMaterial, setDefaultMaterial] = useState<MaterialType | null>(
     null,
   );
+  const [defaultThicknessMm, setDefaultThicknessMm] = useState<number | null>(
+    null,
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const [itemFormResetKey, setItemFormResetKey] = useState(0);
   const todayDateInputValue = new Date().toISOString().slice(0, 10);
+  const importFileRef = useRef<HTMLInputElement>(null);
 
   function handleImportThicknessChange(
     rowNumber: number,
-    value: string | null,
+    thicknessMm: number | null,
   ) {
-    const thicknessMm = Number(value);
-
-    if (!isThicknessOption(thicknessMm)) {
+    if (thicknessMm === null || !isThicknessOption(thicknessMm)) {
       return;
     }
 
@@ -202,6 +226,67 @@ export function CreateOrderForm() {
     );
   }
 
+  function handleImportUnitChange(rowNumber: number, unit: UnitType | null) {
+    if (unit === null) {
+      return;
+    }
+
+    setImportRows((currentRows) =>
+      currentRows?.map((row) => {
+        if (row.rowNumber !== rowNumber) {
+          return row;
+        }
+
+        const errors = row.errors.filter((error) => error.field !== "unit");
+        return { ...row, unit, errors };
+      }),
+    );
+  }
+
+  function handleImportNameChange(rowNumber: number, name: string) {
+    setImportRows((currentRows) =>
+      currentRows?.map((row) => {
+        if (row.rowNumber !== rowNumber) {
+          return row;
+        }
+
+        const errors = row.errors.filter((error) => error.field !== "name");
+        if (name.trim() === "") {
+          errors.push({
+            rowNumber,
+            field: "name",
+            message: IMPORT_NAME_REQUIRED,
+          });
+        }
+
+        return { ...row, name, errors };
+      }),
+    );
+  }
+
+  function handleImportQuantityChange(rowNumber: number, quantityText: string) {
+    const quantity = parseImportQuantity(quantityText);
+
+    setImportRows((currentRows) =>
+      currentRows?.map((row) => {
+        if (row.rowNumber !== rowNumber) {
+          return row;
+        }
+
+        const errors = row.errors.filter((error) => error.field !== "quantity");
+        if (quantity === undefined) {
+          errors.push({
+            rowNumber,
+            field: "quantity",
+            message: IMPORT_QUANTITY_INVALID,
+          });
+        }
+
+        return { ...row, quantityText, quantity, errors };
+      }),
+    );
+  }
+
   function handleAddItem(item: OrderItemDraft) {
     const newItem: DraftListItem = {
       ...item,
@@ -212,6 +297,33 @@ export function CreateOrderForm() {
     setFormError("");
     setSuccessMessage("");
     setCreatedOrderId("");
+  }
+
+  function handleAddImportedItems() {
+    if (readyItems.length === 0) {
+      return;
+    }
+
+    const importedItems = readyItems.map((item) => ({
+      ...item,
+      clientId: crypto.randomUUID(),
+    }));
+
+    setItems((currentItems) => [...currentItems, ...importedItems]);
+
+    setImportRows((currentRows) =>
+      currentRows?.filter((row) => !readyRowNumbers.has(row.rowNumber)),
+    );
+
+    if (importedItems.length === importRows?.length) {
+      setImportRows(undefined);
+
+      if (importFileRef.current) {
+        importFileRef.current.value = "";
+      }
+    }
+
+    return;
   }
 
   function handleRemoveItem(clientId: string) {
@@ -279,6 +391,35 @@ export function CreateOrderForm() {
     }
   }
 
+  const readyRowNumbers = new Set<number>();
+
+  const readyItems: OrderItemDraft[] = [];
+
+  for (const row of importRows ?? []) {
+    const { name, quantity, unit } = row;
+    const materialType = row.materialType ?? defaultMaterial;
+    const thicknessMm = row.thicknessMm ?? defaultThicknessMm;
+
+    if (
+      row.errors.length > 0 ||
+      quantity === undefined ||
+      unit === undefined ||
+      thicknessMm === null ||
+      materialType === null
+    ) {
+      continue;
+    }
+
+    readyItems.push({
+      name: name.trim(),
+      quantity,
+      unit,
+      thicknessMm,
+      materialType,
+    });
+    readyRowNumbers.add(row.rowNumber);
+  }
+
   return (
     <div
       onChange={() => {
@@ -333,6 +474,7 @@ export function CreateOrderForm() {
             setImportError("");
             setImportRows(undefined);
             setDefaultMaterial(null);
+            setDefaultThicknessMm(null);
             const file = event.currentTarget.files?.[0];
             if (file) {
               if (!isSupportedOrderWorkbook(file.name)) {
@@ -364,100 +506,282 @@ export function CreateOrderForm() {
             }
           }}
           id="excelFile"
+          ref={importFileRef}
           name="excelFile"
           type="file"
           accept=".xlsx,.xls"
         />
         {importError && <FieldError>{importError}</FieldError>}
         {importRows && (
-          <div>
-            <p>Rows found: {importRows.length}</p>
-            <FieldLabel htmlFor="importDefaultMaterial">
-              Default material
-            </FieldLabel>
-            <Select
-              items={materialItems}
-              value={defaultMaterial}
-              onValueChange={setDefaultMaterial}
+          <section
+            aria-labelledby="import-preview-title"
+            className="@container/import mt-2 min-w-0 rounded-xl border border-border"
+          >
+            <h3
+              id="import-preview-title"
+              className="px-4 py-3 text-sm font-medium"
             >
-              <SelectTrigger id="importDefaultMaterial">
-                <SelectValue placeholder="Select material" />
-              </SelectTrigger>
-
-              <SelectContent>
-                <SelectGroup>
-                  {materialItems.map((material) => (
-                    <SelectItem key={material.value} value={material.value}>
-                      {material.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <ul>
+              Import preview
+            </h3>
+            <div
+              aria-hidden="true"
+              className={cn(
+                "hidden gap-2 border-t border-border bg-muted/40 px-4 py-2 text-xs font-medium text-muted-foreground @2xl/import:grid",
+                importPreviewColumns,
+              )}
+            >
+              <span>#</span>
+              <span>Item name</span>
+              <span>Quantity</span>
+              <span>Unit</span>
+              <span>Material</span>
+              <span>Thickness</span>
+            </div>
+            <div
+              className={cn(
+                "grid grid-cols-2 items-center gap-2 border-t border-border bg-muted/20 px-4 py-3",
+                importPreviewColumns,
+              )}
+            >
+              <p className="col-span-full text-xs text-muted-foreground @2xl/import:col-span-4">
+                Defaults apply to empty cells.
+              </p>
+              <Field className="min-w-0 gap-1.5">
+                <FieldLabel
+                  htmlFor="importDefaultMaterial"
+                  className="@2xl/import:sr-only"
+                >
+                  Default material
+                </FieldLabel>
+                <Select
+                  items={materialItems}
+                  value={defaultMaterial}
+                  onValueChange={setDefaultMaterial}
+                >
+                  <SelectTrigger
+                    id="importDefaultMaterial"
+                    className="min-w-0 w-full"
+                  >
+                    <SelectValue placeholder="No default" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {materialItems.map((material) => (
+                        <SelectItem key={material.value} value={material.value}>
+                          {material.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field className="min-w-0 gap-1.5">
+                <FieldLabel
+                  htmlFor="importDefaultThickness"
+                  className="@2xl/import:sr-only"
+                >
+                  Default thickness
+                </FieldLabel>
+                <Select
+                  items={thicknessItems}
+                  value={defaultThicknessMm}
+                  onValueChange={setDefaultThicknessMm}
+                >
+                  <SelectTrigger
+                    id="importDefaultThickness"
+                    className="min-w-0 w-full"
+                  >
+                    <SelectValue placeholder="No default" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {thicknessItems.map((thickness) => (
+                        <SelectItem
+                          key={thickness.value}
+                          value={thickness.value}
+                        >
+                          {thickness.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
+            <ul className="divide-y divide-border border-t border-border">
               {importRows.map((row, index) => (
-                <li key={row.rowNumber}>
-                  {index + 1}. {row.name} - {row.quantity} {row.unit}{" "}
-                  <Select
-                    items={thicknessItems}
-                    value={row.thicknessMm?.toString() ?? null}
-                    onValueChange={(value) =>
-                      handleImportThicknessChange(row.rowNumber, value)
-                    }
-                  >
-                    <SelectTrigger
-                      aria-label={`Thickness for Excel row ${row.rowNumber}`}
+                <li
+                  className={cn(
+                    "grid grid-cols-2 items-center gap-x-2 gap-y-3 px-4 py-3 @2xl/import:gap-y-2",
+                    importPreviewColumns,
+                  )}
+                  key={row.rowNumber}
+                >
+                  <span className="col-span-full text-xs font-medium tabular-nums text-muted-foreground @2xl/import:col-span-1">
+                    {index + 1}.
+                  </span>
+                  <div className="col-span-full min-w-0 space-y-1.5 @2xl/import:col-span-1">
+                    <span
+                      aria-hidden="true"
+                      className={importPreviewMobileLabel}
                     >
-                      <SelectValue placeholder="Select thickness" />
-                    </SelectTrigger>
+                      Item name
+                    </span>
+                    <Input
+                      aria-label={`Item name for Excel row ${row.rowNumber}`}
+                      aria-invalid={row.errors.some(
+                        (error) => error.field === "name",
+                      )}
+                      value={row.name}
+                      onChange={(event) =>
+                        handleImportNameChange(
+                          row.rowNumber,
+                          event.currentTarget.value,
+                        )
+                      }
+                    />
+                  </div>
+                  <div className="min-w-0 space-y-1.5">
+                    <span
+                      aria-hidden="true"
+                      className={importPreviewMobileLabel}
+                    >
+                      Quantity
+                    </span>
+                    <Input
+                      aria-label={`Quantity for Excel row ${row.rowNumber}`}
+                      aria-invalid={row.errors.some(
+                        (error) => error.field === "quantity",
+                      )}
+                      inputMode="numeric"
+                      value={row.quantityText ?? ""}
+                      onChange={(event) =>
+                        handleImportQuantityChange(
+                          row.rowNumber,
+                          event.currentTarget.value,
+                        )
+                      }
+                    />
+                  </div>
+                  <div className="min-w-0 space-y-1.5">
+                    <span
+                      aria-hidden="true"
+                      className={importPreviewMobileLabel}
+                    >
+                      Unit
+                    </span>
+                    <Select
+                      items={unitItems}
+                      value={row.unit ?? null}
+                      onValueChange={(value) =>
+                        handleImportUnitChange(row.rowNumber, value)
+                      }
+                    >
+                      <SelectTrigger
+                        aria-label={`Unit for Excel row ${row.rowNumber}`}
+                        className="min-w-0 w-full"
+                      >
+                        <SelectValue placeholder="Choose">
+                          {row.unit && unitLabels[row.unit]}
+                        </SelectValue>
+                      </SelectTrigger>
 
-                    <SelectContent>
-                      <SelectGroup>
-                        {thicknessItems.map((thickness) => (
-                          <SelectItem
-                            key={thickness.value}
-                            value={thickness.value}
-                          >
-                            {thickness.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <Select
-                    items={materialItems}
-                    value={
-                      row.materialType ??
-                      (row.errors.some(
-                        (error) => error.field === "materialType",
-                      )
-                        ? null
-                        : defaultMaterial)
-                    }
-                    onValueChange={(value) =>
-                      handleImportMaterialChange(row.rowNumber, value)
-                    }
-                  >
-                    <SelectTrigger
-                      aria-label={`Material for Excel row ${row.rowNumber}`}
+                      <SelectContent>
+                        <SelectGroup>
+                          {unitItems.map((unit) => (
+                            <SelectItem key={unit.value} value={unit.value}>
+                              {unit.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="min-w-0 space-y-1.5">
+                    <span
+                      aria-hidden="true"
+                      className={importPreviewMobileLabel}
                     >
-                      <SelectValue placeholder="Select material" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {materialItems.map((material) => (
-                          <SelectItem
-                            key={material.value}
-                            value={material.value}
-                          >
-                            {material.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                      Material
+                    </span>
+                    <Select
+                      items={materialItems}
+                      value={
+                        row.materialType ??
+                        (row.errors.some(
+                          (error) => error.field === "materialType",
+                        )
+                          ? null
+                          : defaultMaterial)
+                      }
+                      onValueChange={(value) =>
+                        handleImportMaterialChange(row.rowNumber, value)
+                      }
+                    >
+                      <SelectTrigger
+                        className="min-w-0 w-full"
+                        aria-label={`Material for Excel row ${row.rowNumber}`}
+                      >
+                        <SelectValue placeholder="Choose" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {materialItems.map((material) => (
+                            <SelectItem
+                              key={material.value}
+                              value={material.value}
+                            >
+                              {material.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="min-w-0 space-y-1.5">
+                    <span
+                      aria-hidden="true"
+                      className={importPreviewMobileLabel}
+                    >
+                      Thickness
+                    </span>
+                    <Select
+                      items={thicknessItems}
+                      value={
+                        row.thicknessMm ??
+                        (row.errors.some(
+                          (error) => error.field === "thicknessMm",
+                        )
+                          ? null
+                          : defaultThicknessMm)
+                      }
+                      onValueChange={(value) =>
+                        handleImportThicknessChange(row.rowNumber, value)
+                      }
+                    >
+                      <SelectTrigger
+                        className="min-w-0 w-full"
+                        aria-label={`Thickness for Excel row ${row.rowNumber}`}
+                      >
+                        <SelectValue placeholder="Choose" />
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        <SelectGroup>
+                          {thicknessItems.map((thickness) => (
+                            <SelectItem
+                              key={thickness.value}
+                              value={thickness.value}
+                            >
+                              {thickness.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   {row.errors.length > 0 && (
-                    <ul>
+                    <ul className="col-span-full space-y-1 rounded-md bg-destructive/10 px-3 py-2 text-xs text-destructive">
                       {row.errors.map((error) => (
                         <li key={error.message}>
                           Excel row {error.rowNumber}: {error.message}
@@ -468,7 +792,22 @@ export function CreateOrderForm() {
                 </li>
               ))}
             </ul>
-          </div>
+            <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 border-t border-border px-4 py-3">
+              <p aria-live="polite" className="text-sm text-muted-foreground">
+                Ready to add{" "}
+                <strong className="font-medium tabular-nums text-foreground">
+                  {readyItems.length} of {importRows.length}
+                </strong>
+              </p>
+              <Button
+                type="button"
+                disabled={readyItems.length === 0}
+                onClick={handleAddImportedItems}
+              >
+                Append imported items
+              </Button>
+            </div>
+          </section>
         )}
       </Field>
 

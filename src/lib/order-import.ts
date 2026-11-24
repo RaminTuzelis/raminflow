@@ -7,6 +7,10 @@ export type OrderImportRowError = {
   field: ImportField;
 };
 
+export const IMPORT_NAME_REQUIRED = "Item name is required.";
+export const IMPORT_QUANTITY_INVALID =
+  "Quantity must be a positive whole number.";
+
 export function normalizeImportHeader(header: string): string {
   const text = header.trim().toLowerCase().replace(/\s+/g, " ");
 
@@ -124,7 +128,7 @@ export function parseImportRows(rows: string[][]) {
         errors.push({
           rowNumber,
           field: "name",
-          message: "Item name is required.",
+          message: IMPORT_NAME_REQUIRED,
         });
       }
 
@@ -132,7 +136,7 @@ export function parseImportRows(rows: string[][]) {
         errors.push({
           rowNumber,
           field: "quantity",
-          message: "Quantity must be a positive whole number.",
+          message: IMPORT_QUANTITY_INVALID,
         });
       }
 
