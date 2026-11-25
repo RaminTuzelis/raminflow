@@ -6,7 +6,7 @@ RaminFlow is a production-order management learning prototype built with Next.js
 
 The application includes credentials login, required temporary-password replacement, role-based order access, administrator-managed users, order/item creation and editing, yearly order numbers, search/status filters, pagination and status history with the acting user.
 
-Create Order can read `.xlsx` and Excel 2003 XML (`.xls`) files in the browser and show a responsive item preview with source row numbers and validation errors. Users can select defaults for blank material and thickness values, edit each item field in the preview, and append ready items to the draft. See the [import plan](docs/order-item-import-plan.md) for the remaining import and draft editing work. Attachments, broader edit auditing, inventory and direct accounting integration remain future work.
+Create Order reads the first sheet of `.xlsx` or Excel 2003 XML (`.xls`) files up to 5 MiB in the browser. Convert older binary `.xls` files to `.xlsx` before importing. Review the rows, correct any errors, optionally fill blank materials and thicknesses with defaults, then append ready items to the draft. Review the combined Added items list before saving the order. [Synthetic examples](docs/import-samples) are available for local testing.
 
 This is a local learning prototype. A company pilot requires separately approved private data, infrastructure and deployment arrangements.
 
@@ -49,11 +49,11 @@ Migrations `0006` and `0008` add required creator/actor foreign keys without a h
 | `src/lib/`        | Permissions, current user, domain options, pure helpers and tests |
 | `drizzle/`        | Committed SQL migrations and generated metadata                   |
 | `scripts/`        | Synthetic administrator and order seeds                           |
-| `docs/`           | Import plan, synthetic workbook fixtures and editable diagrams    |
+| `docs/`           | Synthetic workbook fixtures and editable diagrams                 |
 
-Order creation collects manual items in `src/components/create-order-form.tsx` and calls `src/app/orders/new/actions.ts` for authorization, validation and transactional persistence. Planned import confirmation should update that client-side draft before the same final save.
+Order creation collects manual and imported items in `src/components/create-order-form.tsx` and calls `src/app/orders/new/actions.ts` for authorization, validation and transactional persistence.
 
-Status history stores `changedByUserId` and joins the user's current name for display. It does not snapshot past names. Supported status values are checked; a transition matrix is not enforced. Quantities currently use a PostgreSQL integer column; fractional import support is an unresolved model/validation decision documented in the import plan.
+Status history stores `changedByUserId` and joins the user's current name for display. Status transitions currently accept any supported status. Order quantities use a PostgreSQL integer column, and the spreadsheet preview accepts positive whole numbers.
 
 ## Checks And Development
 

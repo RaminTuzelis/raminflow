@@ -52,9 +52,10 @@ const thicknessItems = thicknessOptions.map((thickness) => ({
 
 type AddOrderItemFormProps = {
   onAdd: (item: OrderItemDraft) => void;
+  disabled: boolean;
 };
 
-export function AddOrderItemForm({ onAdd }: AddOrderItemFormProps) {
+export function AddOrderItemForm({ onAdd, disabled }: AddOrderItemFormProps) {
   const [quantity, setQuantity] = useState(1);
   const itemNameInputRef = useRef<HTMLInputElement>(null);
 
@@ -80,7 +81,10 @@ export function AddOrderItemForm({ onAdd }: AddOrderItemFormProps) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <FieldSet className="rounded-lg border border-border bg-muted/20 p-4 sm:p-5">
+      <FieldSet
+        disabled={disabled}
+        className="rounded-lg border border-border bg-muted/20 p-4 sm:p-5"
+      >
         <FieldLegend className="px-2">Add order item</FieldLegend>
 
         <Field>
