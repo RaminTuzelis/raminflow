@@ -60,6 +60,16 @@ export async function createOrderDraft(
   }
 
   const deadlineDate = new Date(draftOrder.deadline);
+  if (
+    Number.isNaN(deadlineDate.getTime()) ||
+    deadlineDate.toISOString().slice(0, 10) !== draftOrder.deadline
+  ) {
+    return {
+      success: false,
+      error: "Enter a valid deadline.",
+    };
+  }
+
   const today = new Date();
 
   today.setHours(0, 0, 0, 0);

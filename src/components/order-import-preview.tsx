@@ -18,6 +18,7 @@ import {
 import type { readOrderWorkbook } from "@/lib/read-order-workbook";
 import { cn } from "@/lib/utils";
 import type { MaterialType, UnitType } from "@/types/order";
+import { Trash2Icon } from "lucide-react";
 
 const unitItems = unitOptions.map((unit) => ({
   value: unit,
@@ -35,7 +36,7 @@ const thicknessItems = thicknessOptions.map((thickness) => ({
 }));
 
 const importPreviewColumns =
-  "@2xl/import:grid-cols-[1.75rem_minmax(0,1fr)_4.5rem_6rem_6.5rem_6.5rem]";
+  "@2xl/import:grid-cols-[1.75rem_minmax(0,1fr)_4.5rem_6rem_6.5rem_6.5rem_2rem]";
 const importPreviewMobileLabel =
   "block text-xs font-medium text-muted-foreground @2xl/import:hidden";
 
@@ -52,6 +53,7 @@ type OrderImportPreviewProps = {
   onMaterialChange: (rowNumber: number, material: MaterialType | null) => void;
   onThicknessChange: (rowNumber: number, thicknessMm: number | null) => void;
   onAppend: () => void;
+  onSkipRow: (rowNumber: number) => void;
   disabled: boolean;
 };
 
@@ -69,6 +71,7 @@ export function OrderImportPreview({
   onMaterialChange,
   onThicknessChange,
   onAppend,
+  onSkipRow,
 }: OrderImportPreviewProps) {
   return (
     <section
@@ -172,10 +175,10 @@ export function OrderImportPreview({
             )}
             key={row.rowNumber}
           >
-            <span className="col-span-full text-xs font-medium tabular-nums text-muted-foreground @2xl/import:col-span-1">
+            <span className="col-start-1 row-start-1 text-xs font-medium tabular-nums text-muted-foreground">
               {index + 1}.
             </span>
-            <div className="col-span-full min-w-0 space-y-1.5 @2xl/import:col-span-1">
+            <div className="col-span-full flex min-w-0 flex-col gap-1.5 @2xl/import:col-span-1">
               <span aria-hidden="true" className={importPreviewMobileLabel}>
                 Item name
               </span>
@@ -190,7 +193,7 @@ export function OrderImportPreview({
                 }
               />
             </div>
-            <div className="min-w-0 space-y-1.5">
+            <div className="flex min-w-0 flex-col gap-1.5">
               <span aria-hidden="true" className={importPreviewMobileLabel}>
                 Quantity
               </span>
@@ -206,7 +209,7 @@ export function OrderImportPreview({
                 }
               />
             </div>
-            <div className="min-w-0 space-y-1.5">
+            <div className="flex min-w-0 flex-col gap-1.5">
               <span aria-hidden="true" className={importPreviewMobileLabel}>
                 Unit
               </span>
@@ -235,7 +238,7 @@ export function OrderImportPreview({
                 </SelectContent>
               </Select>
             </div>
-            <div className="min-w-0 space-y-1.5">
+            <div className="flex min-w-0 flex-col gap-1.5">
               <span aria-hidden="true" className={importPreviewMobileLabel}>
                 Material
               </span>
@@ -268,7 +271,7 @@ export function OrderImportPreview({
                 </SelectContent>
               </Select>
             </div>
-            <div className="min-w-0 space-y-1.5">
+            <div className="flex min-w-0 flex-col gap-1.5">
               <span aria-hidden="true" className={importPreviewMobileLabel}>
                 Thickness
               </span>
@@ -302,6 +305,17 @@ export function OrderImportPreview({
                 </SelectContent>
               </Select>
             </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              disabled={disabled}
+              className="col-start-2 row-start-1 justify-self-end @2xl/import:col-start-7 text-destructive hover:text-destructive"
+              aria-label={`Skip Excel row ${row.rowNumber}`}
+              onClick={() => onSkipRow(row.rowNumber)}
+            >
+              <Trash2Icon aria-hidden="true" />
+            </Button>
             {row.errors.length > 0 && (
               <ul className="col-span-full space-y-1 rounded-md bg-destructive/10 px-3 py-2 text-xs text-destructive">
                 {row.errors.map((error) => (

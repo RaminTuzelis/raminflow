@@ -21,12 +21,21 @@ import {
   FieldError,
 } from "@/components/ui/field";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   PlusIcon,
   Trash2Icon,
   ArrowRightIcon,
   CircleCheckIcon,
   FileSpreadsheetIcon,
   LoaderCircleIcon,
+  TriangleAlertIcon,
 } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -156,8 +165,11 @@ export function CreateOrderForm() {
     null,
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isImportConfirmationOpen, setIsImportConfirmationOpen] =
+    useState(false);
   const [createdOrderId, setCreatedOrderId] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
+  const reviewImportButtonRef = useRef<HTMLButtonElement>(null);
   const [itemFormResetKey, setItemFormResetKey] = useState(0);
   const todayDateInputValue = new Date().toISOString().slice(0, 10);
   const importFileRef = useRef<HTMLInputElement>(null);
@@ -280,6 +292,18 @@ export function CreateOrderForm() {
     setCreatedOrderId("");
   }
 
+  function clearImportPreview() {
+    setImportRows(undefined);
+    setImportFileName("");
+    setImportError("");
+    setDefaultMaterial(null);
+    setDefaultThicknessMm(null);
+
+    if (importFileRef.current) {
+      importFileRef.current.value = "";
+    }
+  }
+
   function handleAddImportedItems() {
     if (readyItems.length === 0) {
       return;
@@ -296,21 +320,14 @@ export function CreateOrderForm() {
     const itemLabel = addedCount === 1 ? "item" : "items";
     toast.success(`${addedCount} ${itemLabel} added to the draft.`);
 
+    if (importedItems.length === importRows?.length) {
+      clearImportPreview();
+      return;
+    }
+
     setImportRows((currentRows) =>
       currentRows?.filter((row) => !readyRowNumbers.has(row.rowNumber)),
     );
-
-    if (importedItems.length === importRows?.length) {
-      setImportRows(undefined);
-
-      if (importFileRef.current) {
-        importFileRef.current.value = "";
-      }
-
-      setImportFileName("");
-    }
-
-    return;
   }
 
   function handleRemoveItem(clientId: string) {
@@ -319,6 +336,17 @@ export function CreateOrderForm() {
     );
     setSuccessMessage("");
     setCreatedOrderId("");
+  }
+
+  function handleSkipImportRow(rowNumber: number) {
+    if (importRows?.length === 1 && importRows[0].rowNumber === rowNumber) {
+      clearImportPreview();
+      return;
+    }
+
+    setImportRows((currentRows) =>
+      currentRows?.filter((row) => row.rowNumber !== rowNumber),
+    );
   }
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
@@ -334,7 +362,26 @@ export function CreateOrderForm() {
       return;
     }
 
-    const formData = new FormData(event.currentTarget);
+    if (importRows?.length) {
+      setIsImportConfirmationOpen(true);
+      return;
+    }
+
+    await saveOrder(event.currentTarget);
+  }
+
+  async function handleConfirmImport() {
+    const form = formRef.current;
+
+    if (!form || isSubmitting || isReadingWorkbook) {
+      return;
+    }
+    setIsImportConfirmationOpen(false);
+    await saveOrder(form);
+  }
+
+  async function saveOrder(form: HTMLFormElement) {
+    const formData = new FormData(form);
     const projectName = String(formData.get("projectName") ?? "");
     const productionNotes = String(formData.get("productionNotes") ?? "");
     const deadline = String(formData.get("deadline") ?? "");
@@ -368,6 +415,7 @@ export function CreateOrderForm() {
       formRef.current?.reset();
       setItemFormResetKey((currentKey) => currentKey + 1);
       setItems([]);
+      clearImportPreview();
     } catch (error) {
       setSuccessMessage("");
 
@@ -382,6 +430,7 @@ export function CreateOrderForm() {
     }
   }
 
+  const remainingImportCount = importRows?.length ?? 0;
   const readyRowNumbers = new Set<number>();
 
   const readyItems: OrderItemDraft[] = [];
@@ -572,6 +621,7 @@ export function CreateOrderForm() {
             onMaterialChange={handleImportMaterialChange}
             onThicknessChange={handleImportThicknessChange}
             onAppend={handleAddImportedItems}
+            onSkipRow={handleSkipImportRow}
           />
         )}
       </Field>
@@ -657,6 +707,43 @@ export function CreateOrderForm() {
             </>
           )}
         </Button>
+        <Dialog
+          open={isImportConfirmationOpen}
+          onOpenChange={setIsImportConfirmationOpen}
+        >
+          <DialogContent
+            initialFocus={reviewImportButtonRef}
+            showCloseButton={false}
+          >
+            <DialogHeader className="flex-row items-start gap-3">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-warning/10 text-warning">
+                <TriangleAlertIcon className="size-4" aria-hidden="true" />
+              </span>
+              <div className="space-y-1">
+                <DialogTitle>Incomplete import</DialogTitle>
+                <DialogDescription>
+                  This order will save {items.length} added{" "}
+                  {items.length === 1 ? "item" : "items"} and leave out{" "}
+                  {remainingImportCount} Excel{" "}
+                  {remainingImportCount === 1 ? "row" : "rows"}.
+                </DialogDescription>
+              </div>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                ref={reviewImportButtonRef}
+                type="button"
+                variant="outline"
+                onClick={() => setIsImportConfirmationOpen(false)}
+              >
+                Review rows
+              </Button>
+              <Button type="button" onClick={handleConfirmImport}>
+                Create order
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
