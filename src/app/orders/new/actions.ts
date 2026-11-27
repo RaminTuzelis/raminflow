@@ -70,12 +70,10 @@ export async function createOrderDraft(
     };
   }
 
-  const today = new Date();
+  const today = new Date().toISOString().slice(0, 10);
+  const POSTGRES_INTEGER_MAX = 2_147_483_647;
 
-  today.setHours(0, 0, 0, 0);
-  deadlineDate.setHours(0, 0, 0, 0);
-
-  if (deadlineDate < today) {
+  if (draftOrder.deadline < today) {
     return {
       success: false,
       error: "Deadline cannot be in the past.",
@@ -97,10 +95,14 @@ export async function createOrderDraft(
       };
     }
 
-    if (item.quantity < 1) {
+    if (
+      !Number.isInteger(item.quantity) ||
+      item.quantity < 1 ||
+      item.quantity > POSTGRES_INTEGER_MAX
+    ) {
       return {
         success: false,
-        error: "Each order item quantity must be at least 1.",
+        error: "Quantity must be a positive whole number.",
       };
     }
 

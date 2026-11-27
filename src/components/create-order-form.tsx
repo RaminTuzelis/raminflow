@@ -27,6 +27,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   PlusIcon,
@@ -62,6 +63,7 @@ type AddedOrderItemRowProps = {
   item: DraftListItem;
   index: number;
   onRemove: (clientId: string) => void;
+  onUpdate: (clientId: string, updatedItem: OrderItemDraft) => void;
   disabled: boolean;
 };
 
@@ -87,18 +89,50 @@ function AddedOrderItemRow({
 
         <span className="whitespace-nowrap">{item.thicknessMm} mm</span>
       </div>
-
-      <Button
-        type="button"
-        disabled={disabled}
-        variant="destructive"
-        size="sm"
-        onClick={() => onRemove(item.clientId)}
-        className="col-span-2 mt-2 w-full md:col-span-1 md:mt-0 md:w-auto"
-      >
-        <Trash2Icon aria-hidden="true" data-icon="inline-start" />
-        Remove
-      </Button>
+      <div className="col-span-2 flex justify-end gap-2 md:col-span-1">
+        <Dialog>
+          <DialogTrigger
+            render={
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                disabled={disabled}
+              />
+            }
+          >
+            Edit
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit item</DialogTitle>
+              <DialogDescription>{item.name}</DialogDescription>
+            </DialogHeader>
+            <Field>
+              <FieldLabel htmlFor={`edit-item-name-${item.clientId}`}>
+                Item name
+              </FieldLabel>
+              <Input
+                id={`edit-item-name-${item.clientId}`}
+                name="itemName"
+                defaultValue={item.name}
+                required
+              />
+            </Field>
+          </DialogContent>
+        </Dialog>
+        <Button
+          type="button"
+          disabled={disabled}
+          variant="destructive"
+          size="sm"
+          onClick={() => onRemove(item.clientId)}
+          className="col-span-2 mt-2 md:col-span-1 md:mt-0 md:w-auto"
+        >
+          <Trash2Icon aria-hidden="true" data-icon="inline-start" />
+          Remove
+        </Button>
+      </div>
     </li>
   );
 }
@@ -106,12 +140,14 @@ function AddedOrderItemRow({
 type AddedOrderItemsSectionProps = {
   items: DraftListItem[];
   onRemove: (clientId: string) => void;
+  onUpdate: (clientId: string, updatedItem: OrderItemDraft) => void;
   disabled: boolean;
 };
 
 function AddedOrderItemsSection({
   items,
   onRemove,
+  onUpdate,
   disabled,
 }: AddedOrderItemsSectionProps) {
   if (items.length === 0) {
@@ -140,6 +176,7 @@ function AddedOrderItemsSection({
             item={item}
             index={index}
             onRemove={onRemove}
+            onUpdate={onUpdate}
           />
         ))}
       </ul>
@@ -336,6 +373,18 @@ export function CreateOrderForm() {
     );
     setSuccessMessage("");
     setCreatedOrderId("");
+  }
+
+  function handleUpdateItem(clientId: string, updatedItem: OrderItemDraft) {
+    setItems((currentItems) =>
+      currentItems.map((item) => {
+        if (item.clientId === clientId) {
+          return { ...item, ...updatedItem };
+        }
+
+        return item;
+      }),
+    );
   }
 
   function handleSkipImportRow(rowNumber: number) {
@@ -554,17 +603,14 @@ export function CreateOrderForm() {
         </div>
         <Input
           onChange={async (event) => {
-            setImportError("");
-            setImportRows(undefined);
-            setDefaultMaterial(null);
-            setDefaultThicknessMm(null);
             if (isSubmitting) {
               return;
             }
+            setImportError("");
+
             const file = event.currentTarget.files?.[0];
 
             if (file) {
-              setImportFileName(file.name);
               if (!isSupportedOrderWorkbook(file.name)) {
                 return setImportError("Choose an .xlsx or .xls file.");
               }
@@ -587,6 +633,9 @@ export function CreateOrderForm() {
                 }
 
                 setImportRows(rows);
+                setImportFileName(file.name);
+                setDefaultMaterial(null);
+                setDefaultThicknessMm(null);
               } catch (error) {
                 setImportError(
                   error instanceof UnsupportedOrderWorkbookError
@@ -634,6 +683,7 @@ export function CreateOrderForm() {
       <AddedOrderItemsSection
         items={items}
         onRemove={handleRemoveItem}
+        onUpdate={handleUpdateItem}
         disabled={isSubmitting}
       />
       {formError && (

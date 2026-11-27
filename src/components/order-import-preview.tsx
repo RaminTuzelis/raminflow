@@ -115,6 +115,7 @@ export function OrderImportPreview({
             Default material
           </FieldLabel>
           <Select
+            disabled={disabled}
             items={materialItems}
             value={defaultMaterial}
             onValueChange={onDefaultMaterialChange}
@@ -144,6 +145,7 @@ export function OrderImportPreview({
             Default thickness
           </FieldLabel>
           <Select
+            disabled={disabled}
             items={thicknessItems}
             value={defaultThicknessMm}
             onValueChange={onDefaultThicknessChange}
@@ -183,6 +185,7 @@ export function OrderImportPreview({
                 Item name
               </span>
               <Input
+                disabled={disabled}
                 aria-label={`Item name for Excel row ${row.rowNumber}`}
                 aria-invalid={row.errors.some(
                   (error) => error.field === "name",
@@ -198,6 +201,7 @@ export function OrderImportPreview({
                 Quantity
               </span>
               <Input
+                disabled={disabled}
                 aria-label={`Quantity for Excel row ${row.rowNumber}`}
                 aria-invalid={row.errors.some(
                   (error) => error.field === "quantity",
@@ -214,6 +218,7 @@ export function OrderImportPreview({
                 Unit
               </span>
               <Select
+                disabled={disabled}
                 items={unitItems}
                 value={row.unit ?? null}
                 onValueChange={(value) => onUnitChange(row.rowNumber, value)}
@@ -243,6 +248,7 @@ export function OrderImportPreview({
                 Material
               </span>
               <Select
+                disabled={disabled}
                 items={materialItems}
                 value={
                   row.materialType ??
@@ -276,6 +282,7 @@ export function OrderImportPreview({
                 Thickness
               </span>
               <Select
+                disabled={disabled}
                 items={thicknessItems}
                 value={
                   row.thicknessMm ??
